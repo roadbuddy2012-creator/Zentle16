@@ -1,0 +1,1182 @@
+<title>곁 쇼핑 비서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: one phone-width column (max 440px) — sticky brand header, one screen at a time, fixed 4-tab bar. Follows the 곁 V0.1 화면 시안: cream ground, deep green actions, soft green panels. */
+:root{
+  --bg:#F5F3EC;
+  --surface:#FFFFFF;
+  --tint:#E7EEE5;
+  --tint-2:#D3E1D1;
+  --green:#245A43;
+  --on-green:#FFFFFF;
+  --green-2:#3B775A;
+  --ink:#1D2621;
+  --muted:#5F6A63;
+  --line:#E0DDD3;
+  --warn:#94491A;
+  --warn-bg:#F6E7D8;
+  --font-ui:"IBM Plex Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --font-brand:"Gowun Dodum", "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101512; --surface:#18201B; --tint:#1E2A23; --tint-2:#2A3B31;
+    --green:#8BCBA8; --on-green:#0C1811; --green-2:#A6D8BB;
+    --ink:#E5EBE7; --muted:#9AA69E; --line:#2B352F; --warn:#EDAA77; --warn-bg:#35271C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101512; --surface:#18201B; --tint:#1E2A23; --tint-2:#2A3B31;
+  --green:#8BCBA8; --on-green:#0C1811; --green-2:#A6D8BB;
+  --ink:#E5EBE7; --muted:#9AA69E; --line:#2B352F; --warn:#EDAA77; --warn-bg:#35271C;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+*,*::before,*::after{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--green-2);outline-offset:2px}
+p{margin:0}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.sm{width:16px;height:16px}
+.muted{color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.minw{min-width:0}
+
+.app{max-width:440px;margin:0 auto;padding-inline:20px;padding-block:0 calc(108px + env(safe-area-inset-bottom,0px))}
+.app.no-tabs{padding-block-end:40px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;align-items:center;justify-content:space-between;padding-block:14px 10px;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;cursor:pointer}
+.mark{width:30px;height:30px;border-radius:9px;background:var(--green);color:var(--on-green);display:grid;place-items:center;flex:none}
+.mark .ic{width:18px;height:18px}
+.mark.mini{width:22px;height:22px;border-radius:7px}
+.mark.mini .ic{width:13px;height:13px}
+.brand-name{font-family:var(--font-brand);font-size:25px;line-height:1}
+.brand-sub{font-size:12.5px;color:var(--muted)}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn.sm{width:32px;height:32px;color:var(--muted)}
+
+.screen{display:flex;flex-direction:column;gap:18px;padding-block:6px 8px}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:2px;border:0;background:none;color:var(--muted);font-size:13.5px;padding:4px 0;cursor:pointer}
+.stack-tight{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12.5px;font-weight:500;color:var(--green-2);letter-spacing:.02em}
+h1{font-size:27px;line-height:1.32;font-weight:400;letter-spacing:-.015em;margin:2px 0 0;text-wrap:balance}
+h1.big{font-size:31px}
+h1.h-prod{font-size:24px}
+h2{font-size:15.5px;font-weight:600;margin:0}
+.lead{color:var(--muted);font-size:14px}
+.hint{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fine{font-size:12px;color:var(--muted)}
+.group{display:flex;flex-direction:column;gap:10px}
+.lbl{font-size:13.5px;font-weight:500;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.row-btns{display:flex;flex-wrap:wrap;gap:8px}
+.actions{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border:0;border-radius:16px;background:var(--green);color:var(--on-green);font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;text-align:center;padding:0 16px}
+.btn-primary[disabled]{opacity:.45;cursor:default}
+.btn-secondary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font-size:15px;cursor:pointer;text-decoration:none;padding:0 14px}
+.btn-link{border:0;background:none;color:var(--muted);font-size:14.5px;padding:8px;cursor:pointer;align-self:center}
+.btn-small{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:13.5px;cursor:pointer;text-decoration:none;flex:none}
+.btn-small.strong{background:var(--green);color:var(--on-green);border-color:var(--green)}
+.btn-small[disabled]{opacity:.55;cursor:default}
+.btn-inline{border:0;background:none;color:var(--green);font-size:14px;font-weight:500;padding:4px 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;align-self:flex-start}
+.btn-inline.danger{color:var(--warn)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}
+.tint{background:var(--tint);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.t-title{font-weight:500;display:flex;align-items:center;gap:6px}
+.notice{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:13.5px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--tint);border-color:var(--green-2);color:var(--green);font-weight:500}
+.field{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;font-size:16px}
+.field::placeholder{color:var(--muted);opacity:.75}
+textarea.field{resize:vertical;min-height:84px}
+.field.num{font-variant-numeric:tabular-nums}
+.field.xs{width:70px;text-align:right;padding:9px 10px}
+.progress{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.progress span{height:4px;border-radius:4px;background:var(--tint-2)}
+.progress span.on{background:var(--green)}
+details>summary{cursor:pointer;font-size:14px;color:var(--green);font-weight:500;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"+ "}
+details[open]>summary::before{content:"− "}
+details.more-info{display:flex;flex-direction:column;gap:10px}
+details.more-info[open]>summary{margin-bottom:10px}
+details.more-info>div{margin-bottom:10px}
+
+/* welcome */
+.hero{background:var(--tint);border-radius:24px;padding:22px 22px 26px;display:flex;flex-direction:column;gap:8px}
+.hero-mark{width:84px;height:84px;border-radius:24px;background:var(--surface);color:var(--green);display:grid;place-items:center;margin-bottom:26px}
+.hero-mark .ic{width:34px;height:34px;stroke-width:1.3}
+.features{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.features li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center}
+.f-ico{width:44px;height:44px;border-radius:12px;background:var(--tint);color:var(--green);display:grid;place-items:center}
+.features b{display:block;font-weight:500;font-size:15.5px}
+.features small{font-size:13px;color:var(--muted)}
+
+/* home */
+.composer{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:8px}
+.composer:focus-within{border-color:var(--green-2)}
+.composer textarea{border:0;background:transparent;resize:vertical;min-height:84px;font-size:16px;padding:0;outline:none}
+.composer textarea::placeholder{color:var(--muted);opacity:.75}
+.composer-foot{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.send{width:46px;height:46px;border-radius:14px;border:0;background:var(--green);color:var(--on-green);display:grid;place-items:center;cursor:pointer;flex:none}
+.list{display:flex;flex-direction:column}
+.ex{display:grid;grid-template-columns:28px 1fr 16px;gap:10px;align-items:center;padding:13px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;cursor:pointer}
+.ex b{font-weight:500;display:block}
+.ex small{color:var(--muted);font-size:12.5px}
+.ex .ic{color:var(--green-2)}
+.link-card{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;width:100%;cursor:pointer}
+.link-card b{display:block;font-weight:500}
+.link-card small{color:var(--muted);font-size:13px}
+.mem-line{font-weight:500}
+
+/* clarify */
+.bubble-me{align-self:flex-end;max-width:88%;background:var(--tint);border-radius:18px 18px 6px 18px;padding:12px 14px}
+.ai-label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.bubble-ai{background:var(--surface);border:1px solid var(--line);border-radius:6px 18px 18px 18px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.bubble-ai .q{font-weight:500}
+.q-label{font-size:12.5px;color:var(--muted)}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-right:5px;animation:blink 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}
+.dots i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* searching */
+.hero-ic{width:64px;height:64px;border-radius:18px;background:var(--tint);color:var(--green);display:grid;place-items:center}
+.hero-ic .ic{width:28px;height:28px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:28px 1fr;gap:6px;padding:14px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.step .ic{margin-top:2px}
+.step.done{color:var(--ink)}
+.step.done .ic{color:var(--green)}
+.step.active{color:var(--ink)}
+.step.active .ic{color:var(--green-2);animation:pulse 1.4s ease-in-out infinite}
+.step-title{font-weight:500}
+.step-sub{font-size:12.5px;color:var(--muted)}
+@keyframes pulse{50%{opacity:.3}}
+
+/* recommendations */
+.rec{display:flex;flex-direction:column;gap:12px}
+.rec.top-pick{border:1.5px solid var(--green-2)}
+.rec-head{display:flex;gap:8px;align-items:center}
+.rank{width:24px;height:24px;border-radius:7px;background:var(--tint);color:var(--green);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
+.tag{background:var(--tint);color:var(--green);font-size:12px;font-weight:500;padding:3px 8px;border-radius:6px}
+.rec-body{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:start}
+.thumb{width:84px;height:84px;border-radius:14px;background:var(--tint);color:var(--green);display:grid;place-items:center;flex:none}
+.thumb .ic{width:38px;height:38px;stroke-width:1.3}
+.rec-name{font-weight:500;font-size:16px}
+.rec-reason{color:var(--muted);font-size:13px;margin:2px 0 6px}
+.price{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.price.big{font-size:26px}
+.price-sub{font-size:12px;color:var(--muted)}
+.rec-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px;font-size:13px}
+.li{display:grid;grid-template-columns:22px 56px 1fr 16px;gap:12px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;cursor:pointer}
+.li .thumb{width:56px;height:56px;border-radius:12px}
+.li .thumb .ic{width:26px;height:26px}
+.li .rank{background:none;color:var(--muted);font-weight:500}
+.li .rec-reason{margin:0}
+.li .price{font-size:16px}
+.hero-thumb{aspect-ratio:16/10;max-width:100%;border-radius:20px;background:var(--tint);color:var(--green);display:grid;place-items:center}
+.hero-thumb .ic{width:76px;height:76px;stroke-width:1.05}
+.rows{display:flex;flex-direction:column;gap:12px}
+.rows.sep{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.row{display:flex;justify-content:space-between;gap:14px;font-size:14px}
+.row>span:first-child{color:var(--muted);flex:none}
+.row>b{font-weight:500;font-variant-numeric:tabular-nums;text-align:right;min-width:0}
+.row.total{border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+.row.total>b{font-weight:600}
+.row.sub>span:first-child,.row.sub>b{font-size:13px;color:var(--muted);font-weight:400}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+
+/* payment options */
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;flex-direction:column;gap:4px;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;cursor:pointer}
+.opt[aria-checked="true"]{border:1.5px solid var(--green-2);background:var(--tint)}
+.opt-title{display:flex;align-items:center;gap:8px;font-weight:500}
+.radio{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);display:inline-grid;place-items:center;flex:none}
+.opt[aria-checked="true"] .radio{border-color:var(--green)}
+.opt[aria-checked="true"] .radio::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--green)}
+.badge{margin-left:auto;font-size:12px;color:var(--green);font-weight:600}
+.opt-amt{font-size:24px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.opt-method{font-size:13.5px;font-weight:500}
+.opt-detail{font-size:12.5px;color:var(--muted)}
+.assume ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:4px}
+
+/* ready / feedback */
+.mini-prod{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center}
+.mini-prod .thumb{width:72px;height:72px}
+.mini-prod .thumb .ic{width:32px;height:32px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--green);margin-top:3px;flex:none}
+.checks{gap:10px}
+.choice{min-height:52px;border:1px solid var(--line);border-radius:14px;background:var(--surface);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.choice[aria-pressed="true"]{background:var(--tint);border-color:var(--green-2);color:var(--green);font-weight:500}
+
+/* lists */
+.req{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+.req-main{text-align:left;border:0;background:none;padding:14px 0;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-width:0}
+.req-text{font-weight:500;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.req-meta{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--tint);color:var(--green);font-weight:500}
+.pill.done{background:var(--line);color:var(--muted)}
+.pill.ready{background:var(--green);color:var(--on-green)}
+.pill.bad{background:var(--warn-bg);color:var(--warn)}
+.buy{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.buy .thumb{width:48px;height:48px;border-radius:12px}
+.buy .thumb .ic{width:22px;height:22px}
+.buy-name{font-weight:500}
+.buy-meta{font-size:12.5px;color:var(--muted)}
+.buy-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.buy-price{font-variant-numeric:tabular-nums;font-weight:500}
+.stats{display:grid;grid-template-columns:1fr 1.5fr;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.stat-n{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.stat-l{font-size:12px;color:var(--muted)}
+.empty{display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding:18px;border:1px dashed var(--line);border-radius:18px}
+.notes{list-style:none;padding:0;margin:0}
+.notes li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+
+/* wallet */
+.pc{background:var(--green);color:var(--on-green);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;border:0;text-align:left;width:100%}
+.pc-top{display:flex;justify-content:space-between;font-size:12.5px;opacity:.85}
+.pc-name{font-size:18px;font-weight:500}
+.pc-meta{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;flex-wrap:wrap}
+.editor{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.seg-line{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:7px 12px;font-size:13.5px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--green);color:var(--on-green)}
+.inline-field{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted)}
+.ben{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px;border-radius:14px;background:var(--tint)}
+.ben .field{padding:9px 10px;font-size:15px;border-radius:10px}
+.ben .full{grid-column:1/-1}
+.ben .inline-field .field{width:84px;text-align:right}
+.ben .right{justify-self:end}
+.ai-note{color:var(--green-2)}
+.prow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.prow .full{grid-column:1/-1}
+.prow .field{padding:9px 10px;font-size:15px;border-radius:10px}
+.prow-name{font-weight:500}
+.add-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.file-btn:focus-within{outline:2px solid var(--green-2);outline-offset:2px}
+.li-check{padding:10px 0;border-bottom:1px solid var(--line)}
+.li-check b{display:block;font-weight:500}
+.li-check small{color:var(--muted);font-size:12.5px}
+
+/* tab bar + toast */
+.tabs{position:fixed;inset-inline:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs nav{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 9px;border:0;background:none;color:var(--muted);font-size:11.5px;cursor:pointer}
+.tab[aria-current="page"]{color:var(--green);font-weight:600}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
+.no-tabs~.toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+@media (prefers-reduced-motion:reduce){.step.active .ic,.dots i{animation:none}}
+</style>
+
+<div id="app"></div>
+
+<script>
+(function(){
+'use strict';
+var $app = document.getElementById('app');
+
+/* ---------- small helpers ---------- */
+function pad(n){ return String(n).padStart(2,'0'); }
+var NOW = new Date();
+var TODAY = NOW.getFullYear()+'-'+pad(NOW.getMonth()+1)+'-'+pad(NOW.getDate());
+var WEEKDAY = ['일','월','화','수','목','금','토'][NOW.getDay()];
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function num(v){ var n = parseFloat(String(v==null?'':v).replace(/[^\d.]/g,'')); return isFinite(n) ? n : 0; }
+function won(n){ return Math.round(Number(n)||0).toLocaleString('ko-KR')+'원'; }
+function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-5); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function toggleIn(arr, v){ var i = arr.indexOf(v); if(i<0) arr.push(v); else arr.splice(i,1); }
+function dateLabel(ts){ var d = new Date(ts); if(isNaN(d)) return ''; var t = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); return t===TODAY ? '오늘' : (d.getMonth()+1)+'월 '+d.getDate()+'일'; }
+
+var ICON = {
+  sparkle:'<path d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6L5.7 9.8l4.6-1.7z"/><path d="M18.5 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/><path d="M6 15.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z"/>',
+  user:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.3-3.5 4-5 7-5s5.7 1.5 7 5"/>',
+  home:'<path d="M4 10.5L12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
+  chat:'<path d="M4 5.5h11a2 2 0 0 1 2 2V13a2 2 0 0 1-2 2H9l-3.5 3v-3H4a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2z"/><path d="M19 9h1a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-.5v2.5L16.5 18H12"/>',
+  receipt:'<path d="M6 3h12v18l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L6 21z"/><path d="M9 8h6M9 12h6M9 16h3.5"/>',
+  wallet:'<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M15.5 14.5h2"/>',
+  card:'<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 9.5h18M7 15h3"/>',
+  arrowR:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  arrowUp:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  checkCircle:'<circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.3l2.6 2.6 5-5.3"/>',
+  circle:'<circle cx="12" cy="12" r="8.5"/>',
+  chevR:'<path d="M9.5 6l6 6-6 6"/>',
+  chevL:'<path d="M14.5 6l-6 6 6 6"/>',
+  chevD:'<path d="M6 9.5l6 6 6-6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  x:'<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  ext:'<path d="M14 4h6v6M20 4l-8.5 8.5"/><path d="M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>',
+  heart:'<path d="M12 19.5s-7-4.3-7-9.8A4 4 0 0 1 12 7a4 4 0 0 1 7 2.7c0 5.5-7 9.8-7 9.8z"/>',
+  shield:'<path d="M12 3l7 2.8V11c0 4.4-3 8.1-7 9.8-4-1.7-7-5.4-7-9.8V5.8z"/><path d="M9 11.8l2.2 2.2 4-4.3"/>',
+  image:'<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="9.5" r="1.6"/><path d="M4 17l5-4.5 4 3.5 2.5-2 4.5 4"/>',
+  file:'<path d="M7 3h7.5L19 7.5V21H7z"/><path d="M14 3v5h5M10 12.5h6M10 16h6"/>',
+  search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+  mic:'<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v2.5"/>',
+  stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+  smile:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 13.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2M9.3 9.6h.01M14.7 9.6h.01"/>',
+  meh:'<circle cx="12" cy="12" r="8.5"/><path d="M9 15h6M9.3 9.6h.01M14.7 9.6h.01"/>',
+  luggage:'<rect x="6" y="7" width="12" height="12.5" rx="2.5"/><path d="M9.5 7V4.5h5V7M10 10.5v5.5M14 10.5v5.5M9 19.5v1.2M15 19.5v1.2"/>',
+  food:'<path d="M3.5 12h17a8.5 8.5 0 0 1-17 0z"/><path d="M9 4.5c0 1.4 1 1.9 1 3.3M13 4.5c0 1.4 1 1.9 1 3.3"/>',
+  device:'<rect x="7" y="3" width="10" height="18" rx="2.3"/><path d="M11 17.5h2"/>',
+  clothing:'<path d="M8.5 4L12 6l3.5-2 4.5 4-3 3v9H7v-9L4 8z"/>',
+  homegoods:'<path d="M5 13V10a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 12.5h18V17H3zM5 17v2M19 17v2"/>',
+  beauty:'<path d="M10 3h4v3.5h-4z"/><path d="M8 10a2 2 0 0 1 2-3.5h4A2 2 0 0 1 16 10v10H8z"/><path d="M8 13.5h8"/>',
+  health:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/>',
+  sports:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 2.6 14.6 0 17M12 3.5c-2.6 2.4-2.6 14.6 0 17"/>',
+  gift:'<rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M3 7h18v3H3zM12 7v13"/><path d="M12 7c-1.5-3-5-3.2-5-1.2S10 7 12 7zM12 7c1.5-3 5-3.2 5-1.2S14 7 12 7z"/>',
+  box:'<path d="M4 8l8-4 8 4v8.5l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8.5"/>'
+};
+function ic(n, cls){ return '<svg class="ic'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+(ICON[n]||ICON.box)+'</svg>'; }
+
+/* ---------- reference lists ---------- */
+var LIKES = ['실용적인 것','가벼운 것','좋은 디자인','오래 쓸 것','합리적인 가격','익숙한 브랜드','빠른 배송','친환경'];
+var MEMBERSHIPS = ['쿠팡 와우','네이버플러스 멤버십','컬리멤버스','배민클럽','SSG 유니버스'];
+var PAY_NAMES = ['네이버페이','카카오페이','토스페이','삼성페이','쿠페이','페이코','SSG페이','스마일페이','애플페이'];
+var AGES = ['','20대','30대','40대','50대','60대 이상'];
+var ITEM_ICONS = ['luggage','food','device','clothing','homegoods','beauty','health','sports','gift','box'];
+var STATUS = {clarifying:'조건 확인 중', asking:'조건 확인 중', searching:'찾는 중', recommended:'추천 받음', ready:'구매 준비', done:'구매 완료'};
+var MET = {yes:'충족', no:'미충족', unknown:'확인 필요'};
+var BTYPE = {discount:'청구할인', cashback:'캐시백', points:'포인트 적립'};
+var EXAMPLES = [
+  {icon:'luggage', title:'다음 주 여행용 캐리어 골라줘', sub:'가볍게 · 15만 원 안에서', text:'다음 주 여행에 쓸 작은 캐리어 골라줘. 가볍고 15만 원 안이면 좋겠어.'},
+  {icon:'food', title:'오늘 둘이 먹을 저녁 골라줘', sub:'맵지 않게 · 배달비까지 3만 원', text:'오늘 둘이 먹을 저녁 배달 골라줘. 맵지 않게, 배달비까지 3만 원 안에서.'},
+  {icon:'health', title:'등산할 때 쓸 무릎 보호대', sub:'무릎이 아플 때 · 5만 원 안팎', text:'요즘 등산할 때 무릎이 아파. 무릎 보호대 추천해줘. 5만 원 안팎으로.'}
+];
+
+/* ---------- state ---------- */
+function freshApp(){ return {v:1, onboarded:false, profile:{likes:[], avoid:'', age:'', job:'', size:'', notes:[], memberships:[]}, wallet:{cards:[], pays:[], points:[]}}; }
+function mergeApp(d){
+  var a = freshApp();
+  if(!d || typeof d!=='object') return a;
+  var o = clone(d);
+  a.onboarded = !!o.onboarded;
+  var p = o.profile || {}; var w = o.wallet || {};
+  ['avoid','age','job','size'].forEach(function(k){ if(typeof p[k]==='string') a.profile[k]=p[k]; });
+  ['likes','notes','memberships'].forEach(function(k){ if(Array.isArray(p[k])) a.profile[k]=p[k].map(String); });
+  ['cards','pays','points'].forEach(function(k){ if(Array.isArray(w[k])) a.wallet[k]=w[k].filter(function(x){ return x && typeof x==='object'; }); });
+  a.wallet.cards.forEach(function(c){ if(!Array.isArray(c.benefits)) c.benefits=[]; });
+  return a;
+}
+var S = {app:freshApp(), requests:[], purchases:[], route:'welcome', stack:[], curId:null, ui:{}, toast:''};
+var sample = null, aiState = 'checking', storage = 'local';
+var refs = {};
+var searchCtl = null;
+
+function cur(){ for(var i=0;i<S.requests.length;i++){ if(S.requests[i].id===S.curId) return S.requests[i]; } return null; }
+function curItem(){ var r = cur(); return r && r.recs && r.recs.items ? r.recs.items[r.sel||0] : null; }
+
+/* ---------- storage: claude.ai account (private per viewer) with a browser copy ---------- */
+var LS_KEY = 'gyeot.v1';
+function lsLoad(){ try{ var t = localStorage.getItem(LS_KEY); return t ? JSON.parse(t) : null; }catch(e){ return null; } }
+function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({app:S.app, requests:S.requests.slice(0,20), purchases:S.purchases.slice(0,200)})); }catch(e){} }
+var saveTimers = {};
+function persist(key){
+  lsSave();
+  if(!refs[key]) return;
+  clearTimeout(saveTimers[key]);
+  saveTimers[key] = setTimeout(function(){ writeRemote(key, 0); }, 600);
+}
+function writeRemote(key, attempt){
+  var body = key==='app' ? clone(S.app) : {list: clone(key==='requests' ? S.requests.slice(0,20) : S.purchases.slice(0,200))};
+  refs[key].set(body).catch(function(e){
+    if(e && e.code==='unavailable' && attempt===0){ setTimeout(function(){ writeRemote(key,1); }, 800+Math.random()*1200); }
+    else { toast('계정에 저장하지 못했어요. 이 기기에는 남아 있어요.'); }
+  });
+}
+
+/* ---------- navigation + render ---------- */
+var ONB = ['welcome','taste','onbWallet','onbHistory'];
+var FLOW = ['clarify','searching','recs','more','detail','pay','ready','feedback','manual'];
+function tabOf(r){ if(r==='home') return 'home'; if(r==='shopping' || FLOW.indexOf(r)>=0) return 'shopping'; if(r==='history') return 'history'; if(r==='wallet') return 'wallet'; return ''; }
+function go(to, opt){
+  opt = opt || {};
+  if(!opt.replace && S.route!==to) S.stack.push(S.route);
+  S.route = to; S.ui.confirm = null;
+  render(); window.scrollTo(0,0);
+}
+function back(){
+  if(S.route==='searching' && searchCtl){ searchCtl.abort(); }
+  S.route = S.stack.pop() || (S.app.onboarded ? 'home' : 'welcome');
+  S.ui.confirm = null;
+  render(); window.scrollTo(0,0);
+}
+function render(){
+  var a = document.activeElement, aid = a && a.id, s0 = null, s1 = null;
+  try{ if(a && typeof a.selectionStart==='number'){ s0 = a.selectionStart; s1 = a.selectionEnd; } }catch(e){}
+  var showTabs = ONB.indexOf(S.route) < 0;
+  $app.innerHTML = '<div class="app'+(showTabs?'':' no-tabs')+'">'+header()+'<main class="screen" id="screen">'+view()+'</main></div>'+(showTabs?tabs():'')+(S.toast?'<div class="toast" role="status">'+esc(S.toast)+'</div>':'');
+  if(aid){ var el = document.getElementById(aid); if(el){ try{ el.focus({preventScroll:true}); if(s0!==null && el.setSelectionRange) el.setSelectionRange(s0,s1); }catch(e){} } }
+}
+var toastTimer;
+function toast(m){
+  S.toast = m;
+  var t = document.querySelector('.toast');
+  if(!t){ t = document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); $app.appendChild(t); }
+  t.textContent = m;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ S.toast=''; var x=document.querySelector('.toast'); if(x) x.remove(); }, 2800);
+}
+
+function header(){
+  var onb = ONB.indexOf(S.route) >= 0;
+  return '<header class="top"><button class="brand" data-act="'+(onb?'noop':'tab')+'" data-to="home" aria-label="곁 처음 화면"><span class="mark">'+ic('sparkle')+'</span><span class="brand-name">곁</span><span class="brand-sub">나의 쇼핑 비서</span></button>'
+    + (onb ? '' : '<button class="icon-btn" data-act="go" data-to="me" aria-label="내 정보">'+ic('user')+'</button>') + '</header>';
+}
+function tabs(){
+  var t = tabOf(S.route);
+  var T = [['home','home','부탁하기'],['shopping','chat','내 쇼핑'],['history','receipt','구매기록'],['wallet','wallet','내 결제']];
+  return '<div class="tabs"><nav aria-label="주요 메뉴">'+T.map(function(x){ return '<button class="tab" data-act="tab" data-to="'+x[0]+'"'+(t===x[0]?' aria-current="page"':'')+'>'+ic(x[1])+'<span>'+x[2]+'</span></button>'; }).join('')+'</nav></div>';
+}
+function backBtn(){ return '<button class="back" data-act="back">'+ic('chevL','sm')+'이전</button>'; }
+function progress(n){ return '<div class="progress" aria-label="처음 설정 '+n+'/3">'+[1,2,3].map(function(i){ return '<span class="'+(i<=n?'on':'')+'"></span>'; }).join('')+'</div>'; }
+function row(k, v, total){ return '<div class="row'+(total?' total':'')+'"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>'; }
+function emptyState(title, sub, label, to){ return '<div class="empty"><p class="t-title">'+esc(title)+'</p><p class="lead">'+esc(sub)+'</p>'+(label?'<button class="btn-inline" data-act="tab" data-to="'+to+'">'+esc(label)+' '+ic('arrowR','sm')+'</button>':'')+'</div>'; }
+function seg(path, val, opts){ return '<span class="seg" role="group">'+opts.map(function(o){ return '<button data-act="setVal" data-path="'+path+'" data-v="'+o[0]+'" aria-pressed="'+(val===o[0])+'">'+o[1]+'</button>'; }).join('')+'</span>'; }
+function opts(list, val){ return list.map(function(o){ return '<option value="'+o[0]+'"'+(val===o[0]?' selected':'')+'>'+o[1]+'</option>'; }).join(''); }
+
+function view(){
+  switch(S.route){
+    case 'welcome': return vWelcome();
+    case 'taste': return vTaste();
+    case 'onbWallet': return vOnbWallet();
+    case 'onbHistory': return vOnbHistory();
+    case 'clarify': return vClarify();
+    case 'searching': return vSearching();
+    case 'recs': return vRecs();
+    case 'more': return vMore();
+    case 'detail': return vDetail();
+    case 'pay': return vPay();
+    case 'ready': return vReady();
+    case 'feedback': return vFeedback();
+    case 'shopping': return vShopping();
+    case 'history': return vHistory();
+    case 'wallet': return vWallet();
+    case 'me': return vMe();
+    case 'manual': return vManual();
+    default: return vHome();
+  }
+}
+function vMissing(){ return emptyState('이 부탁을 찾을 수 없어요.','부탁하기에서 다시 시작해 주세요.','부탁하러 가기','home'); }
+
+/* ---------- 01 ~ 04 처음 설정 ---------- */
+function vWelcome(){
+  return '<section class="hero"><div class="hero-mark">'+ic('sparkle')+'</div><p class="eyebrow">늘 당신 곁에서</p><h1 class="big">사고 싶은 것,<br>말만 해주세요.</h1><p class="lead">찾고, 비교하고, 결제 방법까지.<br>번거로운 쇼핑을 제가 도와드릴게요.</p></section>'
+   + '<ul class="features"><li><span class="f-ico">'+ic('chat')+'</span><div><b>내 상황을 알아듣고</b><small>취향과 예산에 맞게 찾아드려요</small></div></li><li><span class="f-ico">'+ic('wallet')+'</span><div><b>내 결제수단으로 더 유리하게</b><small>상품과 음식배달을 함께 도와드려요</small></div></li></ul>'
+   + '<div class="actions"><button class="btn-primary" data-act="go" data-to="taste">내 쇼핑 비서 만나기 '+ic('arrowR','sm')+'</button><button class="btn-link" data-act="finishOnb">먼저 둘러볼게요</button></div>';
+}
+function tasteFields(){
+  var p = S.app.profile, more = p.age||p.job||p.size;
+  return '<div class="group"><p class="lbl">쇼핑할 때 중요하게 생각하는 것</p><div class="chips">'+LIKES.map(function(l){ return '<button class="chip" data-act="toggleLike" data-v="'+esc(l)+'" aria-pressed="'+(p.likes.indexOf(l)>=0)+'">'+esc(l)+'</button>'; }).join('')+'</div></div>'
+   + '<div class="group"><label class="lbl" for="avoid">피하고 싶은 것도 있나요?</label><input class="field" id="avoid" data-bind="app.profile.avoid" value="'+esc(p.avoid)+'" placeholder="예: 무거운 제품, 너무 매운 음식"></div>'
+   + '<details class="more-info"'+(more?' open':'')+'><summary>더 알려주면 더 잘 맞춰요 (선택)</summary>'
+   + '<div class="grid2"><div class="group"><label class="lbl" for="age">나이대</label><select class="field" id="age" data-bind="app.profile.age">'+AGES.map(function(a){ return '<option value="'+a+'"'+(p.age===a?' selected':'')+'>'+(a||'선택 안 함')+'</option>'; }).join('')+'</select></div>'
+   + '<div class="group"><label class="lbl" for="job">하는 일</label><input class="field" id="job" data-bind="app.profile.job" value="'+esc(p.job)+'" placeholder="예: 사무직"></div></div>'
+   + '<div class="group"><label class="lbl" for="size">체형·사이즈</label><input class="field" id="size" data-bind="app.profile.size" value="'+esc(p.size)+'" placeholder="예: 175cm, 상의 L, 신발 270"></div></details>';
+}
+function vTaste(){
+  return progress(1)+'<div class="stack-tight"><p class="eyebrow">나를 알아가는 첫걸음</p><h1>어떤 선택을<br>좋아하세요?</h1><p class="lead">몇 가지만 알려주세요.<br>나머지는 이야기하면서 알아갈게요.</p></div>'
+   + tasteFields()
+   + '<div class="tint"><p class="t-title">'+ic('heart','sm')+' 내 취향은 언제든 바꿀 수 있어요.</p><p class="hint">나이·하는 일·사이즈는 원할 때만 알려주세요.</p></div>'
+   + '<div class="actions"><button class="btn-primary" data-act="go" data-to="onbWallet">다음 · 결제수단 알려주기</button><button class="btn-link" data-act="go" data-to="onbWallet">지금은 건너뛸게요</button></div>';
+}
+function vOnbWallet(){
+  return progress(2)+'<div class="stack-tight"><p class="eyebrow">내가 가진 수단으로</p><h1>결제도 알아서<br>비교할 수 있도록.</h1><p class="lead">쓰는 카드와 Pay를 알려주세요. 카드번호는 받지 않아요.</p></div>'
+   + walletEditor()
+   + '<div class="actions"><button class="btn-primary" data-act="go" data-to="onbHistory">다음 · 구매기록 가져오기</button></div>';
+}
+function vOnbHistory(){
+  var n = S.purchases.length;
+  return progress(3)+'<div class="stack-tight"><p class="eyebrow">선택해도, 건너뛰어도 괜찮아요</p><h1>지난 쇼핑이<br>나를 알려줄 수 있어요.</h1><p class="lead">주문내역이나 영수증을 가져오면<br>읽고 정리한 내용을 먼저 확인해드려요.</p></div>'
+   + importPanel()
+   + '<div class="tint"><p class="t-title">'+ic('shield','sm')+' 가져오기 전에 내가 선택해요.</p><p class="hint">이력이 없어도 사용할 수 있어요. 확인한 내용만 기억하고 언제든 지울 수 있어요.</p></div>'
+   + '<div class="actions"><button class="btn-primary" data-act="finishOnb">'+(n?'곁 시작하기':'이력 없이 먼저 시작하기')+'</button></div>';
+}
+
+/* ---------- 05 부탁하기 ---------- */
+function vHome(){
+  var p = S.app.profile, w = S.app.wallet;
+  var mem = [p.likes[0], w.cards[0] && w.cards[0].name, w.pays[0] && w.pays[0].name].filter(Boolean);
+  return '<div class="stack-tight"><p class="eyebrow">오늘도 당신 곁에서</p><h1>어떤 쇼핑을<br>도와드릴까요?</h1><p class="lead">필요한 것과 상황을 편하게 말해주세요.</p></div>'
+   + '<div class="composer"><label class="lbl" for="ask">오늘의 부탁</label><textarea id="ask" data-bind="ui.ask" rows="3" placeholder="예: 다음 주 여행에 쓸 캐리어 골라줘">'+esc(S.ui.ask||'')+'</textarea>'
+   + '<div class="composer-foot"><span class="hint">'+ic('mic','sm')+'키보드의 마이크로 말해도 돼요</span><button class="send" data-act="ask" aria-label="부탁 보내기">'+ic('arrowUp')+'</button></div></div>'
+   + (aiState==='off' ? '<p class="notice">지금은 AI 추천을 쓸 수 없어요. 이미 고른 상품은 아래에서 결제 방법을 바로 계산할 수 있어요.</p>' : '')
+   + '<div class="group"><p class="lbl muted">이렇게 부탁해보세요</p><div class="list">'+EXAMPLES.map(function(e,i){ return '<button class="ex" data-act="example" data-i="'+i+'">'+ic(e.icon)+'<span class="minw"><b>'+esc(e.title)+'</b><small>'+esc(e.sub)+'</small></span>'+ic('chevR','sm muted')+'</button>'; }).join('')+'</div></div>'
+   + '<button class="card link-card" data-act="go" data-to="manual"><span class="minw"><b>이미 고른 상품이 있어요</b><small>가격만 알려주면 결제 방법을 계산해요</small></span>'+ic('chevR','sm')+'</button>'
+   + '<div class="tint"><p class="eyebrow">기억하고 있어요</p><p class="mem-line">'+(mem.length?esc(mem.join(' · ')):'아직 기억하는 게 없어요. 쓸수록 더 잘 맞춰요.')+'</p><button class="btn-inline" data-act="go" data-to="me">내 정보 수정하기</button></div>';
+}
+
+/* ---------- 06 조건 확인 ---------- */
+function reflectLine(c){
+  var parts = [];
+  if(c.deadline) parts.push('기한: '+c.deadline);
+  if(c.budgetMax) parts.push('예산 '+won(c.budgetMax)+' 이하');
+  parts.push('취향과 결제수단 반영');
+  return parts.join(' · ');
+}
+function vClarify(){
+  var r = cur(); if(!r) return vMissing();
+  var c = r.clarify, busy = !c && S.ui.clarifyBusy === r.id, err = !c && S.ui.clarifyErr;
+  var h = backBtn()+'<div class="stack-tight"><p class="eyebrow">당신의 부탁</p><h1>'+esc(c ? c.headline : '부탁을 읽고 있어요.')+'</h1></div>'
+   + '<div class="bubble-me">'+esc(r.text)+'</div><div class="ai-label"><span class="mark mini">'+ic('sparkle')+'</span>곁</div>';
+  if(busy){ h += '<div class="bubble-ai"><span class="dots" role="status" aria-label="부탁을 읽는 중"><i></i><i></i><i></i></span></div>'; }
+  else if(err){ h += '<div class="bubble-ai"><p>'+esc(err)+'</p><div class="row-btns"><button class="btn-small" data-act="retryClarify">다시 시도</button><button class="btn-small" data-act="search">질문 없이 바로 찾아줘</button></div></div>'; }
+  else if(c){
+    h += '<div class="bubble-ai"><p>'+esc(c.message)+'</p>'+(c.questions.length ? c.questions.map(function(q){ return '<p class="q">'+esc(q.q)+'</p>'; }).join('') : '<p class="q">이대로 찾아볼까요? 더 알려줄 것이 있으면 적어 주세요.</p>')+'</div>';
+    h += c.questions.map(function(q,i){ return '<div class="group">'+(c.questions.length>1?'<p class="q-label">'+esc(q.q)+'</p>':'')+'<div class="chips" role="group" aria-label="'+esc(q.q)+'">'+q.options.map(function(o){ return '<button class="chip" data-act="answer" data-q="'+i+'" data-v="'+esc(o)+'" aria-pressed="'+(r.answers[i]===o)+'">'+esc(o)+'</button>'; }).join('')+'</div></div>'; }).join('');
+  }
+  h += '<div class="group"><label class="lbl" for="extra">더 알려주고 싶은 것</label><input class="field" id="extra" data-bind="cur.extra" value="'+esc(r.extra||'')+'" placeholder="짧게 말해줘도 괜찮아요"></div>';
+  if(c) h += '<p class="hint">'+esc(reflectLine(c))+'</p>';
+  h += '<div class="actions"><button class="btn-primary" data-act="search"'+(busy?' disabled':'')+'>이 조건으로 찾아줘</button></div>';
+  return h;
+}
+
+/* ---------- 07 검색·비교 ---------- */
+function vSearching(){
+  var r = cur(); if(!r) return vMissing();
+  var s = S.ui.search || {phase:1, found:0};
+  var cond = r.clarify ? r.clarify.understood.join(' · ') : '';
+  function st(k){ return s.phase>k ? 'done' : (s.phase===k && !s.err ? 'active' : ''); }
+  function stepIc(k){ return ic(s.phase>k ? 'checkCircle' : 'circle'); }
+  var h = '<div class="hero-ic">'+ic('search')+'</div><div class="stack-tight"><h1>제가 찾아보고<br>비교해드릴게요.</h1>'+(cond?'<p class="lead">'+esc(cond)+'</p>':'')+'</div>'
+   + '<ol class="steps">'
+   + '<li class="step '+st(1)+'">'+stepIc(1)+'<div><p class="step-title">상품과 옵션을 살펴봐요</p><p class="step-sub">'+(s.found ? '조건에 맞는 후보 '+s.found+'개' : '조건에 맞는 후보를 고르는 중')+'</p></div></li>'
+   + '<li class="step '+st(2)+'">'+stepIc(2)+'<div><p class="step-title">가격과 배송조건도 함께</p><p class="step-sub">같은 옵션 · 배송비 · 도착 안내</p></div></li>'
+   + '<li class="step '+st(3)+'">'+stepIc(3)+'<div><p class="step-title">내 카드와 Pay로 계산해요</p><p class="step-sub">할인 · 적립 · 포인트 · 할부 구분</p></div></li></ol>';
+  if(s.err){
+    h += '<p class="notice">'+esc(s.err)+'</p><div class="actions"><button class="btn-primary" data-act="search">다시 찾아줘</button><button class="btn-link" data-act="back">조건 다시 보기</button></div>';
+  } else if(s.phase>=4 && r.recs){
+    var extra = Math.max(0, r.recs.items.length-3);
+    h += '<div class="tint"><p class="t-title">먼저 볼 추천은 '+Math.min(3,r.recs.items.length)+'개예요.</p>'+(extra?'<p class="hint">추가 대안 '+extra+'개도 준비했어요.</p>':'')+'</div><div class="actions"><button class="btn-primary" data-act="go" data-to="recs" data-replace="1">추천안 보기 '+ic('arrowR','sm')+'</button></div>';
+  } else {
+    h += '<p class="hint">보통 20초에서 1분쯤 걸려요. AI가 아는 상품과 가격 범위에서 골라요.</p><div class="actions"><button class="btn-link" data-act="stopSearch">멈추기</button></div>';
+  }
+  return h;
+}
+
+/* ---------- 결제 계산 (금액은 코드가 계산) ---------- */
+function hit(list, where){
+  var w = String(where||'').replace(/\s+/g,'').toLowerCase(); if(!w) return false;
+  return String(list||'').split(/[,/·\n]+/).map(function(s){ return s.replace(/\s+/g,'').toLowerCase(); }).filter(Boolean).some(function(m){ return w.indexOf(m)>=0 || m.indexOf(w)>=0; });
+}
+function payUsable(p, item){ return !String(p.where||'').trim() || hit(p.where, item.where); }
+function benefitOf(card, item, base){
+  var out = {amount:0, type:'discount', capped:false, cap:0, rate:0};
+  if(!card || card.met==='no') return out;
+  (card.benefits||[]).forEach(function(b){
+    var rate = num(b.rate); if(rate<=0) return;
+    var sc = b.scope || 'online';
+    var ok = sc==='all' || (sc==='online' && item.channel==='online') || (sc==='delivery' && item.channel==='delivery') || (sc==='merchant' && hit(b.merchants, item.where));
+    if(!ok) return;
+    var amt = Math.floor(base*rate/100), cap = num(b.cap), capped = false;
+    if(cap>0 && amt>cap){ amt = cap; capped = true; }
+    if(amt>out.amount){ out = {amount:amt, type:BTYPE[b.type]?b.type:'discount', capped:capped, cap:cap, rate:rate}; }
+  });
+  return out;
+}
+function combo(card, pay, item, base){
+  var b = benefitOf(card, item, base);
+  var disc = b.type==='discount' ? b.amount : 0;
+  var cardLater = b.type!=='discount' ? b.amount : 0;
+  var payR = pay ? Math.floor(base*num(pay.rate)/100) : 0;
+  var now = base - disc;
+  return {card:card, pay:pay, b:b, disc:disc, cardLater:cardLater, payR:payR, later:cardLater+payR, now:now, real:now-cardLater-payR, points:0, months:0, base:base};
+}
+function extend(o, extra){ var r = {}; for(var k in o) r[k]=o[k]; for(var k2 in extra) r[k2]=extra[k2]; return r; }
+function options(item){
+  var w = S.app.wallet, base = num(item.price) + num(item.shipping);
+  var cards = w.cards.filter(function(c){ return c.name; }), pays = w.pays.filter(function(p){ return p.name; });
+  var all = [combo(null,null,item,base)];
+  cards.forEach(function(c){ all.push(combo(c,null,item,base)); pays.forEach(function(p){ if(payUsable(p,item)) all.push(combo(c,p,item,base)); }); });
+  pays.forEach(function(p){ if(payUsable(p,item)) all.push(combo(null,p,item,base)); });
+  function cnt(x){ return (x.card?1:0)+(x.pay?1:0); }
+  function by(a,b){ return (a.real-b.real) || (cnt(a)-cnt(b)); }
+  var best = all.slice().sort(by)[0];
+  var hasWallet = cards.length || pays.length;
+  var list = [extend(best, {key:'best', title: hasWallet ? '총비용을 줄이는 추천' : '일반 결제', rec: !!hasWallet})];
+  var cardOnly = all.filter(function(x){ return x.card && !x.pay; }).sort(by)[0];
+  if(cardOnly && !(cardOnly.card===best.card && !best.pay)) list.push(extend(cardOnly, {key:'card', title:'카드로 바로 결제'}));
+  var pts = w.points.filter(function(p){ return p.name && num(p.balance)>0 && (!String(p.where||'').trim() || hit(p.where, item.where)); });
+  var bal = pts.reduce(function(s,p){ return s+num(p.balance); }, 0);
+  if(bal>0){ list.push(extend(best, {key:'cash', title:'이번 현금 지출을 줄이기', points:Math.min(bal, best.now), pointNames:pts.map(function(p){ return p.name; })})); }
+  if(base>=50000){
+    var inst = cards.map(function(c){ return {c:c, m:Math.floor(num(c.freeInstall))}; }).filter(function(x){ return x.m>=2; }).sort(function(a,b){ return b.m-a.m; })[0];
+    if(inst){ list.push(extend(combo(inst.c,null,item,base), {key:'split', title:'월 부담을 나누기', months:inst.m})); }
+  }
+  return {base:base, list:list};
+}
+function payNow(o){ return o.now - (o.points||0); }
+function monthly(o){ return o.months ? Math.ceil(payNow(o)/o.months/10)*10 : 0; }
+function methodLabel(o){
+  var parts = [o.pay && o.pay.name, o.card && o.card.name].filter(Boolean);
+  if(o.points){ var pn = (o.pointNames||[]).join('·'); parts.push(/포인트|마일리지/.test(pn) ? pn : pn+' 포인트'); }
+  if(parts.length) return parts.join(' + ');
+  return (S.app.wallet.cards.length || S.app.wallet.pays.length) ? '일반 결제' : '결제수단 등록 전';
+}
+function detailLine(o){
+  var d = [];
+  if(o.disc) d.push('카드 할인 '+won(o.disc));
+  if(o.cardLater) d.push('카드 '+(o.b.type==='points'?'포인트':'캐시백')+' '+won(o.cardLater));
+  if(o.payR) d.push(o.pay.name+' 적립 '+won(o.payR));
+  if(o.points) d.push('포인트 '+won(o.points)+' 사용 · 총 사용 가치 '+won(o.now));
+  if(o.months) d.push('월 약 '+won(monthly(o))+' · 총 '+won(payNow(o)));
+  if(!d.length) d.push((S.app.wallet.cards.length || S.app.wallet.pays.length) ? '이 구매처에 맞는 등록 혜택이 없어요' : '결제수단을 등록하면 비교해드려요');
+  return d.join(' · ');
+}
+function assumptions(o){
+  var a = [];
+  if(o.card && o.card.met!=='yes') a.push(o.card.name+': 전월 실적이 '+(o.card.met==='no'?'미충족이라 카드 혜택을 빼고':'확인 전이라 충족했다고 보고')+' 계산했어요.');
+  if(o.b && o.b.capped) a.push('월 할인 한도 '+won(o.b.cap)+'까지만 반영했어요.');
+  if(o.card && o.pay) a.push(o.pay.name+'로 결제할 때도 '+o.card.name+' 혜택이 들어오는지 확인하세요.');
+  if(o.pay && !String(o.pay.where||'').trim()) a.push('구매처에서 '+o.pay.name+'를 쓸 수 있는지 확인하세요.');
+  if(o.months) a.push('무이자 할부는 카드사와 구매처 조건(최소 금액, 기간)을 확인하세요.');
+  a.push('쿠폰과 멤버십 할인은 구매처에서 확인하세요.');
+  a.push('상품 가격이 다르면 위에서 고치면 바로 다시 계산해요.');
+  return a;
+}
+function chosen(r, item){ var l = options(item).list; for(var i=0;i<l.length;i++){ if(l[i].key===r.payKey) return l[i]; } return l[0]; }
+
+/* ---------- 08 ~ 10 추천과 상세 ---------- */
+function recCard(it, i){
+  var o = options(it).list[0];
+  return '<article class="card rec'+(i===0?' top-pick':'')+'"><div class="rec-head"><span class="rank">'+(i+1)+'</span>'+(it.tag?'<span class="tag">'+esc(it.tag)+'</span>':'')+'</div>'
+   + '<div class="rec-body"><div class="thumb">'+ic(it.icon)+'</div><div class="minw"><p class="rec-name">'+esc(it.name)+'</p><p class="rec-reason">'+esc(it.reason)+'</p><p class="price">'+won(payNow(o))+'</p><p class="price-sub">'+(payNow(o)<o.base ? '예상가 '+won(o.base)+'에 결제 혜택 반영' : '예상 결제금액 · 배송비 포함')+'</p></div></div>'
+   + '<div class="rec-foot"><span class="minw">'+esc(methodLabel(o))+'</span><button class="btn-small" data-act="detail" data-i="'+i+'">자세히</button></div></article>';
+}
+function vRecs(){
+  var r = cur(); if(!r || !r.recs) return vMissing();
+  var items = r.recs.items;
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">내게 맞는 추천 1~'+Math.min(3,items.length)+'</p><h1>'+(r.recs.channel==='delivery' ? '오늘은 이 셋 어때요?' : '이 세 가지를 추천해요.')+'</h1><p class="lead">'+esc(r.recs.conditions)+'</p></div>'
+   + items.slice(0,3).map(recCard).join('')
+   + (items.length>3 ? '<button class="btn-secondary" data-act="go" data-to="more">추가 대안 '+(items.length-3)+'개 더 보기 '+ic('chevD','sm')+'</button>' : '')
+   + '<button class="btn-inline" data-act="changeCond">'+ic('chat','sm')+' 조건을 바꿔서 다시 찾아줘</button>'
+   + '<p class="fine">가격은 AI가 아는 범위의 예상가예요. 구매처에서 최종 가격을 확인하세요. 할인은 등록한 결제수단 기준이에요.</p>';
+}
+function vMore(){
+  var r = cur(); if(!r || !r.recs) return vMissing();
+  var items = r.recs.items;
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">더 살펴볼 대안 4~'+items.length+'</p><h1>다른 선택도 준비했어요.</h1><p class="lead">마음에 드는 후보를 눌러 자세히 보세요.</p></div>'
+   + '<div class="list">'+items.slice(3).map(function(it,k){ var i = k+3, o = options(it).list[0]; return '<button class="li" data-act="detail" data-i="'+i+'"><span class="rank">'+(i+1)+'</span><span class="thumb">'+ic(it.icon)+'</span><span class="minw"><span class="rec-name">'+esc(it.name)+'</span><span class="rec-reason" style="display:block">'+esc(it.reason)+'</span><span class="price">'+won(payNow(o))+'</span></span>'+ic('chevR','sm muted')+'</button>'; }).join('')+'</div>'
+   + '<button class="btn-secondary" data-act="back">추천안 1~3번으로 돌아가기</button>';
+}
+function searchUrls(it){
+  var q = encodeURIComponent(it.searchQuery || it.name);
+  return {naver:'https://search.shopping.naver.com/search/all?query='+q, coupang:'https://www.coupang.com/np/search?q='+q};
+}
+function vDetail(){
+  var r = cur(), it = curItem(); if(!it) return vMissing();
+  var u = searchUrls(it);
+  return backBtn()+'<div class="row-between"><p class="eyebrow">'+(it.manual?'직접 고른 상품':((r.sel||0)+1)+'번 구매안')+'</p><span class="tag">'+(it.manual?'직접 입력':'예상가')+'</span></div>'
+   + '<div class="hero-thumb">'+ic(it.icon)+'</div>'
+   + '<div class="stack-tight"><h1 class="h-prod">'+esc(it.name)+'</h1>'+(it.specs?'<p class="lead">'+esc(it.specs)+'</p>':'')+'<p class="price big">'+won(num(it.price)+num(it.shipping))+'</p><p class="price-sub">'+(it.manual?'입력한 금액':'예상가')+' · 배송비 '+(num(it.shipping)?won(it.shipping):'무료')+' 포함</p></div>'
+   + (it.why ? '<div class="tint"><p class="t-title">'+ic('sparkle','sm')+' 이렇게 골랐어요</p><p>'+esc(it.why)+'</p></div>' : '')
+   + '<div class="card rows">'+row('구매처', it.where)+row('배송', it.eta||'구매처에서 확인')+(it.specs?row('선택 옵션', it.specs):'')+(it.brand?row('브랜드', it.brand):'')+'</div>'
+   + (it.channel==='online' ? '<div class="links"><a class="btn-small" href="'+u.naver+'" target="_blank" rel="noopener">네이버쇼핑에서 보기 '+ic('ext','sm')+'</a><a class="btn-small" href="'+u.coupang+'" target="_blank" rel="noopener">쿠팡에서 보기 '+ic('ext','sm')+'</a></div>' : '')
+   + '<div class="actions"><button class="btn-primary" data-act="go" data-to="pay">내 결제수단 비교하기</button><button class="btn-link" data-act="back">다른 추천도 볼게요</button></div>';
+}
+
+/* ---------- 11 결제수단 비교 ---------- */
+function optCard(o, on){
+  return '<button class="opt" role="radio" aria-checked="'+on+'" data-act="pickPay" data-k="'+o.key+'"><span class="opt-title"><span class="radio"></span>'+esc(o.title)+(o.rec?'<span class="badge">추천</span>':'')+'</span>'
+   + '<span class="opt-amt">'+won(payNow(o))+'</span><span class="opt-method">'+esc(methodLabel(o))+(o.months?' · '+o.months+'개월 무이자':'')+'</span><span class="opt-detail">'+esc(detailLine(o))+'</span></button>';
+}
+function breakdown(o, it){
+  var h = row('상품 금액', won(it.price)) + row('배송비', won(it.shipping));
+  if(o.disc) h += row('카드 할인', '−'+won(o.disc));
+  if(o.points) h += row('포인트 사용', '−'+won(o.points));
+  h += row('이번 결제금액', won(payNow(o)), true);
+  if(o.months) h += '<div class="row sub"><span>'+o.months+'개월 무이자 할부</span><b>월 약 '+won(monthly(o))+'</b></div>';
+  if(o.later) h += '<div class="row sub"><span>나중에 받는 적립</span><b>+'+won(o.later)+'</b></div><div class="row sub"><span>적립까지 뺀 실질 부담</span><b>'+won(o.real)+'</b></div>';
+  return h;
+}
+function vPay(){
+  var r = cur(), it = curItem(); if(!it) return vMissing();
+  var res = options(it), o = chosen(r, it);
+  var empty = !S.app.wallet.cards.length && !S.app.wallet.pays.length;
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">내가 가진 수단으로</p><h1>어떻게 결제하면<br>더 유리할까요?</h1><p class="lead">'+esc(it.name)+' · 등록한 결제수단으로 비교</p></div>'
+   + '<div class="grid2"><div class="group"><label class="lbl" for="p-price">상품 금액(원)</label><input class="field num" id="p-price" inputmode="numeric" data-bind="item.price" data-num data-recalc value="'+(num(it.price)||'')+'"></div>'
+   + '<div class="group"><label class="lbl" for="p-ship">배송비(원)</label><input class="field num" id="p-ship" inputmode="numeric" data-bind="item.shipping" data-num data-recalc value="'+(num(it.shipping)||'')+'" placeholder="0"></div></div>'
+   + '<p class="hint">구매처 가격과 다르면 고쳐 주세요. 입력을 마치면 다시 계산해요.</p>'
+   + (empty ? '<div class="notice">등록한 결제수단이 없어 일반 결제만 보여요.<button class="btn-inline danger" data-act="tab" data-to="wallet">결제수단 등록하기 '+ic('arrowR','sm')+'</button></div>' : '')
+   + '<div class="opts" role="radiogroup" aria-label="결제 방법">'+res.list.map(function(x){ return optCard(x, x.key===o.key); }).join('')+'</div>'
+   + '<div class="card rows">'+breakdown(o, it)+'</div>'
+   + '<details class="assume"><summary>적용 조건과 확인할 내용</summary><ul>'+assumptions(o).map(function(a){ return '<li>'+esc(a)+'</li>'; }).join('')+'</ul></details>'
+   + '<div class="actions"><button class="btn-primary" data-act="prepare">이 방법으로 구매 준비</button></div>';
+}
+
+/* ---------- 12 구매 준비 완료 ---------- */
+function buyButtons(it, o){
+  var u = searchUrls(it), q = it.searchQuery || it.name;
+  if(it.channel==='delivery'){
+    return '<p class="hint">배달앱('+esc(it.where)+')에서 아래 이름으로 찾아 주문하세요.</p><button class="btn-secondary" data-act="copy" data-v="'+esc(q)+'">'+esc(q)+' · 복사</button>';
+  }
+  if(it.channel==='offline'){
+    return '<p class="hint">매장에서 '+esc(methodLabel(o))+'(으)로 결제하세요.</p>';
+  }
+  var cp = /쿠팡/.test(it.where);
+  var first = cp ? ['쿠팡', u.coupang] : ['네이버쇼핑', u.naver], second = cp ? ['네이버쇼핑', u.naver] : ['쿠팡', u.coupang];
+  return '<a class="btn-primary" href="'+first[1]+'" target="_blank" rel="noopener">'+first[0]+'에서 찾아 결제 '+ic('ext','sm')+'</a><a class="btn-secondary" href="'+second[1]+'" target="_blank" rel="noopener">'+second[0]+'에서도 찾아보기 '+ic('ext','sm')+'</a>';
+}
+function vReady(){
+  var r = cur(), it = curItem(); if(!it) return vMissing();
+  var o = chosen(r, it), ch = r.checks || {};
+  var C = ['상품과 옵션이 같은지','쿠폰과 결제 혜택이 적용됐는지','최종 금액이 안내와 같은지'];
+  return backBtn()+'<div class="hero-ic">'+ic('check')+'</div><div class="stack-tight"><p class="eyebrow">마지막 확인만 남았어요</p><h1>구매할 준비를<br>해두었어요.</h1><p class="lead">구매처에서 아래 조건을 확인하고 결제하세요.</p></div>'
+   + '<div class="card"><div class="mini-prod"><div class="thumb">'+ic(it.icon)+'</div><div class="minw"><p class="rec-name">'+esc(it.name)+'</p><p class="rec-reason">'+esc(it.specs||it.reason||'')+'</p></div></div>'
+   + '<div class="rows sep">'+row('구매처', it.where)+row('결제 방법', methodLabel(o)+(o.months?' · '+o.months+'개월 무이자':''))+row('예상 결제금액', won(payNow(o)), true)+'</div></div>'
+   + '<div class="tint checks"><p class="t-title">이 세 가지를 확인해주세요.</p>'+C.map(function(t,i){ return '<label class="check"><input type="checkbox" id="chk'+i+'" data-bind="cur.checks.'+i+'"'+(ch[i]?' checked':'')+'><span>'+t+'</span></label>'; }).join('')+'</div>'
+   + '<div class="actions">'+buyButtons(it, o)+'<button class="btn-link" data-act="go" data-to="feedback">구매했어요 · 다음으로</button></div>';
+}
+
+/* ---------- 13 구매 후 기억하기 ---------- */
+function vFeedback(){
+  var r = cur(), it = curItem(); if(!it) return vMissing();
+  var o = chosen(r, it), fb = r.fb || {};
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">다음 쇼핑은 더 편하게</p><h1>마음에 드는 선택이었나요?</h1><p class="lead">짧게 알려주시면 다음 추천에 반영할게요.</p></div>'
+   + '<div class="card mini-prod"><div class="thumb">'+ic(it.icon)+'</div><div class="minw"><p class="rec-name">'+esc(it.name)+'</p><p class="rec-reason">'+esc(methodLabel(o))+'</p><p class="price">'+won(payNow(o))+'</p></div></div>'
+   + '<div class="group"><p class="lbl">이번 선택은</p><div class="grid2"><button class="choice" data-act="feel" data-v="good" aria-pressed="'+(fb.feeling==='good')+'">'+ic('smile','sm')+' 좋았어요</button><button class="choice" data-act="feel" data-v="bad" aria-pressed="'+(fb.feeling==='bad')+'">'+ic('meh','sm')+' 아쉬워요</button></div></div>'
+   + '<div class="group"><label class="lbl" for="fbmemo">기억해두면 좋을 점</label><textarea class="field" id="fbmemo" rows="3" data-bind="cur.fb.memo" placeholder="예: 생각보다 가벼워서 좋았어">'+esc(fb.memo||'')+'</textarea></div>'
+   + '<div class="chips"><button class="chip" data-act="fbFlag" data-k="gift" aria-pressed="'+(!!fb.gift)+'">선물·가족용 구매</button><button class="chip" data-act="fbFlag" data-k="returned" aria-pressed="'+(!!fb.returned)+'">취소·반품 기록</button></div>'
+   + (fb.gift ? '<p class="hint">선물·가족용 구매는 내 취향 기억에 넣지 않아요.</p>' : '')
+   + '<div class="actions"><button class="btn-primary" data-act="savePurchase">기억해두고 다음 쇼핑하기 '+ic('arrowR','sm')+'</button><button class="btn-link" data-act="savePurchaseSkip">이번에는 건너뛸게요</button></div>';
+}
+
+/* ---------- 탭: 내 쇼핑 · 구매기록 · 내 결제 · 내 정보 ---------- */
+function vShopping(){
+  var L = S.requests;
+  return '<div class="stack-tight"><p class="eyebrow">진행 중인 부탁과 지난 부탁</p><h1>내 쇼핑</h1></div>'
+   + (L.length ? '<div class="list">'+L.map(function(r){ var del = S.ui.confirm==='req'+r.id; return '<div class="req"><button class="req-main" data-act="open" data-id="'+r.id+'"><span class="req-text">'+esc(r.text)+'</span><span class="req-meta"><span class="pill '+esc(r.status)+'">'+(STATUS[r.status]||'')+'</span>'+esc(dateLabel(r.createdAt))+(r.recs&&!r.manual?' · 추천 '+r.recs.items.length+'개':'')+'</span></button><button class="'+(del?'btn-small':'icon-btn sm')+'" data-act="delReq" data-id="'+r.id+'" aria-label="이 부탁 지우기">'+(del?'지우기':ic('x','sm'))+'</button></div>'; }).join('')+'</div>'
+   : emptyState('아직 부탁한 쇼핑이 없어요.','필요한 것을 말하면 여기에서 이어서 볼 수 있어요.','부탁하러 가기','home'));
+}
+function feelPill(p){
+  if(p.returned) return '<span class="pill bad">취소·반품</span>';
+  if(p.feeling==='good') return '<span class="pill">좋았어요</span>';
+  if(p.feeling==='bad') return '<span class="pill bad">아쉬워요</span>';
+  if(p.gift) return '<span class="pill done">선물</span>';
+  if(p.source==='import') return '<span class="pill done">가져옴</span>';
+  return '';
+}
+function vHistory(){
+  var P = S.purchases, saved = P.reduce(function(s,p){ return s+num(p.saved); }, 0);
+  return '<div class="stack-tight"><p class="eyebrow">곁이 기억하는 구매</p><h1>구매기록</h1></div>'
+   + '<div class="stats"><div class="stat"><span class="stat-n">'+P.length+'건</span><span class="stat-l">기록한 구매</span></div><div class="stat"><span class="stat-n">'+won(saved)+'</span><span class="stat-l">결제 혜택으로 아낀 금액(예상)</span></div></div>'
+   + (P.length ? '<div class="list">'+P.map(function(p){ var del = S.ui.confirm==='buy'+p.id; return '<div class="buy"><span class="thumb">'+ic(p.icon||'box')+'</span><span class="minw"><span class="buy-name">'+esc(p.name)+'</span><span class="buy-meta" style="display:block">'+esc([p.date, p.where, p.method].filter(Boolean).join(' · '))+'</span></span><span class="buy-right">'+(num(p.price)?'<span class="buy-price">'+won(p.price)+'</span>':'')+feelPill(p)+'<button class="'+(del?'btn-small':'icon-btn sm')+'" data-act="delBuy" data-id="'+p.id+'" aria-label="이 기록 지우기">'+(del?'지우기':ic('x','sm'))+'</button></span></div>'; }).join('')+'</div>'
+   : emptyState('아직 기록한 구매가 없어요.','곁으로 산 상품이나 가져온 주문내역이 여기에 쌓여요.'))
+   + '<details class="card"'+(S.ui.importOpen||S.ui.importResult?' open':'')+'><summary>주문내역·영수증 가져오기</summary><div style="margin-top:12px">'+importPanel()+'</div></details>';
+}
+function vWallet(){
+  return '<div class="stack-tight"><p class="eyebrow">내가 가진 수단</p><h1>내 결제</h1><p class="lead">등록한 카드와 Pay로 결제 방법을 비교해요. 카드번호는 받지 않아요.</p></div>' + walletEditor();
+}
+function vMe(){
+  var notes = S.app.profile.notes;
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">곁이 아는 나</p><h1>내 정보</h1></div>' + tasteFields()
+   + '<section class="group"><h2>곁이 기억하는 것</h2>'+(notes.length ? '<ul class="notes">'+notes.map(function(n,i){ return '<li><span>'+esc(n)+'</span><button class="icon-btn sm" data-act="delNote" data-i="'+i+'" aria-label="이 기억 지우기">'+ic('x','sm')+'</button></li>'; }).join('')+'</ul>' : '<p class="hint">구매 후 남긴 메모와 가져온 주문내역에서 배운 점이 여기에 쌓여요.</p>')+'</section>'
+   + '<section class="group"><h2>저장과 AI</h2><p class="hint">'+(storage==='cloud' ? '내 claude.ai 계정에 저장돼요. 이 페이지를 함께 보는 사람도 내 정보는 볼 수 없어요.' : '지금은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우면 사라져요.')+'</p>'
+   + '<p class="hint">AI 추천: '+(aiState==='on' ? '사용할 수 있어요. 내 Claude 사용량으로 동작해요.' : aiState==='checking' ? '확인하는 중이에요.' : '지금은 쓸 수 없어요.')+'</p></section>'
+   + '<button class="btn-inline danger" data-act="resetAll">'+(S.ui.confirm==='reset' ? '한 번 더 누르면 모든 정보를 지워요' : '모든 정보 지우기')+'</button>';
+}
+function vManual(){
+  var m = S.ui.manual || (S.ui.manual = {name:'', where:'', price:'', shipping:'', channel:'online'});
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">이미 고른 상품</p><h1>가격만 알려주면<br>결제 방법을 계산해요.</h1><p class="lead">구매처 화면에 보이는 금액을 그대로 적어 주세요.</p></div>'
+   + '<div class="group"><label class="lbl" for="m-name">상품 이름</label><input class="field" id="m-name" data-bind="ui.manual.name" value="'+esc(m.name)+'" placeholder="예: 무선청소기 V12"></div>'
+   + '<div class="grid2"><div class="group"><label class="lbl" for="m-price">가격(원)</label><input class="field num" id="m-price" inputmode="numeric" data-bind="ui.manual.price" data-num value="'+(m.price||'')+'" placeholder="0"></div><div class="group"><label class="lbl" for="m-ship">배송비(원)</label><input class="field num" id="m-ship" inputmode="numeric" data-bind="ui.manual.shipping" data-num value="'+(m.shipping||'')+'" placeholder="0"></div></div>'
+   + '<div class="group"><label class="lbl" for="m-where">구매처</label><input class="field" id="m-where" data-bind="ui.manual.where" value="'+esc(m.where)+'" placeholder="예: 쿠팡, 네이버 스마트스토어"></div>'
+   + '<div class="seg-line"><span class="lbl">구분</span>'+seg('ui.manual.channel', m.channel, [['online','온라인'],['delivery','배달'],['offline','매장']])+'</div>'
+   + '<div class="actions"><button class="btn-primary" data-act="manualGo">결제 방법 비교하기</button></div>';
+}
+
+/* ---------- 결제수단 편집 ---------- */
+function benefitSummary(c){
+  var b = (c.benefits||[]).filter(function(x){ return num(x.rate)>0; });
+  if(!b.length) return '혜택: 확인 필요';
+  var f = b[0].label || ((BTYPE[b[0].type]||'할인')+' '+num(b[0].rate)+'%');
+  return f + (b.length>1 ? ' 외 '+(b.length-1)+'개' : '');
+}
+function cardTile(c, i){
+  return '<button class="pc" data-act="editCard" data-i="'+i+'" aria-expanded="'+(S.ui.editCard===i)+'"><span class="pc-top"><span>'+(i===0?'내 첫 번째 카드':(c.kind==='check'?'체크카드':'신용카드'))+'</span>'+ic('card','sm')+'</span><span class="pc-name">'+esc(c.name||'이름 없는 카드')+'</span><span class="pc-meta"><span>전월 실적: '+(MET[c.met]||MET.unknown)+'</span><span>'+esc(benefitSummary(c))+'</span></span></button>';
+}
+function benefitRow(b, i, j){
+  var P = 'app.wallet.cards.'+i+'.benefits.'+j;
+  return '<div class="ben"><select class="field" id="bt'+i+'_'+j+'" data-bind="'+P+'.type" aria-label="혜택 종류">'+opts([['discount','청구할인'],['cashback','캐시백'],['points','포인트 적립']], b.type||'discount')+'</select>'
+   + '<span class="inline-field"><input class="field num" id="br'+i+'_'+j+'" inputmode="decimal" data-bind="'+P+'.rate" data-num value="'+(num(b.rate)||'')+'" placeholder="0" aria-label="할인·적립률"> %</span>'
+   + '<select class="field full" id="bs'+i+'_'+j+'" data-bind="'+P+'.scope" data-rerender aria-label="적용 대상">'+opts([['online','온라인 쇼핑 전체'],['merchant','특정 쇼핑몰·가맹점'],['delivery','배달앱'],['all','모든 가맹점']], b.scope||'online')+'</select>'
+   + (b.scope==='merchant' ? '<input class="field full" id="bm'+i+'_'+j+'" data-bind="'+P+'.merchants" value="'+esc(b.merchants||'')+'" placeholder="이름을 쉼표로 (예: 쿠팡, 네이버)" aria-label="적용되는 쇼핑몰">' : '')
+   + '<span class="inline-field full"><input class="field num" id="bc'+i+'_'+j+'" inputmode="numeric" data-bind="'+P+'.cap" data-num value="'+(num(b.cap)||'')+'" placeholder="없음" aria-label="월 한도"> 원까지 · 월 한도</span>'
+   + '<button class="btn-inline danger full right" data-act="delBenefit" data-i="'+i+'" data-j="'+j+'">이 혜택 지우기</button></div>';
+}
+function cardEditor(c, i){
+  var busy = S.ui.cardBusy===i;
+  return '<div class="editor"><div class="group"><label class="lbl" for="cn'+i+'">카드 이름</label><input class="field" id="cn'+i+'" data-bind="app.wallet.cards.'+i+'.name" value="'+esc(c.name)+'"></div>'
+   + '<div class="seg-line"><span class="lbl">종류</span>'+seg('app.wallet.cards.'+i+'.kind', c.kind||'credit', [['credit','신용'],['check','체크']])+'</div>'
+   + '<div class="seg-line"><span class="lbl">전월 실적</span>'+seg('app.wallet.cards.'+i+'.met', c.met||'unknown', [['yes','충족'],['no','미충족'],['unknown','모름']])+'</div>'
+   + '<div class="seg-line"><label class="lbl" for="fi'+i+'">무이자 할부</label><span class="inline-field"><input class="field num xs" id="fi'+i+'" inputmode="numeric" data-bind="app.wallet.cards.'+i+'.freeInstall" data-num value="'+(num(c.freeInstall)||'')+'" placeholder="0"> 개월까지</span></div>'
+   + '<p class="lbl">혜택</p>' + ((c.benefits||[]).map(function(b,j){ return benefitRow(b,i,j); }).join('') || '<p class="hint">아직 등록한 혜택이 없어요. AI로 채우거나 직접 추가하세요.</p>')
+   + (c.ai ? '<p class="hint ai-note">'+ic('sparkle','sm')+'AI가 아는 범위로 채웠어요'+(c.ai.confidence==='low'?'(확실하지 않음)':'')+'. '+esc(c.ai.note||'')+' 카드사 안내와 다르면 고쳐 주세요.</p>' : '')
+   + '<div class="row-btns"><button class="btn-small" data-act="aiCard" data-i="'+i+'"'+(busy?' disabled':'')+'>'+(busy?'혜택을 찾는 중…':ic('sparkle','sm')+' AI로 혜택 채우기')+'</button><button class="btn-small" data-act="addBenefit" data-i="'+i+'">'+ic('plus','sm')+' 혜택 추가</button></div>'
+   + '<div class="row-between"><button class="btn-inline danger" data-act="delCard" data-i="'+i+'">'+(S.ui.confirm==='card'+i?'한 번 더 누르면 지워요':'카드 삭제')+'</button><button class="btn-small strong" data-act="editCard" data-i="'+i+'">완료</button></div></div>';
+}
+function walletEditor(){
+  var w = S.app.wallet, p = S.app.profile;
+  return '<section class="group"><h2>카드</h2>'+w.cards.map(function(c,i){ return cardTile(c,i) + (S.ui.editCard===i ? cardEditor(c,i) : ''); }).join('')
+   + '<div class="add-row"><input class="field" id="newCard" data-bind="ui.newCard" value="'+esc(S.ui.newCard||'')+'" placeholder="정확한 카드 상품명" aria-label="추가할 카드 상품명"><button class="btn-small strong" data-act="addCard">'+ic('plus','sm')+' 카드 추가</button></div>'
+   + '<p class="hint">예: 신한카드 Deep Online, 현대카드 M. 추가하면 AI가 혜택을 먼저 채워요.</p></section>'
+   + '<section class="group"><h2>Pay</h2>'+w.pays.map(function(x,i){ return '<div class="prow"><span class="prow-name">'+esc(x.name)+'</span><span class="inline-field"><input class="field num xs" id="pr'+i+'" inputmode="decimal" data-bind="app.wallet.pays.'+i+'.rate" data-num value="'+(num(x.rate)||'')+'" placeholder="0" aria-label="'+esc(x.name)+' 적립률"> % 적립</span><button class="icon-btn sm" data-act="delPay" data-i="'+i+'" aria-label="'+esc(x.name)+' 지우기">'+ic('x','sm')+'</button><input class="field full" id="pw'+i+'" data-bind="app.wallet.pays.'+i+'.where" value="'+esc(x.where||'')+'" placeholder="쓰는 곳 (비우면 모든 온라인 구매처)" aria-label="'+esc(x.name)+' 사용처"></div>'; }).join('')
+   + '<div class="chips">'+PAY_NAMES.filter(function(n){ return !w.pays.some(function(x){ return x.name===n; }); }).map(function(n){ return '<button class="chip" data-act="addPay" data-v="'+esc(n)+'">'+ic('plus','sm')+esc(n)+'</button>'; }).join('')+'</div>'
+   + '<div class="add-row"><input class="field" id="newPay" data-bind="ui.newPay" value="'+esc(S.ui.newPay||'')+'" placeholder="다른 Pay 이름" aria-label="추가할 Pay 이름"><button class="btn-small" data-act="addPayCustom">추가</button></div></section>'
+   + '<section class="group"><h2>포인트·마일리지</h2>'+w.points.map(function(x,i){ return '<div class="prow"><input class="field" id="ptn'+i+'" data-bind="app.wallet.points.'+i+'.name" value="'+esc(x.name||'')+'" placeholder="이름 (예: 네이버페이 포인트)" aria-label="포인트 이름"><span class="inline-field"><input class="field num" style="width:96px;text-align:right" id="ptb'+i+'" inputmode="numeric" data-bind="app.wallet.points.'+i+'.balance" data-num value="'+(num(x.balance)||'')+'" placeholder="0" aria-label="잔액"> 원</span><button class="icon-btn sm" data-act="delPoint" data-i="'+i+'" aria-label="포인트 지우기">'+ic('x','sm')+'</button><input class="field full" id="ptw'+i+'" data-bind="app.wallet.points.'+i+'.where" value="'+esc(x.where||'')+'" placeholder="쓰는 곳 (비우면 어디서나)" aria-label="포인트 사용처"></div>'; }).join('')
+   + '<button class="btn-small" data-act="addPoint">'+ic('plus','sm')+' 포인트·마일리지 추가</button></section>'
+   + '<section class="group"><h2>쇼핑 멤버십</h2><p class="hint">무료배송과 추가 적립을 추천에 반영해요.</p><div class="chips">'+MEMBERSHIPS.map(function(m){ return '<button class="chip" data-act="toggleMem" data-v="'+esc(m)+'" aria-pressed="'+(p.memberships.indexOf(m)>=0)+'">'+esc(m)+'</button>'; }).join('')+'</div></section>';
+}
+
+/* ---------- 주문내역 가져오기 ---------- */
+function importPanel(){
+  var res = S.ui.importResult;
+  if(res){
+    return '<div class="group"><p class="t-title">이렇게 읽었어요. 기억할 것만 골라 주세요.</p>'
+     + (res.purchases.length ? '<div class="list">'+res.purchases.map(function(p,i){ return '<label class="check li-check"><input type="checkbox" data-pick="p" data-i="'+i+'"'+(p.pick?' checked':'')+'><span class="minw"><b>'+esc(p.name)+'</b><small>'+esc([p.date, p.store, p.price?won(p.price):''].filter(Boolean).join(' · '))+'</small></span></label>'; }).join('')+'</div>' : '<p class="hint">구매 기록은 찾지 못했어요.</p>')
+     + (res.notes.length ? '<p class="lbl">취향 단서</p>'+res.notes.map(function(n,i){ return '<label class="check"><input type="checkbox" data-pick="n" data-i="'+i+'"'+(n.pick?' checked':'')+'><span>'+esc(n.text)+'</span></label>'; }).join('') : '')
+     + '<div class="row-btns"><button class="btn-small strong" data-act="importSave">확인한 내용만 기억하기</button><button class="btn-small" data-act="importCancel">취소</button></div></div>';
+  }
+  var files = S.ui.importFiles || [];
+  return '<div class="group">'
+   + (S.ui.imgOk ? '<label class="btn-secondary file-btn" for="imp-img">'+ic('image','sm')+' 주문내역 이미지 가져오기<input type="file" id="imp-img" class="sr-only" accept="'+esc((S.ui.imgTypes||[]).join(','))+'" multiple data-file="img"></label>' : '')
+   + '<label class="btn-secondary file-btn" for="imp-txt">'+ic('file','sm')+' 영수증·내역 파일 가져오기<input type="file" id="imp-txt" class="sr-only" accept=".txt,.csv,.tsv,text/plain,text/csv" data-file="txt"></label>'
+   + '<label class="lbl" for="imp-paste">또는 주문내역을 복사해서 붙여넣기</label><textarea class="field" id="imp-paste" rows="4" data-bind="ui.importText" placeholder="쇼핑앱 주문목록의 글자를 복사해 붙여넣어도 돼요.">'+esc(S.ui.importText||'')+'</textarea>'
+   + (files.length ? '<p class="hint">이미지 '+files.length+'장을 골랐어요.</p>' : '')
+   + (S.ui.importErr ? '<p class="notice">'+esc(S.ui.importErr)+'</p>' : '')
+   + '<button class="btn-small strong" data-act="importRun"'+(S.ui.importBusy?' disabled':'')+'>'+(S.ui.importBusy?'읽고 정리하는 중…':'읽고 정리하기')+'</button></div>';
+}
+
+/* ---------- AI (claude.ai sample capability) ---------- */
+function aiError(e){
+  var c = e && e.code;
+  if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].indexOf(c)>=0){ aiState='off'; return 'AI를 쓸 수 없는 상태예요. 이미 고른 상품의 결제 비교는 계속 쓸 수 있어요.'; }
+  if(c==='rate_limited') return 'AI 사용이 잠시 많아요. 조금 뒤에 다시 눌러 주세요.';
+  if(c==='session_expired') return 'claude.ai에 다시 로그인한 뒤 시도해 주세요.';
+  if(c==='refused') return '이 부탁은 도와드리기 어려워요. 다르게 말해 주세요.';
+  if(c==='invalid_json' || c==='empty_completion') return '답을 정리하지 못했어요. 다시 시도해 주세요.';
+  if(c==='prompt_too_large') return '자료가 너무 길어요. 일부만 넣어 주세요.';
+  if(c==='images_unavailable' || c==='image_rejected') return '이 이미지는 읽을 수 없어요. 다른 파일을 골라 주세요.';
+  return '연결이 잠시 끊겼어요. 다시 시도해 주세요.';
+}
+function aiMissing(){ toast(aiState==='checking' ? 'AI를 준비하고 있어요. 잠시 뒤 다시 눌러 주세요.' : '지금은 AI를 쓸 수 없어요.'); }
+function profileText(){
+  var p = S.app.profile, w = S.app.wallet, L = [];
+  if(p.likes.length) L.push('중요하게 보는 것: '+p.likes.join(', '));
+  if(p.avoid) L.push('피하고 싶은 것: '+p.avoid);
+  var who = [p.age, p.job].filter(Boolean).join(', '); if(who) L.push('나이대·하는 일: '+who);
+  if(p.size) L.push('체형·사이즈: '+p.size);
+  if(p.memberships.length) L.push('쇼핑 멤버십: '+p.memberships.join(', '));
+  if(p.notes.length) L.push('지난 쇼핑에서 기억할 점: '+p.notes.slice(-8).join(' / '));
+  var recent = S.purchases.slice(0,6).map(function(x){ return x.name; }).filter(Boolean); if(recent.length) L.push('최근 구매: '+recent.join(', '));
+  var means = w.cards.map(function(c){ return c.name; }).concat(w.pays.map(function(x){ return x.name; })).filter(Boolean); if(means.length) L.push('가진 결제수단: '+means.join(', '));
+  return L.length ? L.map(function(x){ return '- '+x; }).join('\n') : '- 아직 등록한 정보 없음';
+}
+function str(v, d){ return typeof v==='string' && v.trim() ? v.trim() : d; }
+function normClarify(j){
+  j = j && typeof j==='object' ? j : {};
+  var qs = Array.isArray(j.questions) ? j.questions.slice(0,2).map(function(q){ q = q||{}; return {q:str(q.q,''), options:Array.isArray(q.options) ? q.options.map(function(o){ return String(o).trim(); }).filter(Boolean).slice(0,3) : []}; }).filter(function(q){ return q.q && q.options.length; }) : [];
+  return {headline:str(j.headline,'부탁을 도와드릴게요.'), message:str(j.message,'조건에 맞춰 찾아볼게요.'), understood:Array.isArray(j.understood) ? j.understood.map(String).filter(Boolean).slice(0,5) : [], budgetMax:num(j.budgetMax)||null, deadline:str(j.deadline,''), channel:['online','delivery','offline'].indexOf(j.channel)>=0 ? j.channel : 'online', questions:qs};
+}
+function runClarify(r){
+  if(!r) return;
+  if(!sample){ aiMissing(); return; }
+  S.ui.clarifyErr = ''; S.ui.clarifyBusy = r.id; render();
+  var prompt = "너는 한국 사용자의 쇼핑 비서 '곁'이다. 오늘은 "+TODAY+"("+WEEKDAY+")이다.\n"
+   + "사용자의 부탁을 이해하고, 추천을 크게 바꿀 조건만 최대 2개 짧게 물어본다. 부탁이나 사용자 정보에 이미 있는 것은 묻지 않는다. 충분하면 questions는 빈 배열로 둔다.\n"
+   + "각 질문에는 바로 고를 수 있는 짧은 선택지를 2~3개 준다. headline은 '여행 준비를 도와드릴게요.'처럼 부탁을 받아주는 한 문장이다.\n"
+   + "channel은 온라인 쇼핑이면 online, 음식 배달이면 delivery, 매장 방문이 맞으면 offline이다. 건강 관련 부탁이면 진단·치료 조언 없이 용품만 다룬다.\n\n"
+   + "[사용자 정보]\n"+profileText()+"\n\n[부탁]\n"+r.text+"\n\n"
+   + 'JSON 하나만 답한다. 형식 예:\n{"headline":"여행 준비를 도와드릴게요.","message":"예산과 여행 일정에 맞춰 찾아볼게요.","understood":["다음 주 여행","15만 원 이하","가벼움 우선"],"budgetMax":150000,"deadline":"다음 주 여행 전","channel":"online","questions":[{"q":"기내용으로 쓰실 건가요?","options":["기내용, 가벼움 우선","수납이 더 중요해"]}]}';
+  sample.json(prompt, {modelTier:'quick'}).then(function(j){
+    r.clarify = normClarify(j); r.status = 'asking'; persist('requests');
+  }).catch(function(e){
+    if(!e || e.code!=='cancelled') S.ui.clarifyErr = aiError(e);
+  }).then(function(){
+    S.ui.clarifyBusy = null; if(S.curId===r.id) render();
+  });
+}
+function normRecs(j, ch){
+  j = j && typeof j==='object' ? j : {};
+  var arr = Array.isArray(j.items) ? j.items : (Array.isArray(j) ? j : []);
+  var items = arr.map(function(x){
+    x = x || {};
+    var price = Math.round(num(x.price));
+    return {name:str(x.name,''), brand:str(x.brand,''), tag:str(x.tag,''), reason:str(x.reason,''), why:str(x.why,''), specs:str(x.specs,''), price:price, est:price, shipping:Math.round(num(x.shipping)), where:str(x.where,'온라인'), channel:['online','delivery','offline'].indexOf(x.channel)>=0 ? x.channel : ch, searchQuery:str(x.searchQuery, str(x.name,'')), eta:str(x.eta,''), icon:ITEM_ICONS.indexOf(x.icon)>=0 ? x.icon : 'box'};
+  }).filter(function(x){ return x.name && x.price>0; }).slice(0,10);
+  return {conditions:str(j.conditions,''), channel:items[0] ? items[0].channel : ch, items:items};
+}
+function runRecommend(r){
+  if(!r) return;
+  if(!sample){ aiMissing(); return; }
+  if(searchCtl){ searchCtl.abort(); }
+  var ctl = searchCtl = new AbortController();
+  r.status = 'searching';
+  S.ui.search = {phase:1, found:0, err:''};
+  if(S.route==='searching') render(); else go('searching');
+  var c = r.clarify, ch = c ? c.channel : 'online';
+  var ans = Object.keys(r.answers||{}).map(function(k){ var q = c && c.questions[k]; return q ? q.q+' → '+r.answers[k] : r.answers[k]; });
+  var prompt = "너는 한국 사용자의 쇼핑 비서 '곁'이다. 오늘은 "+TODAY+"이다.\n"
+   + "아래 부탁과 사용자 정보에 맞춰 한국에서 지금 살 수 있는 상품(음식 배달이면 메뉴)을 10개 고른다.\n규칙:\n"
+   + "- 실제로 판매되는 브랜드와 제품을 고른다. 정확한 모델명이 확실하지 않으면 브랜드와 제품 유형까지만 쓰고, 없는 모델을 지어내지 않는다.\n"
+   + "- price는 한국 온라인 판매가 기준 예상가(원, 정수)다. 예산이 있으면 넘지 않는다. shipping은 예상 배송비 또는 배달비(원)이고, 무료배송이 흔하면 0이다.\n"
+   + "- 1~3번은 성격이 다른 추천이다. 1번 균형 잡힌 선택, 2번 특정 장점이 뚜렷한 선택, 3번 더 경제적인 선택. tag에 그 성격을 짧게 쓴다(예: 균형 있는 선택, 더 가볍게, 더 경제적으로). 4~10번은 추가 대안이고 tag는 빈 문자열이다.\n"
+   + "- reason은 20자 안팎의 한 줄, why는 이 사용자에게 고른 이유 1~2문장이다.\n"
+   + "- where는 주로 사는 곳 하나다(쿠팡, 네이버쇼핑, 11번가, G마켓, 무신사, 올리브영, 브랜드 공식몰, 배달의민족, 쿠팡이츠, 요기요, 매장 중). channel은 online, delivery, offline 중 하나다.\n"
+   + "- searchQuery는 그 판매처에서 그대로 검색할 짧은 검색어, specs는 핵심 사양 한 줄, eta는 배송·도착 안내 한 줄이다.\n"
+   + "- icon은 luggage, food, device, clothing, homegoods, beauty, health, sports, gift, box 중 하나다.\n"
+   + "- 사용자가 피하고 싶은 것은 빼고, 건강 관련이면 진단이나 치료 효과를 말하지 않는다.\n\n"
+   + "[사용자 정보]\n"+profileText()+"\n\n[부탁]\n"+r.text+"\n\n[확인한 조건]\n"+(ans.length?ans.join('\n'):'추가 조건 없음')+(r.extra?"\n\n[더 알려준 것]\n"+r.extra:'')+"\n\n"
+   + 'JSON 하나만 답한다:\n{"conditions":"기내용 · 가벼움 우선 · 15만 원 이하","items":[{"name":"","brand":"","tag":"","reason":"","why":"","specs":"","price":0,"shipping":0,"where":"","channel":"online","searchQuery":"","eta":"","icon":"luggage"}]}';
+  sample.json(prompt, {modelTier:'default', cache:false, signal:ctl.signal, onText:function(u){
+    if(ctl!==searchCtl) return;
+    var s = S.ui.search, n = (u.text.match(/"name"\s*:/g)||[]).length, changed = false;
+    if(s.phase===1){ s.phase = 2; changed = true; }
+    if(n!==s.found){ s.found = n; changed = true; }
+    if(changed && S.route==='searching') render();
+  }}).then(function(j){
+    if(ctl!==searchCtl) return;
+    var rec = normRecs(j, ch);
+    if(!rec.items.length) throw {code:'empty_completion'};
+    if(!rec.conditions && c) rec.conditions = c.understood.join(' · ');
+    r.recs = rec; r.sel = 0; r.payKey = 'best'; r.status = 'recommended'; persist('requests');
+    S.ui.search.phase = 3; S.ui.search.found = rec.items.length;
+    if(S.route==='searching') render();
+    setTimeout(function(){ S.ui.search.phase = 4; if(S.route==='searching') render(); }, 700);
+  }).catch(function(e){
+    if(ctl!==searchCtl) return;
+    r.status = r.recs ? 'recommended' : 'asking'; persist('requests');
+    if(e && e.code==='cancelled'){ if(S.route==='searching') back(); return; }
+    S.ui.search.err = aiError(e);
+    if(S.route==='searching') render();
+  });
+}
+function aiFillCard(i){
+  var c = S.app.wallet.cards[i];
+  if(!c || !String(c.name||'').trim()){ toast('카드 이름을 먼저 적어 주세요.'); return; }
+  if(!sample){ aiMissing(); return; }
+  S.ui.cardBusy = i; render();
+  var prompt = '한국 카드 상품 "'+c.name+'"의 결제 혜택을 아는 범위에서 정리한다. 온라인 쇼핑, 배달앱, 특정 쇼핑몰의 할인·적립, 전월 실적 조건, 무이자 할부를 중심으로 본다. 확실하지 않으면 benefits를 비우고 confidence를 "low"로 한다. 혜택은 최대 4개다.\n'
+   + 'type: discount(청구할인·즉시할인), cashback, points(포인트 적립)\nscope: online(온라인 쇼핑 전체), delivery(배달앱), merchant(특정 가맹점, merchants에 이름), all(모든 가맹점)\nrate는 퍼센트 숫자, cap은 월 한도(원, 없으면 0), freeInstallMonths는 상시 무이자 할부 최대 개월(모르면 0).\n'
+   + 'JSON 하나만 답한다:\n{"kind":"credit","benefits":[{"type":"discount","rate":10,"scope":"merchant","merchants":["쿠팡","네이버"],"cap":10000,"label":"쿠팡·네이버 10% 청구할인"}],"minSpend":300000,"freeInstallMonths":0,"confidence":"high","note":"전월 실적 30만 원 이상일 때 적용"}';
+  sample.json(prompt, {modelTier:'default', cache:{gcTime:86400000}}).then(function(j){
+    j = j && typeof j==='object' ? j : {};
+    var card = S.app.wallet.cards[i]; if(card!==c) return;
+    c.kind = j.kind==='check' ? 'check' : 'credit';
+    c.benefits = (Array.isArray(j.benefits) ? j.benefits : []).slice(0,4).map(function(b){ b = b||{}; return {type:BTYPE[b.type] ? b.type : 'discount', rate:num(b.rate), scope:['online','delivery','merchant','all'].indexOf(b.scope)>=0 ? b.scope : 'online', merchants:Array.isArray(b.merchants) ? b.merchants.join(', ') : String(b.merchants||''), cap:num(b.cap), label:str(b.label,'')}; }).filter(function(b){ return b.rate>0; });
+    if(num(j.freeInstallMonths)>=2) c.freeInstall = Math.floor(num(j.freeInstallMonths));
+    c.ai = {note:str(j.note,''), confidence:j.confidence==='high' ? 'high' : 'low'};
+    persist('app');
+    toast(c.benefits.length ? '혜택을 채웠어요. 카드사 안내와 다르면 고쳐 주세요.' : '이 카드의 혜택은 확실하지 않아요. 직접 추가해 주세요.');
+  }).catch(function(e){ toast(aiError(e)); }).then(function(){ S.ui.cardBusy = null; render(); });
+}
+function runImport(){
+  var text = String(S.ui.importText||'').trim(), files = S.ui.importFiles || [];
+  if(!text && !files.length){ toast('가져올 내역을 붙여넣거나 파일을 골라 주세요.'); return; }
+  if(!sample){ aiMissing(); return; }
+  S.ui.importBusy = true; S.ui.importErr = ''; S.ui.importOpen = true; render();
+  var prompt = '아래는 사용자의 쇼핑 주문내역 또는 영수증이다'+(files.length?'(첨부 이미지 포함)':'')+'. 상품 구매 기록과 쇼핑 취향 단서를 뽑는다. 주소, 전화번호, 카드번호, 주문번호 같은 개인정보는 버린다. purchases는 최대 30개, notes는 최대 5개의 짧은 문장이다. 날짜는 YYYY-MM-DD, 모르면 빈 문자열이다.\n'
+   + 'JSON 하나만 답한다:\n{"purchases":[{"name":"상품명","price":12000,"date":"2026-09-30","store":"쿠팡"}],"notes":["가벼운 제품을 자주 산다"]}\n\n[자료]\n'+(text ? text.slice(0,12000) : '첨부 이미지만 있음');
+  var o = {modelTier:'default'}; if(files.length) o.images = files;
+  sample.json(prompt, o).then(function(j){
+    j = j && typeof j==='object' ? j : {};
+    S.ui.importResult = {
+      purchases:(Array.isArray(j.purchases) ? j.purchases : []).map(function(p){ p = p||{}; return {name:str(p.name,''), price:Math.round(num(p.price)), date:str(p.date,''), store:str(p.store,''), pick:true}; }).filter(function(p){ return p.name; }).slice(0,30),
+      notes:(Array.isArray(j.notes) ? j.notes : []).map(function(n){ return {text:String(n).trim(), pick:true}; }).filter(function(n){ return n.text; }).slice(0,5)
+    };
+  }).catch(function(e){ S.ui.importErr = aiError(e); }).then(function(){ S.ui.importBusy = false; render(); });
+}
+
+/* ---------- actions ---------- */
+function finishOnb(){ S.app.onboarded = true; persist('app'); S.stack = []; S.route = 'home'; render(); window.scrollTo(0,0); }
+function twoStep(key, fn){ if(S.ui.confirm===key){ S.ui.confirm = null; fn(); } else { S.ui.confirm = key; } render(); }
+function rootOf(k){ if(k==='app') return S.app; if(k==='ui') return S.ui; if(k==='cur') return cur(); if(k==='item') return curItem(); return null; }
+function setPath(path, v){
+  var parts = path.split('.'), o = rootOf(parts[0]); if(!o) return;
+  for(var i=1;i<parts.length-1;i++){ var k = parts[i]; if(o[k]==null || typeof o[k]!=='object') o[k] = {}; o = o[k]; }
+  o[parts[parts.length-1]] = v;
+}
+function afterSet(path){ var r = path.split('.')[0]; if(r==='app') persist('app'); else if(r==='cur' || r==='item') persist('requests'); }
+function doAsk(){
+  var t = String(S.ui.ask||'').trim();
+  if(!t){ toast('무엇을 도와드릴지 적어 주세요.'); var a = document.getElementById('ask'); if(a) a.focus(); return; }
+  if(!sample){ aiMissing(); return; }
+  var r = {id:uid(), text:t, createdAt:Date.now(), status:'clarifying', clarify:null, answers:{}, extra:'', recs:null, sel:0, payKey:'best', checks:{}, fb:{}};
+  S.requests.unshift(r); S.requests = S.requests.slice(0,20);
+  S.curId = r.id; S.ui.ask = ''; persist('requests');
+  go('clarify'); runClarify(r);
+}
+function openReq(id){
+  var r = null; S.requests.forEach(function(x){ if(x.id===id) r = x; }); if(!r) return;
+  S.curId = id;
+  var to = {clarifying:'clarify', asking:'clarify', searching:r.recs?'recs':'clarify', recommended:'recs', ready:'ready', done:'recs'}[r.status] || 'clarify';
+  if(r.manual) to = r.status==='ready' ? 'ready' : 'pay';
+  go(to);
+  if(r.status==='clarifying' && !r.clarify && S.ui.clarifyBusy!==r.id) runClarify(r);
+}
+function savePurchase(skip){
+  var r = cur(), it = curItem(); if(!it) return;
+  var o = chosen(r, it), fb = r.fb || {};
+  var p = {id:uid(), date:TODAY, name:it.name, where:it.where, price:payNow(o), method:methodLabel(o)+(o.months?' · '+o.months+'개월 무이자':''), saved:Math.max(0, o.base-o.real), icon:it.icon, source:'app', feeling:skip?'':(fb.feeling||''), memo:skip?'':String(fb.memo||'').trim(), gift:!!fb.gift, returned:!!fb.returned};
+  S.purchases.unshift(p);
+  if(!skip && !p.gift){
+    var notes = S.app.profile.notes;
+    if(p.memo) notes.push(it.name+': '+p.memo);
+    else if(p.feeling==='bad') notes.push(it.name+'은(는) 아쉬웠음');
+    S.app.profile.notes = notes.slice(-20); persist('app');
+  }
+  r.status = 'done'; persist('requests'); persist('purchases');
+  S.stack = []; S.route = 'home'; render(); window.scrollTo(0,0);
+  toast(skip ? '구매를 기록했어요.' : '기억했어요. 다음 추천에 반영할게요.');
+}
+function onFile(el){
+  S.ui.importOpen = true;
+  var files = Array.prototype.slice.call(el.files||[]);
+  if(!files.length) return;
+  if(el.dataset.file==='img'){ S.ui.importFiles = files.slice(0, 4); render(); return; }
+  var f = files[0];
+  if(f.size > 2000000){ toast('파일이 너무 커요. 2MB 이하로 골라 주세요.'); return; }
+  var fr = new FileReader();
+  fr.onload = function(){ S.ui.importText = (String(S.ui.importText||'') + '\n' + String(fr.result||'')).trim(); render(); };
+  fr.onerror = function(){ toast('파일을 읽지 못했어요. 내용을 붙여넣어 주세요.'); };
+  fr.readAsText(f);
+}
+
+var A = {
+  noop:function(){},
+  go:function(el){ go(el.dataset.to, {replace:!!el.dataset.replace}); },
+  tab:function(el){ S.stack = []; S.route = el.dataset.to; S.ui.confirm = null; render(); window.scrollTo(0,0); },
+  back:function(){ back(); },
+  finishOnb:function(){ finishOnb(); },
+  toggleLike:function(el){ toggleIn(S.app.profile.likes, el.dataset.v); persist('app'); render(); },
+  toggleMem:function(el){ toggleIn(S.app.profile.memberships, el.dataset.v); persist('app'); render(); },
+  example:function(el){ S.ui.ask = EXAMPLES[+el.dataset.i].text; render(); var t = document.getElementById('ask'); if(t){ t.focus(); try{ t.setSelectionRange(t.value.length, t.value.length); }catch(e){} } },
+  ask:function(){ doAsk(); },
+  answer:function(el){ var r = cur(); if(!r) return; var q = el.dataset.q; if(r.answers[q]===el.dataset.v) delete r.answers[q]; else r.answers[q] = el.dataset.v; persist('requests'); render(); },
+  retryClarify:function(){ runClarify(cur()); },
+  search:function(){ runRecommend(cur()); },
+  stopSearch:function(){ if(searchCtl) searchCtl.abort(); },
+  changeCond:function(){ var r = cur(); if(r && r.clarify){ go('clarify'); } else { go('clarify'); runClarify(r); } },
+  detail:function(el){ var r = cur(); if(!r) return; r.sel = +el.dataset.i; r.payKey = 'best'; persist('requests'); go('detail'); },
+  pickPay:function(el){ var r = cur(); if(!r) return; r.payKey = el.dataset.k; persist('requests'); render(); },
+  prepare:function(){ var r = cur(), it = curItem(); if(!it) return; r.payKey = chosen(r, it).key; r.status = 'ready'; r.checks = {}; persist('requests'); go('ready'); },
+  feel:function(el){ var r = cur(); r.fb = r.fb || {}; r.fb.feeling = r.fb.feeling===el.dataset.v ? '' : el.dataset.v; persist('requests'); render(); },
+  fbFlag:function(el){ var r = cur(); r.fb = r.fb || {}; r.fb[el.dataset.k] = !r.fb[el.dataset.k]; persist('requests'); render(); },
+  savePurchase:function(){ savePurchase(false); },
+  savePurchaseSkip:function(){ savePurchase(true); },
+  open:function(el){ openReq(el.dataset.id); },
+  delReq:function(el){ var id = el.dataset.id; twoStep('req'+id, function(){ S.requests = S.requests.filter(function(r){ return r.id!==id; }); persist('requests'); }); },
+  delBuy:function(el){ var id = el.dataset.id; twoStep('buy'+id, function(){ S.purchases = S.purchases.filter(function(p){ return p.id!==id; }); persist('purchases'); }); },
+  editCard:function(el){ var i = +el.dataset.i; S.ui.editCard = S.ui.editCard===i ? null : i; S.ui.confirm = null; render(); },
+  setVal:function(el){ setPath(el.dataset.path, el.dataset.v); afterSet(el.dataset.path); render(); },
+  addCard:function(){
+    var n = String(S.ui.newCard||'').trim(); if(!n){ toast('카드 상품명을 적어 주세요.'); return; }
+    S.app.wallet.cards.push({id:uid(), name:n, kind:'credit', met:'unknown', freeInstall:0, benefits:[]});
+    var i = S.app.wallet.cards.length-1; S.ui.newCard = ''; S.ui.editCard = i; persist('app'); render();
+    if(sample) aiFillCard(i);
+  },
+  aiCard:function(el){ aiFillCard(+el.dataset.i); },
+  addBenefit:function(el){ var c = S.app.wallet.cards[+el.dataset.i]; c.benefits = c.benefits || []; c.benefits.push({type:'discount', rate:'', scope:'online', merchants:'', cap:''}); persist('app'); render(); },
+  delBenefit:function(el){ S.app.wallet.cards[+el.dataset.i].benefits.splice(+el.dataset.j, 1); persist('app'); render(); },
+  delCard:function(el){ var i = +el.dataset.i; twoStep('card'+i, function(){ S.app.wallet.cards.splice(i,1); S.ui.editCard = null; persist('app'); }); },
+  addPay:function(el){ S.app.wallet.pays.push({name:el.dataset.v, rate:'', where:''}); persist('app'); render(); },
+  addPayCustom:function(){ var n = String(S.ui.newPay||'').trim(); if(!n){ toast('Pay 이름을 적어 주세요.'); return; } S.app.wallet.pays.push({name:n, rate:'', where:''}); S.ui.newPay = ''; persist('app'); render(); },
+  delPay:function(el){ S.app.wallet.pays.splice(+el.dataset.i, 1); persist('app'); render(); },
+  addPoint:function(){ S.app.wallet.points.push({name:'', balance:'', where:''}); persist('app'); render(); var x = document.getElementById('ptn'+(S.app.wallet.points.length-1)); if(x) x.focus(); },
+  delPoint:function(el){ S.app.wallet.points.splice(+el.dataset.i, 1); persist('app'); render(); },
+  delNote:function(el){ S.app.profile.notes.splice(+el.dataset.i, 1); persist('app'); render(); },
+  resetAll:function(){ twoStep('reset', function(){ S.app = freshApp(); S.requests = []; S.purchases = []; S.ui = {}; S.stack = []; S.route = 'welcome'; persist('app'); persist('requests'); persist('purchases'); }); },
+  manualGo:function(){
+    var m = S.ui.manual || {};
+    var name = String(m.name||'').trim(), price = num(m.price);
+    if(!name || price<=0){ toast('상품 이름과 가격을 적어 주세요.'); return; }
+    var it = {name:name, brand:'', tag:'', reason:'직접 고른 상품', why:'', specs:'', price:price, est:price, shipping:num(m.shipping), where:String(m.where||'').trim() || '온라인', channel:m.channel||'online', searchQuery:name, eta:'', icon:'box', manual:true};
+    var r = {id:uid(), text:name+' 결제 비교', createdAt:Date.now(), status:'recommended', manual:true, clarify:null, answers:{}, extra:'', recs:{conditions:'직접 고른 상품', channel:it.channel, items:[it]}, sel:0, payKey:'best', checks:{}, fb:{}};
+    S.requests.unshift(r); S.requests = S.requests.slice(0,20); S.curId = r.id; S.ui.manual = null; persist('requests');
+    go('pay', {replace:true});
+  },
+  importRun:function(){ runImport(); },
+  importCancel:function(){ S.ui.importResult = null; render(); },
+  importSave:function(){
+    var res = S.ui.importResult; if(!res) return;
+    var ps = res.purchases.filter(function(p){ return p.pick; }), ns = res.notes.filter(function(n){ return n.pick; });
+    ps.forEach(function(p){ S.purchases.push({id:uid(), date:p.date, name:p.name, where:p.store, price:p.price, method:'', saved:0, icon:'box', source:'import'}); });
+    S.purchases.sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); });
+    ns.forEach(function(n){ S.app.profile.notes.push(n.text); }); S.app.profile.notes = S.app.profile.notes.slice(-20);
+    S.ui.importResult = null; S.ui.importText = ''; S.ui.importFiles = [];
+    persist('purchases'); persist('app'); render();
+    toast((ps.length+ns.length) ? (ps.length ? '구매 '+ps.length+'건' : '취향 단서')+'을 기억했어요.' : '아무것도 고르지 않았어요.');
+  },
+  copy:function(el){
+    var t = el.dataset.v;
+    try{ navigator.clipboard.writeText(t).then(function(){ toast('복사했어요.'); }, function(){ toast('복사하지 못했어요. 글자를 길게 눌러 복사해 주세요.'); }); }
+    catch(e){ toast('복사하지 못했어요. 글자를 길게 눌러 복사해 주세요.'); }
+  }
+};
+
+$app.addEventListener('click', function(e){
+  var el = e.target.closest('[data-act]'); if(!el || !$app.contains(el)) return;
+  var f = A[el.dataset.act]; if(!f) return;
+  e.preventDefault(); f(el, e);
+});
+$app.addEventListener('input', function(e){
+  var el = e.target; if(!el.dataset || !el.dataset.bind || el.type==='checkbox' || el.tagName==='SELECT') return;
+  var v = el.hasAttribute('data-num') ? (el.value.trim()==='' ? '' : num(el.value)) : el.value;
+  setPath(el.dataset.bind, v); afterSet(el.dataset.bind);
+});
+$app.addEventListener('change', function(e){
+  var el = e.target;
+  if(el.dataset.file){ onFile(el); el.value = ''; return; }
+  if(el.dataset.pick){ var res = S.ui.importResult; if(res){ (el.dataset.pick==='p' ? res.purchases : res.notes)[+el.dataset.i].pick = el.checked; } return; }
+  if(el.dataset.bind && (el.type==='checkbox' || el.tagName==='SELECT')){ setPath(el.dataset.bind, el.type==='checkbox' ? el.checked : el.value); afterSet(el.dataset.bind); if(el.hasAttribute('data-rerender')) render(); return; }
+  if(el.hasAttribute('data-recalc')) render();
+});
+
+/* ---------- boot ---------- */
+var cached = lsLoad();
+if(cached){ S.app = mergeApp(cached.app); S.requests = Array.isArray(cached.requests) ? cached.requests : []; S.purchases = Array.isArray(cached.purchases) ? cached.purchases : []; }
+S.route = S.app.onboarded ? 'home' : 'welcome';
+render();
+
+(function boot(){
+  var c = window.claude;
+  if(!c || typeof c.use!=='function'){ aiState = 'off'; render(); return; }
+  c.use('sample').then(function(s){
+    sample = s; aiState = s ? 'on' : 'off';
+    if(s && s.limits){ s.limits().then(function(l){ S.ui.imgOk = !!(l && l.images); S.ui.imgTypes = l && l.images ? l.images.mediaTypes : []; render(); }, function(){}); }
+    render();
+  });
+  Promise.all([c.use('user'), c.use('db')]).then(function(x){
+    var u = x[0], d = x[1]; if(!u || !d) return null;
+    return u.id().then(function(id){
+      if(!id) return null;
+      var base = 'data/users/'+id;
+      var r = {app:d.doc(base+'/app'), requests:d.doc(base+'/requests'), purchases:d.doc(base+'/purchases')};
+      return Promise.all([r.app.get(), r.requests.get(), r.purchases.get()]).then(function(g){
+        refs.app = r.app; refs.requests = r.requests; refs.purchases = r.purchases; storage = 'cloud';
+        if(g[0].exists) S.app = mergeApp(g[0].data()); else if(cached) persist('app');
+        var q = g[1].exists && g[1].data(), p = g[2].exists && g[2].data();
+        if(q && Array.isArray(q.list)) S.requests = clone(q.list); else if(S.requests.length) persist('requests');
+        if(p && Array.isArray(p.list)) S.purchases = clone(p.list); else if(S.purchases.length) persist('purchases');
+        lsSave();
+        if(S.route==='welcome' && S.app.onboarded){ S.route = 'home'; }
+        render();
+      });
+    });
+  }).catch(function(){ /* 계정 저장소를 못 쓰면 이 기기에만 저장 */ });
+})();
+})();
+</script>
