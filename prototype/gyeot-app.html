@@ -58,6 +58,10 @@ p{margin:0}
 .brand-sub{font-size:12.5px;color:var(--muted)}
 .icon-btn{width:40px;height:40px;border-radius:12px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;flex:none}
 .icon-btn.sm{width:32px;height:32px;color:var(--muted)}
+.top-right{display:flex;align-items:center;gap:4px}
+.cm-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.demo-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--tint-2);border-radius:14px;padding:10px 14px;font-size:13px}
+.demo-bar button{border:0;background:none;color:var(--green);font-weight:600;font-size:13px;cursor:pointer;padding:2px 0;flex:none}
 
 .screen{display:flex;flex-direction:column;gap:18px;padding-block:6px 8px}
 .back{align-self:flex-start;display:inline-flex;align-items:center;gap:2px;border:0;background:none;color:var(--muted);font-size:13.5px;padding:4px 0;cursor:pointer}
@@ -451,7 +455,8 @@ function mergeCloset(d){
   return c;
 }
 var S = {app:freshApp(), closet:freshCloset(), requests:[], purchases:[], route:'welcome', stack:[], curId:null, ui:{}, toast:''};
-var sample = null, assets = null, aiState = 'checking', storage = 'local';
+var sample = null, assets = null, comments = null, aiState = 'checking', storage = 'local';
+var demoBackup = null; /* 예시 데이터로 둘러보는 동안 실제 데이터를 잠시 보관하고, 저장은 하지 않는다 */
 var refs = {};
 var searchCtl = null;
 
@@ -462,9 +467,10 @@ function closetItem(id){ for(var i=0;i<S.closet.items.length;i++){ if(S.closet.i
 /* ---------- storage: claude.ai account (private per viewer) with a browser copy ---------- */
 var LS_KEY = 'gyeot.v1';
 function lsLoad(){ try{ var t = localStorage.getItem(LS_KEY); return t ? JSON.parse(t) : null; }catch(e){ return null; } }
-function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({app:S.app, closet:S.closet, requests:S.requests.slice(0,20), purchases:S.purchases.slice(0,200)})); }catch(e){} }
+function lsSave(){ if(demoBackup) return; try{ localStorage.setItem(LS_KEY, JSON.stringify({app:S.app, closet:S.closet, requests:S.requests.slice(0,20), purchases:S.purchases.slice(0,200)})); }catch(e){} }
 var saveTimers = {};
 function persist(key){
+  if(demoBackup) return;
   lsSave();
   if(!refs[key]) return;
   clearTimeout(saveTimers[key]);
@@ -549,7 +555,7 @@ function render(){
   var a = document.activeElement, aid = a && a.id, s0 = null, s1 = null;
   try{ if(a && typeof a.selectionStart==='number'){ s0 = a.selectionStart; s1 = a.selectionEnd; } }catch(e){}
   var showTabs = ONB.indexOf(S.route) < 0;
-  $app.innerHTML = '<div class="app'+(showTabs?'':' no-tabs')+'">'+header()+'<main class="screen" id="screen">'+view()+'</main></div>'+(showTabs?tabs():'')+(S.toast?'<div class="toast" role="status">'+esc(S.toast)+'</div>':'');
+  $app.innerHTML = '<div class="app'+(showTabs?'':' no-tabs')+'">'+header()+'<main class="screen" id="screen">'+(demoBackup?'<div class="demo-bar"><span>예시 데이터로 둘러보는 중이에요. 바꾼 내용은 저장되지 않아요.</span><button data-act="exitDemo">예시 끝내기</button></div>':'')+view()+'</main></div>'+(showTabs?tabs():'')+(S.toast?'<div class="toast" role="status">'+esc(S.toast)+'</div>':'');
   if(aid){ var el = document.getElementById(aid); if(el){ try{ el.focus({preventScroll:true}); if(s0!==null && el.setSelectionRange) el.setSelectionRange(s0,s1); }catch(e){} } }
 }
 var toastTimer;
@@ -565,7 +571,8 @@ function toast(m){
 function header(){
   var onb = ONB.indexOf(S.route) >= 0;
   return '<header class="top"><button class="brand" data-act="'+(onb?'noop':'tab')+'" data-to="home" aria-label="곁 처음 화면"><span class="mark">'+ic('sparkle')+'</span><span class="brand-name">곁</span><span class="brand-sub">나의 쇼핑 비서</span></button>'
-    + (onb ? '' : '<button class="icon-btn" data-act="go" data-to="me" aria-label="내 정보">'+ic('user')+'</button>') + '</header>';
+    + '<span class="top-right">'+(comments ? '<button class="cm-btn" data-act="feedback" aria-label="이 화면에 의견 남기기">'+ic('chat','sm')+'의견</button>' : '')
+    + (onb ? '' : '<button class="icon-btn" data-act="go" data-to="me" aria-label="내 정보">'+ic('user')+'</button>') + '</span></header>';
 }
 function tabs(){
   var t = tabOf(S.route);
@@ -608,7 +615,7 @@ function vMissing(){ return emptyState('이 부탁을 찾을 수 없어요.','�
 function vWelcome(){
   return '<section class="hero"><div class="hero-mark">'+ic('sparkle')+'</div><p class="eyebrow">늘 당신 곁에서</p><h1 class="big">사고 싶은 것,<br>말만 해주세요.</h1><p class="lead">목적을 알아듣고 꼭 맞는 2~3개만 골라,<br>더 싼 곳과 사기 좋은 때, 결제 방법까지 알려드려요.</p></section>'
    + '<ul class="features"><li><span class="f-ico">'+ic('chat')+'</span><div><b>내 상황을 알아듣고</b><small>취향·체형·예산에 맞게 콕 집어드려요</small></div></li><li><span class="f-ico">'+ic('hanger')+'</span><div><b>가진 옷부터 확인해요</b><small>있는 옷으로 되면 안 사도 된다고 말해드려요</small></div></li><li><span class="f-ico">'+ic('wallet')+'</span><div><b>내 결제수단으로 더 유리하게</b><small>카드·Pay·포인트·할부까지 계산해요</small></div></li></ul>'
-   + '<div class="actions"><button class="btn-primary" data-act="go" data-to="taste">내 쇼핑 비서 만나기 '+ic('arrowR','sm')+'</button><button class="btn-link" data-act="finishOnb">먼저 둘러볼게요</button></div>';
+   + '<div class="actions"><button class="btn-primary" data-act="go" data-to="taste">내 쇼핑 비서 만나기 '+ic('arrowR','sm')+'</button><button class="btn-secondary" data-act="demo">예시로 둘러보기</button><button class="btn-link" data-act="finishOnb">내 정보 없이 시작할게요</button></div><p class="fine" style="text-align:center">예시로 둘러보기는 AI 없이 모든 화면을 볼 수 있어요. 저장되지 않아요.</p>';
 }
 function tasteFields(){
   var p = S.app.profile, more = p.age||p.job||p.size;
@@ -1084,6 +1091,7 @@ function vMe(){
    + '<section class="group"><h2>곁이 기억하는 것</h2>'+(notes.length ? '<ul class="notes">'+notes.map(function(n,i){ return '<li><span>'+esc(n)+'</span><button class="icon-btn sm" data-act="delNote" data-i="'+i+'" aria-label="이 기억 지우기">'+ic('x','sm')+'</button></li>'; }).join('')+'</ul>' : '<p class="hint">구매 후 남긴 메모와 가져온 주문내역에서 배운 점이 여기에 쌓여요.</p>')+'</section>'
    + '<section class="group"><h2>저장과 AI</h2><p class="hint">'+(storage==='cloud' ? '내 claude.ai 계정에 저장돼요. 옷 사진과 전신 사진도 이 앱 안에만 보관되고, 이 페이지를 함께 보는 사람도 내 정보는 볼 수 없어요.' : '지금은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우면 사라져요.')+'</p>'
    + '<p class="hint">AI 추천: '+(aiState==='on' ? '사용할 수 있어요. 내 Claude 사용량으로 동작해요.' : aiState==='checking' ? '확인하는 중이에요.' : '지금은 쓸 수 없어요.')+'</p></section>'
+   + (demoBackup ? '' : '<section class="group"><h2>예시로 둘러보기</h2><p class="hint">예시 옷장·카드·추천으로 모든 화면을 볼 수 있어요. 내 정보는 그대로 두고, 끝내면 원래대로 돌아와요.</p><button class="btn-small" data-act="demo">예시 데이터로 둘러보기</button></section>')
    + '<button class="btn-inline danger" data-act="resetAll">'+(S.ui.confirm==='reset' ? '한 번 더 누르면 사진까지 모든 정보를 지워요' : '모든 정보 지우기')+'</button>';
 }
 function vManual(){
@@ -1433,6 +1441,69 @@ function runTryon(){
   }).catch(function(e){ S.ui.tryonErr = aiError(e); }).then(function(){ S.ui.tryonBusy = null; render(); });
 }
 
+/* ---------- 예시 데이터 (리뷰용, 저장하지 않음) ---------- */
+function demoPick(o){ var b = {brand:'예시 브랜드', pros:[], cons:[], fit:'', popularity:'예시 화면이에요. 실제 추천에서는 사이트별 평점·리뷰·판매 근거가 여기에 나와요.', check:[], specs:'', shipping:0, channel:'online', eta:'보통 1~2일', icon:'clothing', coordi:[], reason:''}; for(var k in o) b[k] = o[k]; b.est = b.price; return b; }
+function demoData(){
+  var day = 864e5, now = Date.now();
+  var closet = {items:[
+    {id:'wd1', name:'검정 울 슬랙스', cat:'bottom', color:'검정', style:'미니멀', season:'사계절', photo:null, box:null, source:'text'},
+    {id:'wd2', name:'흰 옥스퍼드 셔츠', cat:'top', color:'흰색', style:'포멀', season:'사계절', photo:null, box:null, source:'text'},
+    {id:'wd3', name:'네이비 크루넥 니트', cat:'top', color:'네이비', style:'캐주얼', season:'겨울', photo:null, box:null, source:'text'},
+    {id:'wd4', name:'갈색 페니 로퍼', cat:'shoes', color:'갈색', style:'포멀', season:'사계절', photo:null, box:null, source:'text'},
+    {id:'wd5', name:'흰 가죽 스니커즈', cat:'shoes', color:'흰색', style:'캐주얼', season:'사계절', photo:null, box:null, source:'text'},
+    {id:'wd6', name:'검정 가죽 토트백', cat:'bag', color:'검정', style:'미니멀', season:'사계절', photo:null, box:null, source:'text'},
+    {id:'wd7', name:'은색 메탈 시계', cat:'acc', color:'은색', style:'포멀', season:'사계절', photo:null, box:null, source:'text'}
+  ], body:{height:'175', weight:'', top:'L', bottom:'32', shoes:'270', fit:'regular', memo:'어깨가 넓은 편', keepPhoto:true, photo:null, analysis:{shape:'어깨가 넓고 상하체 균형이 좋은 편', proportion:'다리가 긴 편', fitTips:['상의는 어깨선이 맞는 레귤러핏','바지는 일자핏'], colors:['네이비','차콜','베이지'], avoid:['어깨 패드가 강한 재킷']}}};
+  var r1 = {id:'demo-r1', text:'다음 달 친구 결혼식에 입을 하객룩 골라줘. 가진 옷이랑 맞춰서 20만 원 안이면 좋겠어.', createdAt:now-2*3600e3, status:'recommended', answers:{0:'있어요'}, extra:'', sel:0, payKey:'best', checks:{}, fb:{},
+    clarify:{headline:'하객룩을 같이 골라볼게요.', intent:'11월 친구 결혼식 하객룩, 가진 옷을 최대한 살리기', message:'예산과 가진 옷에 맞춰 찾아볼게요.', understood:['11월 결혼식','20만 원 이하','가진 옷 활용'], budgetMax:200000, deadline:'11월 중순 전', channel:'online', category:'fashion', questions:[{q:'혹시 검정 슬랙스 가지고 계세요?', options:['있어요','없어요']}]},
+    recs:{intent:'11월 친구 결혼식 하객룩이에요. 가진 검정 슬랙스·흰 셔츠·로퍼를 살리고 재킷 하나만 더하면 돼요.', conditions:'하객룩 · 20만 원 이하 · 가진 옷 활용', category:'fashion', channel:'online',
+      owned:{enough:false, items:['wd1','wd2'], why:'바지와 셔츠는 이미 있어서 재킷만 더하면 돼요.'},
+      items:[
+        demoPick({name:'예시) 네이비 울 블레이저', tag:'균형 있는 선택', reason:'단정하고 계절에 맞는 두께', why:'가진 검정 슬랙스·흰 셔츠와 바로 맞춰 입을 수 있고, 11월 실내외 온도 차에 알맞은 두께예요. 결혼식 뒤에도 출근룩으로 계속 입을 수 있어요.', pros:['구김이 적은 울 혼방','어깨선이 자연스러운 레귤러핏','출근룩으로도 활용'], cons:['밝은 조명에서 보풀이 보일 수 있음'], fit:'키 175cm·상의 L이면 L(100)을 추천해요. 어깨가 넓은 편이라 레귤러핏이 안정적이에요.', check:['어깨너비 실측이 46cm 안팎인지','울 혼용률','교환 가능 기간'], specs:'울 혼방 · 네이비 · 싱글 2버튼', price:159000, where:'무신사', searchQuery:'네이비 울 블레이저', coordi:[{id:'wd1', why:'같은 톤으로 단정하게'},{id:'wd4', why:'로퍼로 격식 있게'}],
+          tryon:{verdict:'잘 맞을 가능성이 높아요', size:'L(100) · 어깨 46cm 기준, 기장은 표준', fit:['어깨선이 맞아요','소매가 1cm쯤 길 수 있어요','허리선이 살짝 들어가 날씬해 보여요'], look:'네이비 재킷에 흰 셔츠와 검정 슬랙스로 차분하고 단정한 하객룩이 돼요.', coordi:[{id:'wd2'},{id:'wd1'},{id:'wd4'}], risk:'실내가 덥다면 울 소재라 답답할 수 있어요'}}),
+        demoPick({name:'예시) 차콜 싱글 재킷', tag:'더 오래 입는', reason:'어디에나 맞는 무난한 색', why:'차콜은 결혼식, 출근, 모임 어디에나 어울려서 활용도가 가장 높아요. 가진 네이비 니트와도 겹쳐 입기 좋아요.', pros:['어느 바지와도 무난','세 계절 착용'], cons:['네이비보다 조금 무거운 인상'], fit:'L(100)을 추천해요. 어깨 패드가 얇은 제품을 고르세요.', check:['어깨 패드 두께','안감 유무'], specs:'울 혼방 · 차콜', price:179000, where:'네이버쇼핑', searchQuery:'차콜 싱글 재킷', coordi:[{id:'wd3', why:'니트와 겹쳐 입기'},{id:'wd5', why:'평소엔 스니커즈로 편하게'}]}),
+        demoPick({name:'예시) 베이직 블레이저', tag:'더 경제적으로', reason:'한두 번 입기 좋은 가격', why:'결혼식에 한두 번 입을 거라면 가격 부담이 가장 적어요. 다만 소재가 얇아 11월 야외에서는 쌀쌀할 수 있어요.', pros:['가격 부담이 적음','가벼움'], cons:['소재가 얇음','구김이 잘 생김'], fit:'L을 추천해요. 기장이 짧게 나오는 편이라 리뷰의 실측을 보세요.', check:['소재 두께','기장 실측'], specs:'폴리 혼방 · 네이비', price:89000, where:'쿠팡', searchQuery:'남성 블레이저', coordi:[{id:'wd2', why:'흰 셔츠와 기본 조합'}]})
+      ],
+      cheaper:{show:true, where:'알리익스프레스', what:'비슷한 핏의 무지 블레이저', price:'훨씬 낮은 가격대', delivery:'7~15일', why:'가격은 크게 낮지만 결혼식이 11월 중순이면 해외 배송이 아슬아슬해요. 하객룩은 핏과 소재가 중요해서 실패하면 다시 사야 할 수 있어요.', caution:'사이즈 편차가 커서 실측을 꼭 확인하세요. 반품은 국제 배송이라 번거로워요.', searchQuery:'블레이저'},
+      timing:{advice:'wait', event:'무신사 무진장 겨울 블랙프라이데이', when:'11월 중순(예상)', expect:'브랜드별 할인', why:'결혼식 전에 시작할 가능성이 높아요. 일정 발표가 늦어지면 K-세일페스타(10/29~11/15) 기간에 사세요.'}}};
+  var r2 = {id:'demo-r2', text:'요즘 등산할 때 무릎이 아파. 무릎 보호대 추천해줘. 5만 원 안팎으로.', createdAt:now-3*day, status:'recommended', answers:{}, extra:'', sel:0, payKey:'best', checks:{}, fb:{},
+    clarify:{headline:'등산용 무릎 보호대를 찾아볼게요.', intent:'산행 중 무릎 부담을 줄일 보호대, 5만 원 안팎', message:'산행 시간과 착용감에 맞춰 찾아볼게요.', understood:['등산용','5만 원 안팎'], budgetMax:50000, deadline:'', channel:'online', category:'health', questions:[]},
+    recs:{intent:'산행 중 무릎이 아파 보호대를 찾는 중이에요. 진단이 아니라 착용 용품만 골랐어요. 통증이 계속되면 진료를 받아 보세요.', conditions:'등산용 · 5만 원 안팎', category:'health', channel:'online', owned:{enough:false, items:[], why:''},
+      items:[
+        demoPick({name:'예시) 스트랩 조절형 무릎 보호대', tag:'균형 있는 선택', reason:'조임을 조절하는 탄탄한 지지', why:'내리막에서 흔들림이 신경 쓰이면 스트랩으로 조임을 조절하는 형태가 잘 맞아요.', pros:['조임 조절','양옆 지지'], cons:['여름엔 더울 수 있음'], check:['사이즈표의 무릎 둘레','세탁 방법'], specs:'스트랩 조절형', price:42000, where:'쿠팡', searchQuery:'무릎 보호대 스트랩', icon:'health'}),
+        demoPick({name:'예시) 슬리브형 무릎 보호대', tag:'더 가볍게', reason:'가볍고 답답하지 않은 착용감', why:'가벼운 산행이나 평지 걷기에 부담 없이 오래 쓰기 좋아요.', pros:['가볍고 통기성 좋음'], cons:['지지력은 약한 편'], check:['압박 강도','양쪽 구매 여부'], specs:'신축 소재 슬리브', price:29000, where:'네이버쇼핑', searchQuery:'무릎 보호대 슬리브', icon:'health'})
+      ],
+      cheaper:{show:false}, timing:{advice:'now', event:'', when:'', expect:'', why:'가격 변동이 크지 않은 품목이라 필요할 때 사는 게 나아요.'}}};
+  return {
+    app:{v:2, onboarded:true, profile:{likes:['실용적인 것','합리적인 가격'], avoid:'너무 화려한 디자인', age:'30대', job:'사무직', size:'단정한 오피스룩', notes:['예시) 흰 옥스퍼드 셔츠: 핏이 좋았음'], memberships:['쿠팡 와우']},
+      wallet:{cards:[{id:'dc1', name:'예시카드 A', kind:'credit', met:'yes', freeInstall:3, benefits:[{type:'discount', rate:10, scope:'merchant', merchants:'쿠팡, 무신사', cap:10000, label:'쿠팡·무신사 10% 청구할인'}]},
+                     {id:'dc2', name:'예시카드 B', kind:'check', met:'unknown', freeInstall:0, benefits:[{type:'points', rate:1.5, scope:'all', merchants:'', cap:0, label:'모든 가맹점 1.5% 적립'}]}],
+              pays:[{name:'네이버페이', rate:1, where:'네이버'},{name:'토스페이', rate:0.5, where:''}],
+              points:[{name:'예시 포인트', balance:5000, where:''}]}},
+    closet:closet,
+    requests:[r1, r2],
+    purchases:[
+      {id:'dp1', date:'2026-10-02', name:'예시) 흰 옥스퍼드 셔츠', where:'무신사', price:35100, method:'예시카드 A', saved:3900, icon:'clothing', cat:'fashion', source:'app', feeling:'good', memo:'핏이 좋았어', inCloset:true},
+      {id:'dp2', date:'2026-09-21', name:'예시) 출근용 검정 바지', where:'', price:0, method:'가진 것으로 해결', saved:59000, icon:'hanger', cat:'fashion', source:'avoided'}
+    ]
+  };
+}
+function enterDemo(){
+  if(!demoBackup) demoBackup = clone({app:S.app, closet:S.closet, requests:S.requests, purchases:S.purchases});
+  var d = demoData();
+  S.app = d.app; S.closet = d.closet; S.requests = d.requests; S.purchases = d.purchases;
+  S.ui = {imgOk:S.ui.imgOk, imgMax:S.ui.imgMax}; S.stack = []; S.route = 'home';
+  render(); window.scrollTo(0,0);
+  toast('예시 데이터로 둘러봐요. 내 쇼핑·옷장·구매기록 탭을 눌러 보세요.');
+}
+function exitDemo(){
+  var b = demoBackup; if(!b) return;
+  demoBackup = null;
+  S.app = b.app; S.closet = b.closet; S.requests = b.requests; S.purchases = b.purchases;
+  S.ui = {imgOk:S.ui.imgOk, imgMax:S.ui.imgMax}; S.stack = []; S.route = S.app.onboarded ? 'home' : 'welcome';
+  render(); window.scrollTo(0,0);
+}
+
 /* ---------- actions ---------- */
 function finishOnb(){ S.app.onboarded = true; persist('app'); S.stack = []; S.route = 'home'; render(); window.scrollTo(0,0); }
 function twoStep(key, fn){ if(S.ui.confirm===key){ S.ui.confirm = null; fn(); } else { S.ui.confirm = key; } render(); }
@@ -1498,6 +1569,17 @@ function onFile(el){
 
 var A = {
   noop:function(){},
+  demo:function(){ enterDemo(); },
+  exitDemo:function(){ exitDemo(); },
+  feedback:function(){
+    if(!comments) return;
+    var target = document.getElementById('screen') || document.body;
+    comments.openComposer({element:target}).then(function(res){ if(!res || !res.opened) toast('이미 열린 댓글 창이 있어요.'); }, function(e){
+      var c = e && e.code;
+      if(c==='rate_limited'){ toast('잠시 뒤 다시 눌러 주세요.'); return; }
+      comments = null; render(); toast('이 화면에서는 의견을 남길 수 없어요.');
+    });
+  },
   go:function(el){ go(el.dataset.to, {replace:!!el.dataset.replace}); },
   tab:function(el){ S.stack = []; S.route = el.dataset.to; S.ui.confirm = null; render(); window.scrollTo(0,0); },
   back:function(){ back(); },
@@ -1635,6 +1717,7 @@ render();
     render();
   });
   c.use('assets').then(function(a){ assets = a; });
+  c.use('comments').then(function(cm){ comments = cm; if(cm) render(); });
   Promise.all([c.use('user'), c.use('db')]).then(function(x){
     var u = x[0], d = x[1]; if(!u || !d) return null;
     return u.id().then(function(id){
@@ -1643,11 +1726,12 @@ render();
       var r = {app:d.doc(base+'/app'), closet:d.doc(base+'/closet'), requests:d.doc(base+'/requests'), purchases:d.doc(base+'/purchases')};
       return Promise.all([r.app.get(), r.closet.get(), r.requests.get(), r.purchases.get()]).then(function(g){
         refs.app = r.app; refs.closet = r.closet; refs.requests = r.requests; refs.purchases = r.purchases; storage = 'cloud';
-        if(g[0].exists) S.app = mergeApp(g[0].data()); else if(cached) persist('app');
-        if(g[1].exists) S.closet = mergeCloset(g[1].data()); else if(cached && cached.closet) persist('closet');
+        var T = demoBackup || S; /* 예시를 보는 중이면 계정 데이터는 보관본에 넣는다 */
+        if(g[0].exists) T.app = mergeApp(g[0].data()); else if(cached) persist('app');
+        if(g[1].exists) T.closet = mergeCloset(g[1].data()); else if(cached && cached.closet) persist('closet');
         var q = g[2].exists && g[2].data(), p = g[3].exists && g[3].data();
-        if(q && Array.isArray(q.list)) S.requests = clone(q.list); else if(S.requests.length) persist('requests');
-        if(p && Array.isArray(p.list)) S.purchases = clone(p.list); else if(S.purchases.length) persist('purchases');
+        if(q && Array.isArray(q.list)) T.requests = clone(q.list); else if(T.requests.length) persist('requests');
+        if(p && Array.isArray(p.list)) T.purchases = clone(p.list); else if(T.purchases.length) persist('purchases');
         lsSave();
         if(S.route==='welcome' && S.app.onboarded){ S.route = 'home'; }
         render();
