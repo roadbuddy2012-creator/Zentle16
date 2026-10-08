@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@300;400;500;600&display=swap">
 <style>
-/* Layout: one phone-width column (max 440px) — sticky brand header, one screen at a time, fixed 4-tab bar. Follows the 곁 V0.1 화면 시안: cream ground, deep green actions, soft green panels. */
+/* Layout: one phone-width column (max 440px) — sticky brand header, one screen at a time, fixed 5-tab bar. Follows the 곁 V0.1 화면 시안: cream ground, deep green actions, soft green panels. */
 :root{
   --bg:#F5F3EC;
   --surface:#FFFFFF;
@@ -34,9 +34,9 @@
   --ink:#E5EBE7; --muted:#9AA69E; --line:#2B352F; --warn:#EDAA77; --warn-bg:#35271C;
   color-scheme:dark;
 }
+*,*::before,*::after{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
-*,*::before,*::after{box-sizing:border-box}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--green-2);outline-offset:2px}
 p{margin:0}
@@ -72,6 +72,7 @@ h2{font-size:15.5px;font-weight:600;margin:0}
 .fine{font-size:12px;color:var(--muted)}
 .group{display:flex;flex-direction:column;gap:10px}
 .lbl{font-size:13.5px;font-weight:500;display:block}
+.sec-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row-between{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .row-btns{display:flex;flex-wrap:wrap;gap:8px}
@@ -79,20 +80,20 @@ h2{font-size:15.5px;font-weight:600;margin:0}
 
 .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border:0;border-radius:16px;background:var(--green);color:var(--on-green);font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;text-align:center;padding:0 16px}
 .btn-primary[disabled]{opacity:.45;cursor:default}
-.btn-secondary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font-size:15px;cursor:pointer;text-decoration:none;padding:0 14px}
+.btn-secondary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font-size:15px;cursor:pointer;text-decoration:none;padding:0 14px;text-align:center}
 .btn-link{border:0;background:none;color:var(--muted);font-size:14.5px;padding:8px;cursor:pointer;align-self:center}
 .btn-small{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:13.5px;cursor:pointer;text-decoration:none;flex:none}
 .btn-small.strong{background:var(--green);color:var(--on-green);border-color:var(--green)}
 .btn-small[disabled]{opacity:.55;cursor:default}
-.btn-inline{border:0;background:none;color:var(--green);font-size:14px;font-weight:500;padding:4px 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;align-self:flex-start}
+.btn-inline{border:0;background:none;color:var(--green);font-size:14px;font-weight:500;padding:4px 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;align-self:flex-start;text-align:left}
 .btn-inline.danger{color:var(--warn)}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}
-.tint{background:var(--tint);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.tint{background:var(--tint);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px}
 .t-title{font-weight:500;display:flex;align-items:center;gap:6px}
 .notice{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:13.5px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer;text-decoration:none;color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--tint);border-color:var(--green-2);color:var(--green);font-weight:500}
 .field{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;font-size:16px}
 .field::placeholder{color:var(--muted);opacity:.75}
@@ -109,6 +110,10 @@ details[open]>summary::before{content:"− "}
 details.more-info{display:flex;flex-direction:column;gap:10px}
 details.more-info[open]>summary{margin-bottom:10px}
 details.more-info>div{margin-bottom:10px}
+.pill{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--tint);color:var(--green);font-weight:500;white-space:nowrap}
+.pill.done{background:var(--line);color:var(--muted)}
+.pill.ready{background:var(--green);color:var(--on-green)}
+.pill.bad,.pill.est{background:var(--warn-bg);color:var(--warn)}
 
 /* welcome */
 .hero{background:var(--tint);border-radius:24px;padding:22px 22px 26px;display:flex;flex-direction:column;gap:8px}
@@ -136,12 +141,18 @@ details.more-info>div{margin-bottom:10px}
 .link-card b{display:block;font-weight:500}
 .link-card small{color:var(--muted);font-size:13px}
 .mem-line{font-weight:500}
+.sale{display:grid;grid-template-columns:96px 1fr;gap:2px 12px;padding:11px 0;border-bottom:1px solid var(--line);align-items:start}
+.sale:last-child{border-bottom:0;padding-bottom:0}
+.sale-when{font-size:12.5px;color:var(--green);font-weight:600;font-variant-numeric:tabular-nums;line-height:1.45}
+.sale-name{font-weight:500;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sale-note{grid-column:2;font-size:12.5px;color:var(--muted)}
 
 /* clarify */
 .bubble-me{align-self:flex-end;max-width:88%;background:var(--tint);border-radius:18px 18px 6px 18px;padding:12px 14px}
 .ai-label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
 .bubble-ai{background:var(--surface);border:1px solid var(--line);border-radius:6px 18px 18px 18px;padding:14px;display:flex;flex-direction:column;gap:6px}
 .bubble-ai .q{font-weight:500}
+.intent{border-left:3px solid var(--green-2);padding-left:10px;font-size:14px}
 .q-label{font-size:12.5px;color:var(--muted)}
 .dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-right:5px;animation:blink 1.2s infinite}
 .dots i:nth-child(2){animation-delay:.2s}
@@ -176,7 +187,18 @@ details.more-info>div{margin-bottom:10px}
 .price{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .price.big{font-size:26px}
 .price-sub{font-size:12px;color:var(--muted)}
+.why{font-size:14px}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pros-cons ul{margin:4px 0 0;padding-left:16px;font-size:13px;display:flex;flex-direction:column;gap:3px}
+.pros-cons .sec-label{color:var(--green-2)}
+.pros-cons .cons .sec-label{color:var(--warn)}
+.mini{font-size:13px}
+.mini b{font-weight:600;margin-right:6px}
+.pop{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;color:var(--muted)}
+.pop .ic{margin-top:2px;color:var(--green-2)}
 .rec-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px;font-size:13px}
+.coordi{display:flex;gap:10px;overflow-x:auto;padding-bottom:2px}
+.coordi .cl-item{width:76px;flex:none}
 .li{display:grid;grid-template-columns:22px 56px 1fr 16px;gap:12px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;width:100%;cursor:pointer}
 .li .thumb{width:56px;height:56px;border-radius:12px}
 .li .thumb .ic{width:26px;height:26px}
@@ -194,6 +216,11 @@ details.more-info>div{margin-bottom:10px}
 .row.total>b{font-weight:600}
 .row.sub>span:first-child,.row.sub>b{font-size:13px;color:var(--muted);font-weight:400}
 .links{display:flex;flex-wrap:wrap;gap:8px}
+.callout{display:flex;flex-direction:column;gap:8px}
+.callout-head{display:flex;align-items:center;gap:8px;font-weight:600}
+.callout-head .ic{color:var(--green-2)}
+.callout ul{margin:0;padding-left:18px;font-size:13.5px;display:flex;flex-direction:column;gap:3px}
+.check-list{margin:0;padding-left:18px;font-size:13.5px;display:flex;flex-direction:column;gap:4px}
 
 /* payment options */
 .opts{display:flex;flex-direction:column;gap:10px}
@@ -224,10 +251,6 @@ details.more-info>div{margin-bottom:10px}
 .req-main{text-align:left;border:0;background:none;padding:14px 0;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-width:0}
 .req-text{font-weight:500;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .req-meta{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.pill{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--tint);color:var(--green);font-weight:500}
-.pill.done{background:var(--line);color:var(--muted)}
-.pill.ready{background:var(--green);color:var(--on-green)}
-.pill.bad{background:var(--warn-bg);color:var(--warn)}
 .buy{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
 .buy .thumb{width:48px;height:48px;border-radius:12px}
 .buy .thumb .ic{width:22px;height:22px}
@@ -242,6 +265,26 @@ details.more-info>div{margin-bottom:10px}
 .empty{display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding:18px;border:1px dashed var(--line);border-radius:18px}
 .notes{list-style:none;padding:0;margin:0}
 .notes li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+
+/* closet */
+.closet-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cl-item{display:flex;flex-direction:column;gap:6px;text-align:left;background:none;border:0;padding:0;cursor:pointer;min-width:0;color:var(--ink)}
+.ph{display:block;width:100%;aspect-ratio:1;border-radius:14px;background-color:var(--tint);background-repeat:no-repeat}
+.ph-ic{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:14px;background:var(--tint);color:var(--green)}
+.ph-ic .ic{width:28px;height:28px;stroke-width:1.3}
+.cl-item[aria-pressed="true"] .ph,.cl-item[aria-pressed="true"] .ph-ic{outline:2px solid var(--green-2);outline-offset:2px}
+.cl-name{font-size:12.5px;font-weight:500;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cl-meta{font-size:11.5px;color:var(--muted)}
+.qa{display:flex;flex-direction:column;gap:10px}
+.qa-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wq-row{display:grid;grid-template-columns:22px 56px 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.wq-row .ph,.wq-row .ph-ic{width:56px}
+.wq-row .field{padding:8px 10px;font-size:15px;border-radius:10px}
+.wq-fields{display:grid;grid-template-columns:1fr 92px;gap:6px}
+.body-sum{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.body-sum ul{margin:0;padding-left:18px;font-size:13.5px}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.board-new{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;aspect-ratio:1;border-radius:14px;border:1.5px dashed var(--green-2);color:var(--green);font-size:12px;text-align:center;padding:6px}
 
 /* wallet */
 .pc{background:var(--green);color:var(--on-green);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;border:0;text-align:left;width:100%}
@@ -273,11 +316,12 @@ details.more-info>div{margin-bottom:10px}
 
 /* tab bar + toast */
 .tabs{position:fixed;inset-inline:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabs nav{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 9px;border:0;background:none;color:var(--muted);font-size:11.5px;cursor:pointer}
+.tabs nav{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 9px;border:0;background:none;color:var(--muted);font-size:11px;cursor:pointer}
 .tab[aria-current="page"]{color:var(--green);font-weight:600}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
 .no-tabs~.toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+@media (max-width:359px){.pros-cons,.qa-btns{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.step.active .ic,.dots i{animation:none}}
 </style>
 
@@ -300,6 +344,8 @@ function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 function toggleIn(arr, v){ var i = arr.indexOf(v); if(i<0) arr.push(v); else arr.splice(i,1); }
 function dateLabel(ts){ var d = new Date(ts); if(isNaN(d)) return ''; var t = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); return t===TODAY ? '오늘' : (d.getMonth()+1)+'월 '+d.getDate()+'일'; }
+function str(v, d){ return typeof v==='string' && v.trim() ? v.trim() : d; }
+function strList(a, n){ return Array.isArray(a) ? a.map(function(x){ return String(x==null?'':x).trim(); }).filter(Boolean).slice(0, n||5) : []; }
 
 var ICON = {
   sparkle:'<path d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6L5.7 9.8l4.6-1.7z"/><path d="M18.5 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/><path d="M6 15.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z"/>',
@@ -308,6 +354,7 @@ var ICON = {
   chat:'<path d="M4 5.5h11a2 2 0 0 1 2 2V13a2 2 0 0 1-2 2H9l-3.5 3v-3H4a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2z"/><path d="M19 9h1a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-.5v2.5L16.5 18H12"/>',
   receipt:'<path d="M6 3h12v18l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3L6 21z"/><path d="M9 8h6M9 12h6M9 16h3.5"/>',
   wallet:'<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M15.5 14.5h2"/>',
+  hanger:'<path d="M10 6a2 2 0 1 1 2 2v1.6"/><path d="M12 9.6L3.6 15.4a1 1 0 0 0 .6 1.8h15.6a1 1 0 0 0 .6-1.8L12 9.6"/>',
   card:'<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 9.5h18M7 15h3"/>',
   arrowR:'<path d="M5 12h14M13 6l6 6-6 6"/>',
   arrowUp:'<path d="M12 19V5M6 11l6-6 6 6"/>',
@@ -323,16 +370,23 @@ var ICON = {
   heart:'<path d="M12 19.5s-7-4.3-7-9.8A4 4 0 0 1 12 7a4 4 0 0 1 7 2.7c0 5.5-7 9.8-7 9.8z"/>',
   shield:'<path d="M12 3l7 2.8V11c0 4.4-3 8.1-7 9.8-4-1.7-7-5.4-7-9.8V5.8z"/><path d="M9 11.8l2.2 2.2 4-4.3"/>',
   image:'<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="9.5" r="1.6"/><path d="M4 17l5-4.5 4 3.5 2.5-2 4.5 4"/>',
+  camera:'<path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/>',
   file:'<path d="M7 3h7.5L19 7.5V21H7z"/><path d="M14 3v5h5M10 12.5h6M10 16h6"/>',
   search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
   mic:'<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v2.5"/>',
-  stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+  calendar:'<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>',
+  tag:'<path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1 1 0 0 1 0 1.4l-7.3 7.3a1 1 0 0 1-1.4 0z"/><circle cx="8" cy="8" r="1.3"/>',
+  trend:'<path d="M3.5 16.5l5.5-5.5 4 4 7.5-7.5M15 7.5h5.5V13"/>',
   smile:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 13.5c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2M9.3 9.6h.01M14.7 9.6h.01"/>',
   meh:'<circle cx="12" cy="12" r="8.5"/><path d="M9 15h6M9.3 9.6h.01M14.7 9.6h.01"/>',
   luggage:'<rect x="6" y="7" width="12" height="12.5" rx="2.5"/><path d="M9.5 7V4.5h5V7M10 10.5v5.5M14 10.5v5.5M9 19.5v1.2M15 19.5v1.2"/>',
   food:'<path d="M3.5 12h17a8.5 8.5 0 0 1-17 0z"/><path d="M9 4.5c0 1.4 1 1.9 1 3.3M13 4.5c0 1.4 1 1.9 1 3.3"/>',
   device:'<rect x="7" y="3" width="10" height="18" rx="2.3"/><path d="M11 17.5h2"/>',
   clothing:'<path d="M8.5 4L12 6l3.5-2 4.5 4-3 3v9H7v-9L4 8z"/>',
+  pants:'<path d="M7 3.5h10l1.5 17h-4.3L12 10.5l-2.2 10H5.5z"/>',
+  shoe:'<path d="M3 17.5V9.5l4.5 1.5 2.5-3 4.5 5 5.5 1.5a2 2 0 0 1 1.5 1.9v1.6z"/><path d="M3 17.5h18.5"/>',
+  bag:'<path d="M5.5 8.5h13l-1 11.5h-11z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/>',
+  gem:'<path d="M7 4h10l3.5 5-8.5 11L3.5 9z"/><path d="M3.5 9h17"/>',
   homegoods:'<path d="M5 13V10a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 12.5h18V17H3zM5 17v2M19 17v2"/>',
   beauty:'<path d="M10 3h4v3.5h-4z"/><path d="M8 10a2 2 0 0 1 2-3.5h4A2 2 0 0 1 16 10v10H8z"/><path d="M8 13.5h8"/>',
   health:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/>',
@@ -347,18 +401,35 @@ var LIKES = ['실용적인 것','가벼운 것','좋은 디자인','오래 쓸 �
 var MEMBERSHIPS = ['쿠팡 와우','네이버플러스 멤버십','컬리멤버스','배민클럽','SSG 유니버스'];
 var PAY_NAMES = ['네이버페이','카카오페이','토스페이','삼성페이','쿠페이','페이코','SSG페이','스마일페이','애플페이'];
 var AGES = ['','20대','30대','40대','50대','60대 이상'];
-var ITEM_ICONS = ['luggage','food','device','clothing','homegoods','beauty','health','sports','gift','box'];
-var STATUS = {clarifying:'조건 확인 중', asking:'조건 확인 중', searching:'찾는 중', recommended:'추천 받음', ready:'구매 준비', done:'구매 완료'};
+var FITS = [['slim','슬림'],['regular','레귤러'],['over','오버핏']];
+var ITEM_ICONS = ['luggage','food','device','clothing','pants','shoe','bag','gem','homegoods','beauty','health','sports','gift','box'];
+var CATS = [['top','상의'],['bottom','하의'],['outer','아우터'],['dress','원피스'],['shoes','신발'],['bag','가방'],['acc','액세서리'],['etc','기타']];
+var CAT_LABEL = {}; CATS.forEach(function(c){ CAT_LABEL[c[0]] = c[1]; });
+var CAT_ICON = {top:'clothing', bottom:'pants', outer:'clothing', dress:'clothing', shoes:'shoe', bag:'bag', acc:'gem', etc:'hanger'};
+var REQ_CATS = ['fashion','beauty','digital','home','food','health','baby','sports','travel','etc'];
+var STATUS = {clarifying:'조건 확인 중', asking:'조건 확인 중', searching:'찾는 중', recommended:'추천 받음', ready:'구매 준비', done:'끝'};
 var MET = {yes:'충족', no:'미충족', unknown:'확인 필요'};
 var BTYPE = {discount:'청구할인', cashback:'캐시백', points:'포인트 적립'};
 var EXAMPLES = [
-  {icon:'luggage', title:'다음 주 여행용 캐리어 골라줘', sub:'가볍게 · 15만 원 안에서', text:'다음 주 여행에 쓸 작은 캐리어 골라줘. 가볍고 15만 원 안이면 좋겠어.'},
-  {icon:'food', title:'오늘 둘이 먹을 저녁 골라줘', sub:'맵지 않게 · 배달비까지 3만 원', text:'오늘 둘이 먹을 저녁 배달 골라줘. 맵지 않게, 배달비까지 3만 원 안에서.'},
+  {icon:'clothing', title:'다음 달 결혼식 하객룩', sub:'가진 옷과 맞춰서 · 20만 원 안에서', text:'다음 달 친구 결혼식에 입을 하객룩 골라줘. 가진 옷이랑 맞춰서 20만 원 안이면 좋겠어.'},
+  {icon:'luggage', title:'다음 주 여행용 캐리어', sub:'가볍게 · 15만 원 안에서', text:'다음 주 여행에 쓸 작은 캐리어 골라줘. 가볍고 15만 원 안이면 좋겠어.'},
   {icon:'health', title:'등산할 때 쓸 무릎 보호대', sub:'무릎이 아플 때 · 5만 원 안팎', text:'요즘 등산할 때 무릎이 아파. 무릎 보호대 추천해줘. 5만 원 안팎으로.'}
 ];
+/* 2026-10-08 기준으로 확인한 세일 일정. sure=false는 지난해 일정으로 본 예상치다. */
+var SALES = [
+  {name:'K-세일페스타', start:'2026-10-29', end:'2026-11-15', when:'10/29~11/15', sure:true, where:'국내 온·오프라인 전반', cats:['all'], note:'정부 주관 할인 행사. 업체별 프리세일이 더 일찍 시작하기도 해요.'},
+  {name:'알리익스프레스 11.11', start:'2026-11-08', end:'2026-11-19', when:'11/11 전후', sure:false, where:'알리익스프레스', cats:['all'], note:'지난해는 11/8~10 예열, 11/11~19 본행사였어요.'},
+  {name:'무신사 무진장 겨울 블랙프라이데이', start:'2026-11-15', end:'2026-11-26', when:'11월 중순', sure:false, where:'무신사', cats:['fashion'], note:'지난해는 11/16~26이었어요. 올해 일정은 아직 발표 전이에요.'},
+  {name:'쿠팡 블랙프라이데이', start:'2026-11-20', end:'2026-11-30', when:'11월 하순', sure:false, where:'쿠팡', cats:['all'], note:'지난해 해외직구 쿠블프는 11/24에 시작했어요.'},
+  {name:'블랙프라이데이·사이버먼데이', start:'2026-11-27', end:'2026-11-30', when:'11/27~11/30', sure:true, where:'해외직구(아마존 등)·테무', cats:['all'], note:'미국 블랙프라이데이 11/27, 사이버먼데이 11/30이에요.'},
+  {name:'올리브영 12월 올영세일', start:'2026-11-29', end:'2026-12-05', when:'11월 말~12월 초', sure:false, where:'올리브영', cats:['beauty'], note:'연 4회(3·6·9·12월). 9월 회차가 8/30~9/5였어요.'},
+  {name:'겨울 시즌오프', start:'2027-01-02', end:'2027-02-28', when:'1~2월', sure:false, where:'의류 브랜드 공식몰·백화점', cats:['fashion'], note:'겨울 옷 재고 할인이 몰리는 시기예요(매년 비슷한 흐름).'}
+];
+function upcomingSales(cat){ return SALES.filter(function(s){ return s.end >= TODAY && (s.cats.indexOf('all')>=0 || s.cats.indexOf(cat)>=0); }).sort(function(a,b){ return a.start.localeCompare(b.start); }); }
 
 /* ---------- state ---------- */
-function freshApp(){ return {v:1, onboarded:false, profile:{likes:[], avoid:'', age:'', job:'', size:'', notes:[], memberships:[]}, wallet:{cards:[], pays:[], points:[]}}; }
+function freshApp(){ return {v:2, onboarded:false, profile:{likes:[], avoid:'', age:'', job:'', size:'', notes:[], memberships:[]}, wallet:{cards:[], pays:[], points:[]}}; }
+function freshCloset(){ return {items:[], body:{height:'', weight:'', top:'', bottom:'', shoes:'', fit:'regular', memo:'', keepPhoto:true, photo:null, analysis:null}}; }
 function mergeApp(d){
   var a = freshApp();
   if(!d || typeof d!=='object') return a;
@@ -371,18 +442,27 @@ function mergeApp(d){
   a.wallet.cards.forEach(function(c){ if(!Array.isArray(c.benefits)) c.benefits=[]; });
   return a;
 }
-var S = {app:freshApp(), requests:[], purchases:[], route:'welcome', stack:[], curId:null, ui:{}, toast:''};
-var sample = null, aiState = 'checking', storage = 'local';
+function mergeCloset(d){
+  var c = freshCloset();
+  if(!d || typeof d!=='object') return c;
+  var o = clone(d);
+  if(Array.isArray(o.items)) c.items = o.items.filter(function(x){ return x && x.id && x.name; });
+  if(o.body && typeof o.body==='object'){ for(var k in o.body){ c.body[k] = o.body[k]; } }
+  return c;
+}
+var S = {app:freshApp(), closet:freshCloset(), requests:[], purchases:[], route:'welcome', stack:[], curId:null, ui:{}, toast:''};
+var sample = null, assets = null, aiState = 'checking', storage = 'local';
 var refs = {};
 var searchCtl = null;
 
 function cur(){ for(var i=0;i<S.requests.length;i++){ if(S.requests[i].id===S.curId) return S.requests[i]; } return null; }
 function curItem(){ var r = cur(); return r && r.recs && r.recs.items ? r.recs.items[r.sel||0] : null; }
+function closetItem(id){ for(var i=0;i<S.closet.items.length;i++){ if(S.closet.items[i].id===id) return S.closet.items[i]; } return null; }
 
 /* ---------- storage: claude.ai account (private per viewer) with a browser copy ---------- */
 var LS_KEY = 'gyeot.v1';
 function lsLoad(){ try{ var t = localStorage.getItem(LS_KEY); return t ? JSON.parse(t) : null; }catch(e){ return null; } }
-function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({app:S.app, requests:S.requests.slice(0,20), purchases:S.purchases.slice(0,200)})); }catch(e){} }
+function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({app:S.app, closet:S.closet, requests:S.requests.slice(0,20), purchases:S.purchases.slice(0,200)})); }catch(e){} }
 var saveTimers = {};
 function persist(key){
   lsSave();
@@ -390,18 +470,69 @@ function persist(key){
   clearTimeout(saveTimers[key]);
   saveTimers[key] = setTimeout(function(){ writeRemote(key, 0); }, 600);
 }
+function remoteBody(key){
+  if(key==='app') return clone(S.app);
+  if(key==='closet') return clone(S.closet);
+  return {list: clone(key==='requests' ? S.requests.slice(0,20) : S.purchases.slice(0,200))};
+}
 function writeRemote(key, attempt){
-  var body = key==='app' ? clone(S.app) : {list: clone(key==='requests' ? S.requests.slice(0,20) : S.purchases.slice(0,200))};
-  refs[key].set(body).catch(function(e){
+  refs[key].set(remoteBody(key)).catch(function(e){
     if(e && e.code==='unavailable' && attempt===0){ setTimeout(function(){ writeRemote(key,1); }, 800+Math.random()*1200); }
     else { toast('계정에 저장하지 못했어요. 이 기기에는 남아 있어요.'); }
   });
 }
 
+/* ---------- photos: shrink in the page, keep in the artifact's private asset store ---------- */
+function shrink(file, max){
+  max = max || 1280;
+  return new Promise(function(res, rej){
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function(){
+      var w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max/Math.max(w,h));
+      var c = document.createElement('canvas'); c.width = Math.max(1,Math.round(w*k)); c.height = Math.max(1,Math.round(h*k));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(function(b){ if(b) res({blob:b, r:c.width/c.height}); else rej({code:'decode'}); }, 'image/jpeg', 0.84);
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); rej({code:'decode'}); };
+    img.src = url;
+  });
+}
+function savePhoto(blob){
+  if(!assets) return Promise.resolve(null);
+  return assets.upload(blob, {type:'image/jpeg'}).then(function(r){ return r.id; }).catch(function(e){
+    if(e && e.code==='quota_or_state') toast('사진 저장 공간이 가득 찼어요. 안 쓰는 사진을 지워 주세요.');
+    return null;
+  });
+}
+function photoInUse(id){
+  if(S.closet.body.photo && S.closet.body.photo.id===id) return true;
+  return S.closet.items.some(function(i){ return i.photo && i.photo.id===id; });
+}
+function dropPhoto(id){ if(id && assets && !photoInUse(id)){ assets.delete(id).catch(function(){}); } }
+function fetchPhoto(id){ return fetch('/_blob/'+id).then(function(r){ return r.ok ? r.blob() : null; }).catch(function(){ return null; }); }
+/* A square tile showing one photo, zoomed to the item's box when the AI gave one. */
+function photoTile(photo, box, iconName){
+  if(!photo || !/^[A-Za-z0-9_-]{8,64}$/.test(String(photo.id||''))) return '<span class="ph-ic">'+ic(iconName||'hanger')+'</span>';
+  var st = 'background-image:url(/_blob/'+photo.id+');';
+  var r = num(photo.r) || 1;
+  if(Array.isArray(box) && box.length===4){
+    var x = Math.min(Math.max(num(box[0]),0),1), y = Math.min(Math.max(num(box[1]),0),1);
+    var w = Math.min(Math.max(num(box[2]),.12),1), h = Math.min(Math.max(num(box[3]),.12),1);
+    var A = 1/Math.max(w, h/r);
+    var px = A===1 ? .5 : Math.min(Math.max((.5-(x+w/2)*A)/(1-A),0),1);
+    var py = (A/r)===1 ? .5 : Math.min(Math.max((.5-(y+h/2)*(A/r))/(1-A/r),0),1);
+    st += 'background-size:'+(A*100).toFixed(1)+'% auto;background-position:'+(px*100).toFixed(1)+'% '+(py*100).toFixed(1)+'%';
+  } else {
+    st += 'background-size:cover;background-position:center';
+  }
+  return '<span class="ph" style="'+st+'" role="img" aria-label="옷 사진"></span>';
+}
+
 /* ---------- navigation + render ---------- */
 var ONB = ['welcome','taste','onbWallet','onbHistory'];
 var FLOW = ['clarify','searching','recs','more','detail','pay','ready','feedback','manual'];
-function tabOf(r){ if(r==='home') return 'home'; if(r==='shopping' || FLOW.indexOf(r)>=0) return 'shopping'; if(r==='history') return 'history'; if(r==='wallet') return 'wallet'; return ''; }
+function tabOf(r){ if(r==='home') return 'home'; if(r==='shopping' || FLOW.indexOf(r)>=0) return 'shopping'; if(r==='closet') return 'closet'; if(r==='history') return 'history'; if(r==='wallet') return 'wallet'; return ''; }
 function go(to, opt){
   opt = opt || {};
   if(!opt.replace && S.route!==to) S.stack.push(S.route);
@@ -428,7 +559,7 @@ function toast(m){
   if(!t){ t = document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); $app.appendChild(t); }
   t.textContent = m;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ S.toast=''; var x=document.querySelector('.toast'); if(x) x.remove(); }, 2800);
+  toastTimer = setTimeout(function(){ S.toast=''; var x=document.querySelector('.toast'); if(x) x.remove(); }, 3000);
 }
 
 function header(){
@@ -438,7 +569,7 @@ function header(){
 }
 function tabs(){
   var t = tabOf(S.route);
-  var T = [['home','home','부탁하기'],['shopping','chat','내 쇼핑'],['history','receipt','구매기록'],['wallet','wallet','내 결제']];
+  var T = [['home','home','부탁하기'],['shopping','chat','내 쇼핑'],['closet','hanger','옷장'],['history','receipt','구매기록'],['wallet','wallet','내 결제']];
   return '<div class="tabs"><nav aria-label="주요 메뉴">'+T.map(function(x){ return '<button class="tab" data-act="tab" data-to="'+x[0]+'"'+(t===x[0]?' aria-current="page"':'')+'>'+ic(x[1])+'<span>'+x[2]+'</span></button>'; }).join('')+'</nav></div>';
 }
 function backBtn(){ return '<button class="back" data-act="back">'+ic('chevL','sm')+'이전</button>'; }
@@ -463,6 +594,7 @@ function view(){
     case 'ready': return vReady();
     case 'feedback': return vFeedback();
     case 'shopping': return vShopping();
+    case 'closet': return vCloset();
     case 'history': return vHistory();
     case 'wallet': return vWallet();
     case 'me': return vMe();
@@ -474,8 +606,8 @@ function vMissing(){ return emptyState('이 부탁을 찾을 수 없어요.','�
 
 /* ---------- 01 ~ 04 처음 설정 ---------- */
 function vWelcome(){
-  return '<section class="hero"><div class="hero-mark">'+ic('sparkle')+'</div><p class="eyebrow">늘 당신 곁에서</p><h1 class="big">사고 싶은 것,<br>말만 해주세요.</h1><p class="lead">찾고, 비교하고, 결제 방법까지.<br>번거로운 쇼핑을 제가 도와드릴게요.</p></section>'
-   + '<ul class="features"><li><span class="f-ico">'+ic('chat')+'</span><div><b>내 상황을 알아듣고</b><small>취향과 예산에 맞게 찾아드려요</small></div></li><li><span class="f-ico">'+ic('wallet')+'</span><div><b>내 결제수단으로 더 유리하게</b><small>상품과 음식배달을 함께 도와드려요</small></div></li></ul>'
+  return '<section class="hero"><div class="hero-mark">'+ic('sparkle')+'</div><p class="eyebrow">늘 당신 곁에서</p><h1 class="big">사고 싶은 것,<br>말만 해주세요.</h1><p class="lead">목적을 알아듣고 꼭 맞는 2~3개만 골라,<br>더 싼 곳과 사기 좋은 때, 결제 방법까지 알려드려요.</p></section>'
+   + '<ul class="features"><li><span class="f-ico">'+ic('chat')+'</span><div><b>내 상황을 알아듣고</b><small>취향·체형·예산에 맞게 콕 집어드려요</small></div></li><li><span class="f-ico">'+ic('hanger')+'</span><div><b>가진 옷부터 확인해요</b><small>있는 옷으로 되면 안 사도 된다고 말해드려요</small></div></li><li><span class="f-ico">'+ic('wallet')+'</span><div><b>내 결제수단으로 더 유리하게</b><small>카드·Pay·포인트·할부까지 계산해요</small></div></li></ul>'
    + '<div class="actions"><button class="btn-primary" data-act="go" data-to="taste">내 쇼핑 비서 만나기 '+ic('arrowR','sm')+'</button><button class="btn-link" data-act="finishOnb">먼저 둘러볼게요</button></div>';
 }
 function tasteFields(){
@@ -485,12 +617,12 @@ function tasteFields(){
    + '<details class="more-info"'+(more?' open':'')+'><summary>더 알려주면 더 잘 맞춰요 (선택)</summary>'
    + '<div class="grid2"><div class="group"><label class="lbl" for="age">나이대</label><select class="field" id="age" data-bind="app.profile.age">'+AGES.map(function(a){ return '<option value="'+a+'"'+(p.age===a?' selected':'')+'>'+(a||'선택 안 함')+'</option>'; }).join('')+'</select></div>'
    + '<div class="group"><label class="lbl" for="job">하는 일</label><input class="field" id="job" data-bind="app.profile.job" value="'+esc(p.job)+'" placeholder="예: 사무직"></div></div>'
-   + '<div class="group"><label class="lbl" for="size">체형·사이즈</label><input class="field" id="size" data-bind="app.profile.size" value="'+esc(p.size)+'" placeholder="예: 175cm, 상의 L, 신발 270"></div></details>';
+   + '<div class="group"><label class="lbl" for="size">스타일 메모</label><input class="field" id="size" data-bind="app.profile.size" value="'+esc(p.size)+'" placeholder="예: 단정한 오피스룩, 무채색 위주"></div></details>';
 }
 function vTaste(){
   return progress(1)+'<div class="stack-tight"><p class="eyebrow">나를 알아가는 첫걸음</p><h1>어떤 선택을<br>좋아하세요?</h1><p class="lead">몇 가지만 알려주세요.<br>나머지는 이야기하면서 알아갈게요.</p></div>'
    + tasteFields()
-   + '<div class="tint"><p class="t-title">'+ic('heart','sm')+' 내 취향은 언제든 바꿀 수 있어요.</p><p class="hint">나이·하는 일·사이즈는 원할 때만 알려주세요.</p></div>'
+   + '<div class="tint"><p class="t-title">'+ic('heart','sm')+' 내 취향은 언제든 바꿀 수 있어요.</p><p class="hint">키·체형·가진 옷은 옷장 탭에서 필요할 때 알려주세요.</p></div>'
    + '<div class="actions"><button class="btn-primary" data-act="go" data-to="onbWallet">다음 · 결제수단 알려주기</button><button class="btn-link" data-act="go" data-to="onbWallet">지금은 건너뛸게요</button></div>';
 }
 function vOnbWallet(){
@@ -507,14 +639,22 @@ function vOnbHistory(){
 }
 
 /* ---------- 05 부탁하기 ---------- */
+function salesCard(list, title){
+  if(!list.length) return '';
+  return '<div class="card"><p class="callout-head">'+ic('calendar')+esc(title)+'</p>'+list.map(function(s){
+    return '<div class="sale"><span class="sale-when">'+esc(s.when)+'</span><span class="sale-name">'+esc(s.name)+'<span class="pill'+(s.sure?'':' est')+'">'+(s.sure?'확정':'예상')+'</span></span><span class="sale-note">'+esc(s.where)+' · '+esc(s.note)+'</span></div>';
+  }).join('')+'<p class="fine" style="margin-top:8px">'+TODAY.replace(/-/g,'.')+' 기준이에요. 예상 일정은 각 앱 공지로 확인하세요.</p></div>';
+}
 function vHome(){
-  var p = S.app.profile, w = S.app.wallet;
-  var mem = [p.likes[0], w.cards[0] && w.cards[0].name, w.pays[0] && w.pays[0].name].filter(Boolean);
+  var p = S.app.profile, w = S.app.wallet, n = S.closet.items.length;
+  var mem = [p.likes[0], S.closet.body.height ? S.closet.body.height+'cm' : '', n ? '옷 '+n+'벌' : '', w.cards[0] && w.cards[0].name, w.pays[0] && w.pays[0].name].filter(Boolean);
   return '<div class="stack-tight"><p class="eyebrow">오늘도 당신 곁에서</p><h1>어떤 쇼핑을<br>도와드릴까요?</h1><p class="lead">필요한 것과 상황을 편하게 말해주세요.</p></div>'
-   + '<div class="composer"><label class="lbl" for="ask">오늘의 부탁</label><textarea id="ask" data-bind="ui.ask" rows="3" placeholder="예: 다음 주 여행에 쓸 캐리어 골라줘">'+esc(S.ui.ask||'')+'</textarea>'
+   + '<div class="composer"><label class="lbl" for="ask">오늘의 부탁</label><textarea id="ask" data-bind="ui.ask" rows="3" placeholder="예: 다음 달 결혼식에 입을 하객룩 골라줘">'+esc(S.ui.ask||'')+'</textarea>'
    + '<div class="composer-foot"><span class="hint">'+ic('mic','sm')+'키보드의 마이크로 말해도 돼요</span><button class="send" data-act="ask" aria-label="부탁 보내기">'+ic('arrowUp')+'</button></div></div>'
    + (aiState==='off' ? '<p class="notice">지금은 AI 추천을 쓸 수 없어요. 이미 고른 상품은 아래에서 결제 방법을 바로 계산할 수 있어요.</p>' : '')
    + '<div class="group"><p class="lbl muted">이렇게 부탁해보세요</p><div class="list">'+EXAMPLES.map(function(e,i){ return '<button class="ex" data-act="example" data-i="'+i+'">'+ic(e.icon)+'<span class="minw"><b>'+esc(e.title)+'</b><small>'+esc(e.sub)+'</small></span>'+ic('chevR','sm muted')+'</button>'; }).join('')+'</div></div>'
+   + (n<5 ? '<button class="card link-card" data-act="tab" data-to="closet"><span class="minw"><b>오늘 입은 옷, 사진 한 장만</b><small>거울 셀카 한 장이면 상의·하의·신발이 한 번에 옷장에 들어가요. 가진 옷과 맞춰 추천하고 같은 옷을 또 사지 않게 막아요.</small></span>'+ic('camera','sm')+'</button>' : '')
+   + salesCard(upcomingSales('all').slice(0,4), '다가오는 세일 · 사기 좋은 때')
    + '<button class="card link-card" data-act="go" data-to="manual"><span class="minw"><b>이미 고른 상품이 있어요</b><small>가격만 알려주면 결제 방법을 계산해요</small></span>'+ic('chevR','sm')+'</button>'
    + '<div class="tint"><p class="eyebrow">기억하고 있어요</p><p class="mem-line">'+(mem.length?esc(mem.join(' · ')):'아직 기억하는 게 없어요. 쓸수록 더 잘 맞춰요.')+'</p><button class="btn-inline" data-act="go" data-to="me">내 정보 수정하기</button></div>';
 }
@@ -524,7 +664,7 @@ function reflectLine(c){
   var parts = [];
   if(c.deadline) parts.push('기한: '+c.deadline);
   if(c.budgetMax) parts.push('예산 '+won(c.budgetMax)+' 이하');
-  parts.push('취향과 결제수단 반영');
+  parts.push(c.category==='fashion' ? '체형·가진 옷·결제수단 반영' : '취향과 결제수단 반영');
   return parts.join(' · ');
 }
 function vClarify(){
@@ -535,8 +675,12 @@ function vClarify(){
   if(busy){ h += '<div class="bubble-ai"><span class="dots" role="status" aria-label="부탁을 읽는 중"><i></i><i></i><i></i></span></div>'; }
   else if(err){ h += '<div class="bubble-ai"><p>'+esc(err)+'</p><div class="row-btns"><button class="btn-small" data-act="retryClarify">다시 시도</button><button class="btn-small" data-act="search">질문 없이 바로 찾아줘</button></div></div>'; }
   else if(c){
-    h += '<div class="bubble-ai"><p>'+esc(c.message)+'</p>'+(c.questions.length ? c.questions.map(function(q){ return '<p class="q">'+esc(q.q)+'</p>'; }).join('') : '<p class="q">이대로 찾아볼까요? 더 알려줄 것이 있으면 적어 주세요.</p>')+'</div>';
+    h += '<div class="bubble-ai">'+(c.intent?'<p class="intent"><b>이렇게 이해했어요.</b> '+esc(c.intent)+'</p>':'')+'<p>'+esc(c.message)+'</p>'+(c.questions.length ? c.questions.map(function(q){ return '<p class="q">'+esc(q.q)+'</p>'; }).join('') : '<p class="q">이대로 찾아볼까요? 더 알려줄 것이 있으면 적어 주세요.</p>')+'</div>';
     h += c.questions.map(function(q,i){ return '<div class="group">'+(c.questions.length>1?'<p class="q-label">'+esc(q.q)+'</p>':'')+'<div class="chips" role="group" aria-label="'+esc(q.q)+'">'+q.options.map(function(o){ return '<button class="chip" data-act="answer" data-q="'+i+'" data-v="'+esc(o)+'" aria-pressed="'+(r.answers[i]===o)+'">'+esc(o)+'</button>'; }).join('')+'</div></div>'; }).join('');
+    var saidYes = c.questions.some(function(q,i){ return /있으세요|있나요|가지고/.test(q.q) && /^있/.test(String(r.answers[i]||'')); });
+    if(c.category==='fashion'){
+      h += '<div class="tint"><p class="t-title">'+ic('hanger','sm')+(saidYes ? ' 그 옷, 사진 한 장만 올려 주세요.' : ' 가진 옷과 맞춰서 골라요.')+'</p><p class="hint">'+(saidYes ? '바로 옷장에 넣고 코디에 써요. 사진이 어려우면 말로 적어도 돼요.' : (S.closet.items.length ? '옷장에 '+S.closet.items.length+'벌이 있어요. 빠진 게 있으면 지금 추가하세요.' : '옷장이 비어 있어요. 맞춰 입을 옷을 한 장만 찍어도 중복 구매를 막을 수 있어요.'))+'</p>'+quickAdd('clarify')+'</div>';
+    }
   }
   h += '<div class="group"><label class="lbl" for="extra">더 알려주고 싶은 것</label><input class="field" id="extra" data-bind="cur.extra" value="'+esc(r.extra||'')+'" placeholder="짧게 말해줘도 괜찮아요"></div>';
   if(c) h += '<p class="hint">'+esc(reflectLine(c))+'</p>';
@@ -551,18 +695,17 @@ function vSearching(){
   var cond = r.clarify ? r.clarify.understood.join(' · ') : '';
   function st(k){ return s.phase>k ? 'done' : (s.phase===k && !s.err ? 'active' : ''); }
   function stepIc(k){ return ic(s.phase>k ? 'checkCircle' : 'circle'); }
-  var h = '<div class="hero-ic">'+ic('search')+'</div><div class="stack-tight"><h1>제가 찾아보고<br>비교해드릴게요.</h1>'+(cond?'<p class="lead">'+esc(cond)+'</p>':'')+'</div>'
+  var h = '<div class="hero-ic">'+ic('search')+'</div><div class="stack-tight"><h1>목적에 맞는 것만<br>콕 집어올게요.</h1>'+(cond?'<p class="lead">'+esc(cond)+'</p>':'')+'</div>'
    + '<ol class="steps">'
-   + '<li class="step '+st(1)+'">'+stepIc(1)+'<div><p class="step-title">상품과 옵션을 살펴봐요</p><p class="step-sub">'+(s.found ? '조건에 맞는 후보 '+s.found+'개' : '조건에 맞는 후보를 고르는 중')+'</p></div></li>'
-   + '<li class="step '+st(2)+'">'+stepIc(2)+'<div><p class="step-title">가격과 배송조건도 함께</p><p class="step-sub">같은 옵션 · 배송비 · 도착 안내</p></div></li>'
+   + '<li class="step '+st(1)+'">'+stepIc(1)+'<div><p class="step-title">목적을 정리하고 후보를 좁혀요</p><p class="step-sub">평점·리뷰 수·판매량이 함께 좋은 것 위주로</p></div></li>'
+   + '<li class="step '+st(2)+'">'+stepIc(2)+'<div><p class="step-title">가진 옷, 더 싼 곳, 사기 좋은 때까지</p><p class="step-sub">'+(s.found ? '추천 '+s.found+'개를 정리하는 중' : '옷장 · 테무·알리·쿠팡 · 세일 일정')+'</p></div></li>'
    + '<li class="step '+st(3)+'">'+stepIc(3)+'<div><p class="step-title">내 카드와 Pay로 계산해요</p><p class="step-sub">할인 · 적립 · 포인트 · 할부 구분</p></div></li></ol>';
   if(s.err){
     h += '<p class="notice">'+esc(s.err)+'</p><div class="actions"><button class="btn-primary" data-act="search">다시 찾아줘</button><button class="btn-link" data-act="back">조건 다시 보기</button></div>';
   } else if(s.phase>=4 && r.recs){
-    var extra = Math.max(0, r.recs.items.length-3);
-    h += '<div class="tint"><p class="t-title">먼저 볼 추천은 '+Math.min(3,r.recs.items.length)+'개예요.</p>'+(extra?'<p class="hint">추가 대안 '+extra+'개도 준비했어요.</p>':'')+'</div><div class="actions"><button class="btn-primary" data-act="go" data-to="recs" data-replace="1">추천안 보기 '+ic('arrowR','sm')+'</button></div>';
+    h += '<div class="tint"><p class="t-title">꼭 맞는 '+r.recs.items.length+'개를 골랐어요.</p><p class="hint">'+(r.recs.owned && r.recs.owned.enough ? '가진 것으로 될 수도 있어서 함께 알려드려요.' : '고른 이유와 사기 좋은 때를 함께 정리했어요.')+'</p></div><div class="actions"><button class="btn-primary" data-act="go" data-to="recs" data-replace="1">추천 보기 '+ic('arrowR','sm')+'</button></div>';
   } else {
-    h += '<p class="hint">보통 20초에서 1분쯤 걸려요. AI가 아는 상품과 가격 범위에서 골라요.</p><div class="actions"><button class="btn-link" data-act="stopSearch">멈추기</button></div>';
+    h += '<p class="hint">꼼꼼히 비교하느라 1~2분쯤 걸려요. AI가 아는 상품·가격 범위에서 고르고, 사이트별 순위는 결과 화면에서 바로 확인할 수 있어요.</p><div class="actions"><button class="btn-link" data-act="stopSearch">멈추기</button></div>';
   }
   return h;
 }
@@ -649,42 +792,135 @@ function assumptions(o){
 }
 function chosen(r, item){ var l = options(item).list; for(var i=0;i<l.length;i++){ if(l[i].key===r.payKey) return l[i]; } return l[0]; }
 
+/* ---------- 사이트별 순위 확인 링크 ---------- */
+function siteUrls(q){
+  var e = encodeURIComponent(q);
+  return {
+    coupang:'https://www.coupang.com/np/search?q='+e+'&sorter=saleCountDesc',
+    naver:'https://search.shopping.naver.com/search/all?query='+e+'&sort=review',
+    ali:'https://ko.aliexpress.com/w/wholesale-'+encodeURIComponent(String(q).trim().replace(/\s+/g,'-'))+'.html?SortType=total_tranpro_desc',
+    temu:'https://www.temu.com/kr/search_result.html?search_key='+e,
+    musinsa:'https://www.musinsa.com/search/goods?keyword='+e
+  };
+}
+function storeUrl(where, q){
+  var u = siteUrls(q), w = String(where||'');
+  if(/쿠팡/.test(w)) return u.coupang;
+  if(/알리/.test(w)) return u.ali;
+  if(/테무/i.test(w)) return u.temu;
+  if(/무신사/.test(w)) return u.musinsa;
+  return u.naver;
+}
+function rankLinks(it, fashion){
+  var u = siteUrls(it.searchQuery || it.name);
+  return '<div class="group"><p class="sec-label">사이트별 순위로 직접 확인</p><div class="links">'
+   + '<a class="chip" href="'+u.coupang+'" target="_blank" rel="noopener">쿠팡 판매량순 '+ic('ext','sm')+'</a>'
+   + '<a class="chip" href="'+u.naver+'" target="_blank" rel="noopener">네이버 리뷰 많은순 '+ic('ext','sm')+'</a>'
+   + (fashion ? '<a class="chip" href="'+u.musinsa+'" target="_blank" rel="noopener">무신사 '+ic('ext','sm')+'</a>' : '<a class="chip" href="'+u.ali+'" target="_blank" rel="noopener">알리 주문 많은순 '+ic('ext','sm')+'</a>')
+   + '</div></div>';
+}
+
 /* ---------- 08 ~ 10 추천과 상세 ---------- */
-function recCard(it, i){
+function closetChips(list){
+  var html = list.map(function(x){ var w = closetItem(x.id); if(!w) return ''; return '<span class="cl-item">'+photoTile(w.photo, w.box, CAT_ICON[w.cat])+'<span class="cl-name">'+esc(w.name)+'</span>'+(x.why?'<span class="cl-meta">'+esc(x.why)+'</span>':'')+'</span>'; }).join('');
+  return html ? '<div class="coordi">'+html+'</div>' : '';
+}
+function prosCons(it){
+  var pros = it.pros || [], cons = it.cons || [];
+  if(!pros.length && !cons.length) return '';
+  return '<div class="pros-cons"><div class="pros"><p class="sec-label">좋은 점</p><ul>'+pros.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul></div><div class="cons"><p class="sec-label">아쉬운 점</p><ul>'+cons.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul></div></div>';
+}
+function popLine(it){ return it.popularity ? '<p class="pop">'+ic('trend','sm')+'<span>'+esc(it.popularity)+' <span class="fine">(AI가 아는 정보 · 실시간 아님)</span></span></p>' : ''; }
+function recCard(it, i, fashion){
   var o = options(it).list[0];
   return '<article class="card rec'+(i===0?' top-pick':'')+'"><div class="rec-head"><span class="rank">'+(i+1)+'</span>'+(it.tag?'<span class="tag">'+esc(it.tag)+'</span>':'')+'</div>'
    + '<div class="rec-body"><div class="thumb">'+ic(it.icon)+'</div><div class="minw"><p class="rec-name">'+esc(it.name)+'</p><p class="rec-reason">'+esc(it.reason)+'</p><p class="price">'+won(payNow(o))+'</p><p class="price-sub">'+(payNow(o)<o.base ? '예상가 '+won(o.base)+'에 결제 혜택 반영' : '예상 결제금액 · 배송비 포함')+'</p></div></div>'
-   + '<div class="rec-foot"><span class="minw">'+esc(methodLabel(o))+'</span><button class="btn-small" data-act="detail" data-i="'+i+'">자세히</button></div></article>';
+   + (it.why ? '<p class="why">'+esc(it.why)+'</p>' : '')
+   + prosCons(it)
+   + (it.fit ? '<p class="mini"><b>사이즈·핏</b>'+esc(it.fit)+'</p>' : '')
+   + popLine(it)
+   + (it.coordi && it.coordi.length ? '<div class="group"><p class="sec-label">가진 것과 이렇게 맞춰요</p>'+closetChips(it.coordi)+'</div>' : '')
+   + '<div class="rec-foot"><span class="minw">'+esc(methodLabel(o))+'</span><button class="btn-small" data-act="detail" data-i="'+i+'">자세히'+(fashion?' · 입혀보기':'')+'</button></div></article>';
+}
+function ownedCard(rec){
+  var ow = rec.owned; if(!ow || !ow.items.length) return '';
+  var list = ow.items.map(function(id){ return {id:id}; });
+  return '<div class="'+(ow.enough?'tint':'card')+' callout"><p class="callout-head">'+ic('hanger')+(ow.enough ? '가진 것으로 해결될 수도 있어요' : '가진 것 중 함께 쓸 것')+'</p>'+(ow.why?'<p class="mini">'+esc(ow.why)+'</p>':'')+closetChips(list)
+   + (ow.enough ? '<div class="row-btns"><button class="btn-small strong" data-act="avoidBuy">가진 걸로 해결할게요</button></div>' : '') + '</div>';
+}
+function cheaperCard(rec){
+  var c = rec.cheaper; if(!c || !c.show) return '';
+  var url = storeUrl(c.where, c.searchQuery || (rec.items[0] && rec.items[0].searchQuery) || '');
+  return '<div class="card callout"><p class="callout-head">'+ic('tag')+'더 싸게: '+esc(c.where)+'</p>'
+   + (c.what ? '<p class="mini"><b>대안</b>'+esc(c.what)+(c.price?' · '+esc(c.price):'')+(c.delivery?' · 배송 '+esc(c.delivery):'')+'</p>' : '')
+   + (c.why ? '<p class="mini">'+esc(c.why)+'</p>' : '')
+   + (c.caution ? '<p class="notice">'+esc(c.caution)+'</p>' : '')
+   + '<a class="btn-small" href="'+url+'" target="_blank" rel="noopener">'+esc(c.where)+'에서 찾아보기 '+ic('ext','sm')+'</a></div>';
+}
+function timingCard(rec){
+  var t = rec.timing; if(!t || !t.why) return '';
+  var wait = t.advice==='wait';
+  return '<div class="card callout"><p class="callout-head">'+ic('calendar')+(wait ? '기다리면 더 쌀 수 있어요' : '지금 사도 좋아요')+'</p>'
+   + (t.event ? '<p class="mini"><b>'+esc(t.event)+'</b>'+esc(t.when||'')+(t.expect?' · '+esc(t.expect):'')+'</p>' : '')
+   + '<p class="mini">'+esc(t.why)+'</p></div>';
 }
 function vRecs(){
   var r = cur(); if(!r || !r.recs) return vMissing();
-  var items = r.recs.items;
-  return backBtn()+'<div class="stack-tight"><p class="eyebrow">내게 맞는 추천 1~'+Math.min(3,items.length)+'</p><h1>'+(r.recs.channel==='delivery' ? '오늘은 이 셋 어때요?' : '이 세 가지를 추천해요.')+'</h1><p class="lead">'+esc(r.recs.conditions)+'</p></div>'
-   + items.slice(0,3).map(recCard).join('')
-   + (items.length>3 ? '<button class="btn-secondary" data-act="go" data-to="more">추가 대안 '+(items.length-3)+'개 더 보기 '+ic('chevD','sm')+'</button>' : '')
+  var rec = r.recs, items = rec.items, fashion = rec.category==='fashion';
+  var shown = items.slice(0,3), n = shown.length;
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">내게 맞는 추천</p><h1>'+(n===1?'이걸 추천해요.':n===2?'이 두 가지를 추천해요.':'이 세 가지를 추천해요.')+'</h1><p class="lead">'+esc(rec.conditions)+'</p></div>'
+   + (rec.intent ? '<div class="tint"><p class="eyebrow">이렇게 이해했어요</p><p>'+esc(rec.intent)+'</p></div>' : '')
+   + ownedCard(rec)
+   + shown.map(function(it,i){ return recCard(it,i,fashion); }).join('')
+   + (items.length>3 ? '<button class="btn-secondary" data-act="go" data-to="more">다른 후보 '+(items.length-3)+'개 더 보기 '+ic('chevD','sm')+'</button>' : '')
+   + timingCard(rec)
+   + cheaperCard(rec)
    + '<button class="btn-inline" data-act="changeCond">'+ic('chat','sm')+' 조건을 바꿔서 다시 찾아줘</button>'
-   + '<p class="fine">가격은 AI가 아는 범위의 예상가예요. 구매처에서 최종 가격을 확인하세요. 할인은 등록한 결제수단 기준이에요.</p>';
+   + '<p class="fine">가격과 인기 정보는 AI가 아는 범위의 예상이에요. 각 사이트의 판매량·리뷰 순위와 최종 가격은 자세히 화면의 링크로 확인하세요.</p>';
 }
 function vMore(){
   var r = cur(); if(!r || !r.recs) return vMissing();
   var items = r.recs.items;
-  return backBtn()+'<div class="stack-tight"><p class="eyebrow">더 살펴볼 대안 4~'+items.length+'</p><h1>다른 선택도 준비했어요.</h1><p class="lead">마음에 드는 후보를 눌러 자세히 보세요.</p></div>'
+  return backBtn()+'<div class="stack-tight"><p class="eyebrow">다른 후보</p><h1>이런 선택도 있어요.</h1></div>'
    + '<div class="list">'+items.slice(3).map(function(it,k){ var i = k+3, o = options(it).list[0]; return '<button class="li" data-act="detail" data-i="'+i+'"><span class="rank">'+(i+1)+'</span><span class="thumb">'+ic(it.icon)+'</span><span class="minw"><span class="rec-name">'+esc(it.name)+'</span><span class="rec-reason" style="display:block">'+esc(it.reason)+'</span><span class="price">'+won(payNow(o))+'</span></span>'+ic('chevR','sm muted')+'</button>'; }).join('')+'</div>'
-   + '<button class="btn-secondary" data-act="back">추천안 1~3번으로 돌아가기</button>';
+   + '<button class="btn-secondary" data-act="back">추천으로 돌아가기</button>';
 }
-function searchUrls(it){
-  var q = encodeURIComponent(it.searchQuery || it.name);
-  return {naver:'https://search.shopping.naver.com/search/all?query='+q, coupang:'https://www.coupang.com/np/search?q='+q};
+function tryonSection(r, it){
+  var busy = S.ui.tryonBusy===it.name, t = it.tryon, body = S.closet.body;
+  var h = '<div class="card callout"><p class="callout-head">'+ic('user')+'내 체형으로 입혀본 결과</p>';
+  if(t){
+    h += (t.verdict ? '<p class="t-title">'+esc(t.verdict)+'</p>' : '')
+      + (t.size ? '<p class="mini"><b>추천 사이즈</b>'+esc(t.size)+'</p>' : '')
+      + (t.fit.length ? '<ul>'+t.fit.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>' : '')
+      + (t.look ? '<p class="mini">'+esc(t.look)+'</p>' : '')
+      + (t.coordi.length ? '<p class="sec-label">이렇게 입어 보세요</p><div class="board">'+t.coordi.map(function(x){ var w = closetItem(x.id); return w ? '<span class="cl-item">'+photoTile(w.photo, w.box, CAT_ICON[w.cat])+'<span class="cl-name">'+esc(w.name)+'</span></span>' : ''; }).join('')+'<span class="board-new">'+ic(it.icon)+'<span>'+esc(it.name)+'</span></span></div>' : '')
+      + (t.risk ? '<p class="notice">'+esc(t.risk)+'</p>' : '')
+      + '<p class="fine">사진을 합성한 이미지가 아니라 체형·사이즈·옷장 정보로 예상한 결과예요.</p>'
+      + '<button class="btn-inline" data-act="tryon"'+(busy?' disabled':'')+'>'+(busy?'다시 보는 중…':'다시 입혀보기')+'</button>';
+  } else {
+    var ready = body.height || body.analysis || body.top;
+    h += '<p class="mini">'+(ready ? '키·사이즈·체형과 가진 옷을 함께 보고 사이즈와 맞음새, 어울리는 코디를 알려드려요.' : '옷장 탭에서 키와 평소 사이즈를 알려주면 더 정확해요. 지금도 일반 기준으로 봐드릴 수 있어요.')+'</p>'
+      + '<div class="row-btns"><button class="btn-small strong" data-act="tryon"'+(busy?' disabled':'')+'>'+(busy?'입혀보는 중…':ic('sparkle','sm')+' 내 체형으로 입혀보기')+'</button>'+(ready?'':'<button class="btn-small" data-act="tab" data-to="closet">체형 알려주기</button>')+'</div>';
+  }
+  if(S.ui.tryonErr) h += '<p class="notice">'+esc(S.ui.tryonErr)+'</p>';
+  return h + '</div>';
 }
 function vDetail(){
   var r = cur(), it = curItem(); if(!it) return vMissing();
-  var u = searchUrls(it);
-  return backBtn()+'<div class="row-between"><p class="eyebrow">'+(it.manual?'직접 고른 상품':((r.sel||0)+1)+'번 구매안')+'</p><span class="tag">'+(it.manual?'직접 입력':'예상가')+'</span></div>'
+  var fashion = r.recs.category==='fashion';
+  var u = storeUrl(it.where, it.searchQuery || it.name);
+  return backBtn()+'<div class="row-between"><p class="eyebrow">'+(it.manual?'직접 고른 상품':((r.sel||0)+1)+'번 추천')+'</p><span class="tag">'+(it.manual?'직접 입력':'예상가')+'</span></div>'
    + '<div class="hero-thumb">'+ic(it.icon)+'</div>'
    + '<div class="stack-tight"><h1 class="h-prod">'+esc(it.name)+'</h1>'+(it.specs?'<p class="lead">'+esc(it.specs)+'</p>':'')+'<p class="price big">'+won(num(it.price)+num(it.shipping))+'</p><p class="price-sub">'+(it.manual?'입력한 금액':'예상가')+' · 배송비 '+(num(it.shipping)?won(it.shipping):'무료')+' 포함</p></div>'
    + (it.why ? '<div class="tint"><p class="t-title">'+ic('sparkle','sm')+' 이렇게 골랐어요</p><p>'+esc(it.why)+'</p></div>' : '')
-   + '<div class="card rows">'+row('구매처', it.where)+row('배송', it.eta||'구매처에서 확인')+(it.specs?row('선택 옵션', it.specs):'')+(it.brand?row('브랜드', it.brand):'')+'</div>'
-   + (it.channel==='online' ? '<div class="links"><a class="btn-small" href="'+u.naver+'" target="_blank" rel="noopener">네이버쇼핑에서 보기 '+ic('ext','sm')+'</a><a class="btn-small" href="'+u.coupang+'" target="_blank" rel="noopener">쿠팡에서 보기 '+ic('ext','sm')+'</a></div>' : '')
+   + prosCons(it)
+   + (it.fit ? '<p class="mini"><b>사이즈·핏</b>'+esc(it.fit)+'</p>' : '')
+   + popLine(it)
+   + (it.check && it.check.length ? '<div class="group"><p class="sec-label">사기 전에 확인할 것</p><ul class="check-list">'+it.check.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul></div>' : '')
+   + (fashion && !it.manual ? tryonSection(r, it) : '')
+   + '<div class="card rows">'+row('구매처', it.where)+row('배송', it.eta||'구매처에서 확인')+(it.brand?row('브랜드', it.brand):'')+'</div>'
+   + (it.manual ? '' : rankLinks(it, fashion))
+   + (it.channel==='online' ? '<a class="btn-secondary" href="'+u+'" target="_blank" rel="noopener">'+esc(it.where)+'에서 보기 '+ic('ext','sm')+'</a>' : '')
    + '<div class="actions"><button class="btn-primary" data-act="go" data-to="pay">내 결제수단 비교하기</button><button class="btn-link" data-act="back">다른 추천도 볼게요</button></div>';
 }
 
@@ -719,21 +955,21 @@ function vPay(){
 
 /* ---------- 12 구매 준비 완료 ---------- */
 function buyButtons(it, o){
-  var u = searchUrls(it), q = it.searchQuery || it.name;
+  var u = siteUrls(it.searchQuery || it.name), q = it.searchQuery || it.name;
   if(it.channel==='delivery'){
     return '<p class="hint">배달앱('+esc(it.where)+')에서 아래 이름으로 찾아 주문하세요.</p><button class="btn-secondary" data-act="copy" data-v="'+esc(q)+'">'+esc(q)+' · 복사</button>';
   }
   if(it.channel==='offline'){
     return '<p class="hint">매장에서 '+esc(methodLabel(o))+'(으)로 결제하세요.</p>';
   }
-  var cp = /쿠팡/.test(it.where);
-  var first = cp ? ['쿠팡', u.coupang] : ['네이버쇼핑', u.naver], second = cp ? ['네이버쇼핑', u.naver] : ['쿠팡', u.coupang];
-  return '<a class="btn-primary" href="'+first[1]+'" target="_blank" rel="noopener">'+first[0]+'에서 찾아 결제 '+ic('ext','sm')+'</a><a class="btn-secondary" href="'+second[1]+'" target="_blank" rel="noopener">'+second[0]+'에서도 찾아보기 '+ic('ext','sm')+'</a>';
+  var first = storeUrl(it.where, q), firstName = /쿠팡|알리|테무|무신사/.test(it.where) ? it.where : '네이버쇼핑';
+  var second = /쿠팡/.test(it.where) ? ['네이버쇼핑', u.naver] : ['쿠팡', u.coupang];
+  return '<a class="btn-primary" href="'+first+'" target="_blank" rel="noopener">'+esc(firstName)+'에서 찾아 결제 '+ic('ext','sm')+'</a><a class="btn-secondary" href="'+second[1]+'" target="_blank" rel="noopener">'+second[0]+'에서도 찾아보기 '+ic('ext','sm')+'</a>';
 }
 function vReady(){
   var r = cur(), it = curItem(); if(!it) return vMissing();
   var o = chosen(r, it), ch = r.checks || {};
-  var C = ['상품과 옵션이 같은지','쿠폰과 결제 혜택이 적용됐는지','최종 금액이 안내와 같은지'];
+  var C = ['상품과 옵션(사이즈·색)이 같은지','쿠폰과 결제 혜택이 적용됐는지','최종 금액이 안내와 같은지'];
   return backBtn()+'<div class="hero-ic">'+ic('check')+'</div><div class="stack-tight"><p class="eyebrow">마지막 확인만 남았어요</p><h1>구매할 준비를<br>해두었어요.</h1><p class="lead">구매처에서 아래 조건을 확인하고 결제하세요.</p></div>'
    + '<div class="card"><div class="mini-prod"><div class="thumb">'+ic(it.icon)+'</div><div class="minw"><p class="rec-name">'+esc(it.name)+'</p><p class="rec-reason">'+esc(it.specs||it.reason||'')+'</p></div></div>'
    + '<div class="rows sep">'+row('구매처', it.where)+row('결제 방법', methodLabel(o)+(o.months?' · '+o.months+'개월 무이자':''))+row('예상 결제금액', won(payNow(o)), true)+'</div></div>'
@@ -744,14 +980,75 @@ function vReady(){
 /* ---------- 13 구매 후 기억하기 ---------- */
 function vFeedback(){
   var r = cur(), it = curItem(); if(!it) return vMissing();
-  var o = chosen(r, it), fb = r.fb || {};
+  var o = chosen(r, it), fb = r.fb || {}, fashion = r.recs && r.recs.category==='fashion';
   return backBtn()+'<div class="stack-tight"><p class="eyebrow">다음 쇼핑은 더 편하게</p><h1>마음에 드는 선택이었나요?</h1><p class="lead">짧게 알려주시면 다음 추천에 반영할게요.</p></div>'
    + '<div class="card mini-prod"><div class="thumb">'+ic(it.icon)+'</div><div class="minw"><p class="rec-name">'+esc(it.name)+'</p><p class="rec-reason">'+esc(methodLabel(o))+'</p><p class="price">'+won(payNow(o))+'</p></div></div>'
    + '<div class="group"><p class="lbl">이번 선택은</p><div class="grid2"><button class="choice" data-act="feel" data-v="good" aria-pressed="'+(fb.feeling==='good')+'">'+ic('smile','sm')+' 좋았어요</button><button class="choice" data-act="feel" data-v="bad" aria-pressed="'+(fb.feeling==='bad')+'">'+ic('meh','sm')+' 아쉬워요</button></div></div>'
-   + '<div class="group"><label class="lbl" for="fbmemo">기억해두면 좋을 점</label><textarea class="field" id="fbmemo" rows="3" data-bind="cur.fb.memo" placeholder="예: 생각보다 가벼워서 좋았어">'+esc(fb.memo||'')+'</textarea></div>'
-   + '<div class="chips"><button class="chip" data-act="fbFlag" data-k="gift" aria-pressed="'+(!!fb.gift)+'">선물·가족용 구매</button><button class="chip" data-act="fbFlag" data-k="returned" aria-pressed="'+(!!fb.returned)+'">취소·반품 기록</button></div>'
+   + '<div class="group"><label class="lbl" for="fbmemo">기억해두면 좋을 점</label><textarea class="field" id="fbmemo" rows="3" data-bind="cur.fb.memo" placeholder="예: 생각보다 가벼워서 좋았어, 한 치수 작게 사도 됐어">'+esc(fb.memo||'')+'</textarea></div>'
+   + '<div class="chips"><button class="chip" data-act="fbFlag" data-k="gift" aria-pressed="'+(!!fb.gift)+'">선물·가족용 구매</button><button class="chip" data-act="fbFlag" data-k="returned" aria-pressed="'+(!!fb.returned)+'">취소·반품 기록</button>'+(fashion?'<button class="chip" data-act="fbFlag" data-k="toCloset" aria-pressed="'+(fb.toCloset!==false)+'">옷장에 넣기</button>':'')+'</div>'
    + (fb.gift ? '<p class="hint">선물·가족용 구매는 내 취향 기억에 넣지 않아요.</p>' : '')
    + '<div class="actions"><button class="btn-primary" data-act="savePurchase">기억해두고 다음 쇼핑하기 '+ic('arrowR','sm')+'</button><button class="btn-link" data-act="savePurchaseSkip">이번에는 건너뛸게요</button></div>';
+}
+
+/* ---------- 옷장 · 체형 ---------- */
+function quickAdd(ctx){
+  var wq = S.ui.wq || {};
+  if(wq.ctx===ctx && wq.busy) return '<div class="qa"><p class="hint"><span class="dots" role="status" aria-label="정리하는 중"><i></i><i></i><i></i></span>'+esc(wq.msg||'정리하는 중')+'</p></div>';
+  if(wq.ctx===ctx && wq.result){
+    return '<div class="qa"><p class="t-title">이렇게 찾았어요. 맞는 것만 남겨 주세요.</p>'+wq.result.map(function(x,i){
+      return '<div class="wq-row"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--green)" data-pick="w" data-i="'+i+'"'+(x.pick?' checked':'')+' aria-label="'+esc(x.name||'항목')+' 넣기">'+photoTile(x.photo, x.box, CAT_ICON[x.cat])
+       + '<div class="wq-fields"><input class="field" id="wqn'+i+'" data-bind="ui.wq.result.'+i+'.name" value="'+esc(x.name)+'" placeholder="이름" aria-label="옷 이름"><select class="field" id="wqc'+i+'" data-bind="ui.wq.result.'+i+'.cat" aria-label="종류">'+opts(CATS, x.cat)+'</select></div></div>';
+    }).join('')+'<div class="row-btns"><button class="btn-small strong" data-act="wqSave">옷장에 넣기</button><button class="btn-small" data-act="wqCancel">취소</button></div></div>';
+  }
+  var canPhoto = S.ui.imgOk && sample;
+  return '<div class="qa">'
+   + (canPhoto ? '<div class="qa-btns"><label class="btn-secondary file-btn" for="wq-cam-'+ctx+'">'+ic('camera','sm')+' 지금 찍기<input type="file" id="wq-cam-'+ctx+'" class="sr-only" accept="image/*" capture="environment" data-file="wq" data-ctx="'+ctx+'"></label><label class="btn-secondary file-btn" for="wq-alb-'+ctx+'">'+ic('image','sm')+' 앨범에서 여러 장<input type="file" id="wq-alb-'+ctx+'" class="sr-only" accept="image/*" multiple data-file="wq" data-ctx="'+ctx+'"></label></div>' : '')
+   + '<div class="add-row"><input class="field" id="wq-text-'+ctx+'" data-bind="ui.wqText" value="'+esc(S.ui.wqText||'')+'" placeholder="말로 적기: 검정 슬랙스, 흰 셔츠, 갈색 로퍼" aria-label="가진 옷을 말로 적기"><button class="btn-small strong" data-act="wqText" data-ctx="'+ctx+'">추가</button></div>'
+   + (wq.ctx===ctx && wq.err ? '<p class="notice">'+esc(wq.err)+'</p>' : '')
+   + '</div>';
+}
+function bodySummary(b){
+  var nums = [b.height?b.height+'cm':'', b.weight?b.weight+'kg':'', b.top?'상의 '+b.top:'', b.bottom?'하의 '+b.bottom:'', b.shoes?'신발 '+b.shoes:'', (FITS.filter(function(f){ return f[0]===b.fit; })[0]||[])[1] ? (FITS.filter(function(f){ return f[0]===b.fit; })[0][1]+' 선호') : ''].filter(Boolean).join(' · ');
+  var a = b.analysis;
+  return '<div class="body-sum">'+(nums?'<p class="mem-line">'+esc(nums)+'</p>':'')+(a ? (a.shape?'<p>'+esc(a.shape)+(a.proportion?' · '+esc(a.proportion):'')+'</p>':'')+(a.fitTips.length?'<ul>'+a.fitTips.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>':'')+(a.colors.length?'<p class="hint">잘 어울리는 색: '+esc(a.colors.join(', '))+'</p>':'') : '')+'</div>';
+}
+function bodyEditor(){
+  var b = S.closet.body, busy = S.ui.bodyBusy, canPhoto = S.ui.imgOk && sample;
+  return '<div class="editor"><div class="grid2"><div class="group"><label class="lbl" for="b-h">키(cm)</label><input class="field num" id="b-h" inputmode="numeric" data-bind="closet.body.height" value="'+esc(b.height)+'" placeholder="175"></div><div class="group"><label class="lbl" for="b-w">몸무게(kg, 선택)</label><input class="field num" id="b-w" inputmode="numeric" data-bind="closet.body.weight" value="'+esc(b.weight)+'" placeholder="선택"></div></div>'
+   + '<div class="grid2"><div class="group"><label class="lbl" for="b-t">상의 사이즈</label><input class="field" id="b-t" data-bind="closet.body.top" value="'+esc(b.top)+'" placeholder="L / 100"></div><div class="group"><label class="lbl" for="b-b">하의 사이즈</label><input class="field" id="b-b" data-bind="closet.body.bottom" value="'+esc(b.bottom)+'" placeholder="32 / M"></div></div>'
+   + '<div class="grid2"><div class="group"><label class="lbl" for="b-s">신발(mm)</label><input class="field num" id="b-s" inputmode="numeric" data-bind="closet.body.shoes" value="'+esc(b.shoes)+'" placeholder="270"></div><div class="group"><span class="lbl">선호 핏</span>'+seg('closet.body.fit', b.fit||'regular', FITS)+'</div></div>'
+   + '<div class="group"><label class="lbl" for="b-m">체형 메모 (선택)</label><input class="field" id="b-m" data-bind="closet.body.memo" value="'+esc(b.memo)+'" placeholder="예: 어깨가 넓은 편, 허벅지가 굵은 편"></div>'
+   + (canPhoto ? '<label class="check"><input type="checkbox" id="b-keep" data-bind="closet.body.keepPhoto"'+(b.keepPhoto!==false?' checked':'')+'><span>전신 사진을 보관해서 입혀보기에 써요. 나만 볼 수 있고 언제든 지울 수 있어요.</span></label>'
+       + '<label class="btn-secondary file-btn" for="b-photo">'+ic('camera','sm')+(busy?' 체형을 보는 중…':(b.photo?' 전신 사진 다시 올리기':' 전신 사진으로 체형 보기'))+'<input type="file" id="b-photo" class="sr-only" accept="image/*" data-file="body"'+(busy?' disabled':'')+'></label>' : '')
+   + '<div class="row-btns"><button class="btn-small strong" data-act="bodyRun"'+(busy?' disabled':'')+'>'+(busy?'정리하는 중…':'입력한 정보로 정리하기')+'</button>'+(b.photo?'<button class="btn-small" data-act="bodyPhotoDel">'+(S.ui.confirm==='bodyphoto'?'한 번 더 누르면 지워요':'보관한 사진 지우기')+'</button>':'')+'<button class="btn-small" data-act="bodyClose">닫기</button></div>'
+   + (S.ui.bodyErr ? '<p class="notice">'+esc(S.ui.bodyErr)+'</p>' : '')
+   + '<p class="fine">사이즈와 핏을 맞추는 데만 써요. 외모나 체중을 평가하지 않아요.</p></div>';
+}
+function itemEditor(w){
+  return '<div class="editor"><div class="row-between"><p class="t-title">'+esc(w.name)+'</p><button class="icon-btn sm" data-act="wEdit" data-id="'+w.id+'" aria-label="닫기">'+ic('x','sm')+'</button></div>'
+   + '<div class="group"><label class="lbl" for="we-n">이름</label><input class="field" id="we-n" data-bind="wsel.name" value="'+esc(w.name)+'"></div>'
+   + '<div class="grid2"><div class="group"><label class="lbl" for="we-c">종류</label><select class="field" id="we-c" data-bind="wsel.cat">'+opts(CATS, w.cat)+'</select></div><div class="group"><label class="lbl" for="we-col">색</label><input class="field" id="we-col" data-bind="wsel.color" value="'+esc(w.color||'')+'"></div></div>'
+   + '<button class="btn-inline danger" data-act="wDel" data-id="'+w.id+'">'+(S.ui.confirm==='w'+w.id?'한 번 더 누르면 옷장에서 빼요':'옷장에서 빼기')+'</button></div>';
+}
+function vCloset(){
+  var C = S.closet, b = C.body, items = C.items;
+  var hasBody = b.height || b.top || b.analysis;
+  var h = '<div class="stack-tight"><p class="eyebrow">가진 것부터 확인해요</p><h1>내 옷장</h1><p class="lead">가진 옷·신발·액세서리와 체형을 알면 코디를 맞추고, 같은 옷을 또 사지 않게 막아요.</p></div>';
+  h += '<section class="card group"><div class="row-between"><h2>내 체형</h2>'+(S.ui.bodyOpen?'':'<button class="btn-small" data-act="bodyOpen">'+(hasBody?'고치기':'알려주기')+'</button>')+'</div>'
+    + (S.ui.bodyOpen ? bodyEditor() : (hasBody ? bodySummary(b) : '<p class="hint">키와 평소 사이즈만 알려줘도 추천 사이즈를 골라드려요. 전신 사진을 올리면 체형까지 봐드려요.</p>'))+'</section>';
+  h += '<section class="group"><div class="row-between"><h2>옷 넣기</h2><span class="hint">'+items.length+'벌</span></div><p class="hint">오늘 입은 옷 거울 셀카, 바닥에 펼친 옷, 옷걸이에 건 옷 모두 괜찮아요. 한 장에 여러 벌이 있으면 AI가 하나씩 나눠요.</p>'+quickAdd('closet')+'</section>';
+  var pending = S.purchases.filter(function(p){ return p.cat==='fashion' && !p.inCloset && p.source!=='avoided'; }).slice(0,4);
+  if(pending.length) h += '<section class="tint"><p class="t-title">'+ic('receipt','sm')+' 산 옷을 옷장에 넣을까요?</p>'+pending.map(function(p){ return '<div class="row-between"><span class="minw">'+esc(p.name)+'</span><button class="btn-small" data-act="fromPurchase" data-id="'+p.id+'">넣기</button></div>'; }).join('')+'</section>';
+  if(!items.length){
+    h += emptyState('아직 옷장이 비어 있어요.','사진 한 장이나 말 한 줄로 시작하세요. 부탁할 때 필요한 옷만 물어볼게요.');
+  } else {
+    CATS.forEach(function(c){
+      var list = items.filter(function(w){ return w.cat===c[0]; }); if(!list.length) return;
+      h += '<section class="group"><p class="sec-label">'+c[1]+' '+list.length+'</p><div class="closet-grid">'+list.map(function(w){ return '<button class="cl-item" data-act="wEdit" data-id="'+w.id+'" aria-pressed="'+(S.ui.wsel===w.id)+'">'+photoTile(w.photo, w.box, CAT_ICON[w.cat])+'<span class="cl-name">'+esc(w.name)+'</span>'+(w.color?'<span class="cl-meta">'+esc(w.color)+'</span>':'')+'</button>'; }).join('')+'</div>'
+        + (list.some(function(w){ return w.id===S.ui.wsel; }) ? itemEditor(closetItem(S.ui.wsel)) : '') + '</section>';
+    });
+  }
+  return h;
 }
 
 /* ---------- 탭: 내 쇼핑 · 구매기록 · 내 결제 · 내 정보 ---------- */
@@ -762,6 +1059,7 @@ function vShopping(){
    : emptyState('아직 부탁한 쇼핑이 없어요.','필요한 것을 말하면 여기에서 이어서 볼 수 있어요.','부탁하러 가기','home'));
 }
 function feelPill(p){
+  if(p.source==='avoided') return '<span class="pill">안 사고 해결</span>';
   if(p.returned) return '<span class="pill bad">취소·반품</span>';
   if(p.feeling==='good') return '<span class="pill">좋았어요</span>';
   if(p.feeling==='bad') return '<span class="pill bad">아쉬워요</span>';
@@ -772,7 +1070,7 @@ function feelPill(p){
 function vHistory(){
   var P = S.purchases, saved = P.reduce(function(s,p){ return s+num(p.saved); }, 0);
   return '<div class="stack-tight"><p class="eyebrow">곁이 기억하는 구매</p><h1>구매기록</h1></div>'
-   + '<div class="stats"><div class="stat"><span class="stat-n">'+P.length+'건</span><span class="stat-l">기록한 구매</span></div><div class="stat"><span class="stat-n">'+won(saved)+'</span><span class="stat-l">결제 혜택으로 아낀 금액(예상)</span></div></div>'
+   + '<div class="stats"><div class="stat"><span class="stat-n">'+P.length+'건</span><span class="stat-l">기록한 구매</span></div><div class="stat"><span class="stat-n">'+won(saved)+'</span><span class="stat-l">결제 혜택·안 사고 해결로 아낀 돈(예상)</span></div></div>'
    + (P.length ? '<div class="list">'+P.map(function(p){ var del = S.ui.confirm==='buy'+p.id; return '<div class="buy"><span class="thumb">'+ic(p.icon||'box')+'</span><span class="minw"><span class="buy-name">'+esc(p.name)+'</span><span class="buy-meta" style="display:block">'+esc([p.date, p.where, p.method].filter(Boolean).join(' · '))+'</span></span><span class="buy-right">'+(num(p.price)?'<span class="buy-price">'+won(p.price)+'</span>':'')+feelPill(p)+'<button class="'+(del?'btn-small':'icon-btn sm')+'" data-act="delBuy" data-id="'+p.id+'" aria-label="이 기록 지우기">'+(del?'지우기':ic('x','sm'))+'</button></span></div>'; }).join('')+'</div>'
    : emptyState('아직 기록한 구매가 없어요.','곁으로 산 상품이나 가져온 주문내역이 여기에 쌓여요.'))
    + '<details class="card"'+(S.ui.importOpen||S.ui.importResult?' open':'')+'><summary>주문내역·영수증 가져오기</summary><div style="margin-top:12px">'+importPanel()+'</div></details>';
@@ -784,9 +1082,9 @@ function vMe(){
   var notes = S.app.profile.notes;
   return backBtn()+'<div class="stack-tight"><p class="eyebrow">곁이 아는 나</p><h1>내 정보</h1></div>' + tasteFields()
    + '<section class="group"><h2>곁이 기억하는 것</h2>'+(notes.length ? '<ul class="notes">'+notes.map(function(n,i){ return '<li><span>'+esc(n)+'</span><button class="icon-btn sm" data-act="delNote" data-i="'+i+'" aria-label="이 기억 지우기">'+ic('x','sm')+'</button></li>'; }).join('')+'</ul>' : '<p class="hint">구매 후 남긴 메모와 가져온 주문내역에서 배운 점이 여기에 쌓여요.</p>')+'</section>'
-   + '<section class="group"><h2>저장과 AI</h2><p class="hint">'+(storage==='cloud' ? '내 claude.ai 계정에 저장돼요. 이 페이지를 함께 보는 사람도 내 정보는 볼 수 없어요.' : '지금은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우면 사라져요.')+'</p>'
+   + '<section class="group"><h2>저장과 AI</h2><p class="hint">'+(storage==='cloud' ? '내 claude.ai 계정에 저장돼요. 옷 사진과 전신 사진도 이 앱 안에만 보관되고, 이 페이지를 함께 보는 사람도 내 정보는 볼 수 없어요.' : '지금은 이 기기의 브라우저에만 저장돼요. 브라우저 데이터를 지우면 사라져요.')+'</p>'
    + '<p class="hint">AI 추천: '+(aiState==='on' ? '사용할 수 있어요. 내 Claude 사용량으로 동작해요.' : aiState==='checking' ? '확인하는 중이에요.' : '지금은 쓸 수 없어요.')+'</p></section>'
-   + '<button class="btn-inline danger" data-act="resetAll">'+(S.ui.confirm==='reset' ? '한 번 더 누르면 모든 정보를 지워요' : '모든 정보 지우기')+'</button>';
+   + '<button class="btn-inline danger" data-act="resetAll">'+(S.ui.confirm==='reset' ? '한 번 더 누르면 사진까지 모든 정보를 지워요' : '모든 정보 지우기')+'</button>';
 }
 function vManual(){
   var m = S.ui.manual || (S.ui.manual = {name:'', where:'', price:'', shipping:'', channel:'online'});
@@ -852,7 +1150,7 @@ function importPanel(){
   }
   var files = S.ui.importFiles || [];
   return '<div class="group">'
-   + (S.ui.imgOk ? '<label class="btn-secondary file-btn" for="imp-img">'+ic('image','sm')+' 주문내역 이미지 가져오기<input type="file" id="imp-img" class="sr-only" accept="'+esc((S.ui.imgTypes||[]).join(','))+'" multiple data-file="img"></label>' : '')
+   + (S.ui.imgOk ? '<label class="btn-secondary file-btn" for="imp-img">'+ic('image','sm')+' 주문내역 캡처 가져오기<input type="file" id="imp-img" class="sr-only" accept="image/*" multiple data-file="img"></label>' : '')
    + '<label class="btn-secondary file-btn" for="imp-txt">'+ic('file','sm')+' 영수증·내역 파일 가져오기<input type="file" id="imp-txt" class="sr-only" accept=".txt,.csv,.tsv,text/plain,text/csv" data-file="txt"></label>'
    + '<label class="lbl" for="imp-paste">또는 주문내역을 복사해서 붙여넣기</label><textarea class="field" id="imp-paste" rows="4" data-bind="ui.importText" placeholder="쇼핑앱 주문목록의 글자를 복사해 붙여넣어도 돼요.">'+esc(S.ui.importText||'')+'</textarea>'
    + (files.length ? '<p class="hint">이미지 '+files.length+'장을 골랐어요.</p>' : '')
@@ -869,7 +1167,7 @@ function aiError(e){
   if(c==='refused') return '이 부탁은 도와드리기 어려워요. 다르게 말해 주세요.';
   if(c==='invalid_json' || c==='empty_completion') return '답을 정리하지 못했어요. 다시 시도해 주세요.';
   if(c==='prompt_too_large') return '자료가 너무 길어요. 일부만 넣어 주세요.';
-  if(c==='images_unavailable' || c==='image_rejected') return '이 이미지는 읽을 수 없어요. 다른 파일을 골라 주세요.';
+  if(c==='images_unavailable' || c==='image_rejected' || c==='decode') return '이 사진은 읽을 수 없어요. 다른 사진을 골라 주세요.';
   return '연결이 잠시 끊겼어요. 다시 시도해 주세요.';
 }
 function aiMissing(){ toast(aiState==='checking' ? 'AI를 준비하고 있어요. 잠시 뒤 다시 눌러 주세요.' : '지금은 AI를 쓸 수 없어요.'); }
@@ -878,29 +1176,47 @@ function profileText(){
   if(p.likes.length) L.push('중요하게 보는 것: '+p.likes.join(', '));
   if(p.avoid) L.push('피하고 싶은 것: '+p.avoid);
   var who = [p.age, p.job].filter(Boolean).join(', '); if(who) L.push('나이대·하는 일: '+who);
-  if(p.size) L.push('체형·사이즈: '+p.size);
+  if(p.size) L.push('스타일 메모: '+p.size);
   if(p.memberships.length) L.push('쇼핑 멤버십: '+p.memberships.join(', '));
   if(p.notes.length) L.push('지난 쇼핑에서 기억할 점: '+p.notes.slice(-8).join(' / '));
   var recent = S.purchases.slice(0,6).map(function(x){ return x.name; }).filter(Boolean); if(recent.length) L.push('최근 구매: '+recent.join(', '));
   var means = w.cards.map(function(c){ return c.name; }).concat(w.pays.map(function(x){ return x.name; })).filter(Boolean); if(means.length) L.push('가진 결제수단: '+means.join(', '));
   return L.length ? L.map(function(x){ return '- '+x; }).join('\n') : '- 아직 등록한 정보 없음';
 }
-function str(v, d){ return typeof v==='string' && v.trim() ? v.trim() : d; }
+function bodyText(){
+  var b = S.closet.body, L = [];
+  if(b.height) L.push('키 '+b.height+'cm'); if(b.weight) L.push('몸무게 '+b.weight+'kg');
+  if(b.top) L.push('상의 '+b.top); if(b.bottom) L.push('하의 '+b.bottom); if(b.shoes) L.push('신발 '+b.shoes+'mm');
+  var f = FITS.filter(function(x){ return x[0]===b.fit; })[0]; if(f) L.push(f[1]+' 핏 선호');
+  if(b.memo) L.push('메모: '+b.memo);
+  var a = b.analysis;
+  if(a){ if(a.shape) L.push('체형: '+a.shape); if(a.proportion) L.push('비율: '+a.proportion); if(a.fitTips.length) L.push('핏 팁: '+a.fitTips.join(' / ')); if(a.colors.length) L.push('어울리는 색: '+a.colors.join(', ')); }
+  return L.length ? L.join(', ') : '알려준 정보 없음';
+}
+function closetText(){
+  var items = S.closet.items;
+  if(!items.length) return '비어 있음';
+  return items.slice(0,60).map(function(w){ return w.id+' | '+(CAT_LABEL[w.cat]||'기타')+' | '+w.name+(w.color?' | '+w.color:'')+(w.style?' | '+w.style:''); }).join('\n');
+}
+function salesText(cat){
+  return upcomingSales(cat).map(function(s){ return '- '+s.name+': '+(s.sure ? s.start+' ~ '+s.end+' (확정)' : s.when+' (예상, '+s.note+')')+' · '+s.where; }).join('\n') || '- 없음';
+}
 function normClarify(j){
   j = j && typeof j==='object' ? j : {};
-  var qs = Array.isArray(j.questions) ? j.questions.slice(0,2).map(function(q){ q = q||{}; return {q:str(q.q,''), options:Array.isArray(q.options) ? q.options.map(function(o){ return String(o).trim(); }).filter(Boolean).slice(0,3) : []}; }).filter(function(q){ return q.q && q.options.length; }) : [];
-  return {headline:str(j.headline,'부탁을 도와드릴게요.'), message:str(j.message,'조건에 맞춰 찾아볼게요.'), understood:Array.isArray(j.understood) ? j.understood.map(String).filter(Boolean).slice(0,5) : [], budgetMax:num(j.budgetMax)||null, deadline:str(j.deadline,''), channel:['online','delivery','offline'].indexOf(j.channel)>=0 ? j.channel : 'online', questions:qs};
+  var qs = Array.isArray(j.questions) ? j.questions.slice(0,3).map(function(q){ q = q||{}; return {q:str(q.q,''), options:strList(q.options,3)}; }).filter(function(q){ return q.q && q.options.length; }) : [];
+  return {headline:str(j.headline,'부탁을 도와드릴게요.'), intent:str(j.intent,''), message:str(j.message,'조건에 맞춰 찾아볼게요.'), understood:strList(j.understood,5), budgetMax:num(j.budgetMax)||null, deadline:str(j.deadline,''), channel:['online','delivery','offline'].indexOf(j.channel)>=0 ? j.channel : 'online', category:REQ_CATS.indexOf(j.category)>=0 ? j.category : 'etc', questions:qs};
 }
 function runClarify(r){
   if(!r) return;
   if(!sample){ aiMissing(); return; }
   S.ui.clarifyErr = ''; S.ui.clarifyBusy = r.id; render();
-  var prompt = "너는 한국 사용자의 쇼핑 비서 '곁'이다. 오늘은 "+TODAY+"("+WEEKDAY+")이다.\n"
-   + "사용자의 부탁을 이해하고, 추천을 크게 바꿀 조건만 최대 2개 짧게 물어본다. 부탁이나 사용자 정보에 이미 있는 것은 묻지 않는다. 충분하면 questions는 빈 배열로 둔다.\n"
-   + "각 질문에는 바로 고를 수 있는 짧은 선택지를 2~3개 준다. headline은 '여행 준비를 도와드릴게요.'처럼 부탁을 받아주는 한 문장이다.\n"
-   + "channel은 온라인 쇼핑이면 online, 음식 배달이면 delivery, 매장 방문이 맞으면 offline이다. 건강 관련 부탁이면 진단·치료 조언 없이 용품만 다룬다.\n\n"
-   + "[사용자 정보]\n"+profileText()+"\n\n[부탁]\n"+r.text+"\n\n"
-   + 'JSON 하나만 답한다. 형식 예:\n{"headline":"여행 준비를 도와드릴게요.","message":"예산과 여행 일정에 맞춰 찾아볼게요.","understood":["다음 주 여행","15만 원 이하","가벼움 우선"],"budgetMax":150000,"deadline":"다음 주 여행 전","channel":"online","questions":[{"q":"기내용으로 쓰실 건가요?","options":["기내용, 가벼움 우선","수납이 더 중요해"]}]}';
+  var prompt = "너는 한국 사용자의 개인 쇼퍼 '곁'이다. 오늘은 "+TODAY+"("+WEEKDAY+")이다.\n"
+   + "부탁의 진짜 목적(왜, 어떤 상황에서, 언제까지, 누가 쓰는지)을 먼저 파악해 intent에 한 줄로 쓴다. 그리고 추천을 크게 바꿀 조건만 최대 3개 짧게 묻는다. 부탁, 사용자 정보, 옷장에 이미 있는 것은 묻지 않는다. 충분하면 questions는 빈 배열로 둔다.\n"
+   + "각 질문에는 바로 고를 수 있는 짧은 선택지를 2~3개 준다. headline은 '하객룩을 같이 골라볼게요.'처럼 부탁을 받아주는 한 문장이다.\n"
+   + "옷·신발·가방·액세서리 부탁이면 category를 fashion으로 하고, 옷장 목록에서 함께 입을 아이템을 찾아본다. 맞춰 입을 아이템이 옷장에 없으면 '혹시 ○○(색) ○○ 가지고 계세요?'를 질문 하나로 넣고 선택지는 '있어요', '없어요'로 한다. 체형 정보가 없고 사이즈가 중요하면 평소 사이즈를 묻는다.\n"
+   + "category는 fashion, beauty, digital, home, food, health, baby, sports, travel, etc 중 하나다. channel은 온라인 쇼핑이면 online, 음식 배달이면 delivery, 매장 방문이 맞으면 offline이다. 건강 관련 부탁이면 진단·치료 조언 없이 용품만 다룬다.\n\n"
+   + "[사용자 정보]\n"+profileText()+"\n\n[체형]\n"+bodyText()+"\n\n[옷장 목록 (id | 종류 | 이름 | 색 | 스타일)]\n"+closetText()+"\n\n[부탁]\n"+r.text+"\n\n"
+   + 'JSON 하나만 답한다. 형식 예:\n{"headline":"하객룩을 같이 골라볼게요.","intent":"11월 친구 결혼식에 하객으로 입을 단정한 옷, 가진 옷을 최대한 활용","message":"예산과 가진 옷에 맞춰 찾아볼게요.","understood":["11월 결혼식","20만 원 이하"],"budgetMax":200000,"deadline":"11월 중순 전","channel":"online","category":"fashion","questions":[{"q":"혹시 검정 슬랙스 가지고 계세요?","options":["있어요","없어요"]}]}';
   sample.json(prompt, {modelTier:'quick'}).then(function(j){
     r.clarify = normClarify(j); r.status = 'asking'; persist('requests');
   }).catch(function(e){
@@ -909,15 +1225,25 @@ function runClarify(r){
     S.ui.clarifyBusy = null; if(S.curId===r.id) render();
   });
 }
-function normRecs(j, ch){
+function validIds(list){ return (Array.isArray(list) ? list : []).filter(function(x){ return closetItem(typeof x==='string' ? x : x && x.id); }); }
+function normRecs(j, ch, cat){
   j = j && typeof j==='object' ? j : {};
-  var arr = Array.isArray(j.items) ? j.items : (Array.isArray(j) ? j : []);
+  var arr = Array.isArray(j.picks) ? j.picks : (Array.isArray(j.items) ? j.items : []);
   var items = arr.map(function(x){
     x = x || {};
     var price = Math.round(num(x.price));
-    return {name:str(x.name,''), brand:str(x.brand,''), tag:str(x.tag,''), reason:str(x.reason,''), why:str(x.why,''), specs:str(x.specs,''), price:price, est:price, shipping:Math.round(num(x.shipping)), where:str(x.where,'온라인'), channel:['online','delivery','offline'].indexOf(x.channel)>=0 ? x.channel : ch, searchQuery:str(x.searchQuery, str(x.name,'')), eta:str(x.eta,''), icon:ITEM_ICONS.indexOf(x.icon)>=0 ? x.icon : 'box'};
-  }).filter(function(x){ return x.name && x.price>0; }).slice(0,10);
-  return {conditions:str(j.conditions,''), channel:items[0] ? items[0].channel : ch, items:items};
+    return {name:str(x.name,''), brand:str(x.brand,''), tag:str(x.tag,''), reason:str(x.summary, str(x.reason,'')), why:str(x.why,''), pros:strList(x.pros,3), cons:strList(x.cons,3), fit:str(x.fit,''), popularity:str(x.popularity,''), check:strList(x.check,3), specs:str(x.specs,''), price:price, est:price, shipping:Math.round(num(x.shipping)), where:str(x.where,'온라인'), channel:['online','delivery','offline'].indexOf(x.channel)>=0 ? x.channel : ch, searchQuery:str(x.searchQuery, str(x.name,'')), eta:str(x.eta,''), icon:ITEM_ICONS.indexOf(x.icon)>=0 ? x.icon : 'box', coordi:validIds(x.coordi).map(function(c){ return typeof c==='string' ? {id:c, why:''} : {id:c.id, why:str(c.why,'')}; }).slice(0,3)};
+  }).filter(function(x){ return x.name && x.price>0; }).slice(0,3);
+  var ow = j.owned && typeof j.owned==='object' ? j.owned : {};
+  var ownedIds = validIds(ow.items).map(function(x){ return typeof x==='string' ? x : x.id; }).slice(0,4);
+  var c = j.cheaper && typeof j.cheaper==='object' ? j.cheaper : {};
+  var t = j.timing && typeof j.timing==='object' ? j.timing : {};
+  return {
+    intent:str(j.intent,''), conditions:str(j.conditions,''), category:REQ_CATS.indexOf(j.category)>=0 ? j.category : cat, channel:items[0] ? items[0].channel : ch, items:items,
+    owned:{enough:!!ow.enough && ownedIds.length>0, items:ownedIds, why:str(ow.why,'')},
+    cheaper:{show:!!c.show && !!str(c.where,''), where:str(c.where,''), what:str(c.what,''), price:str(c.price,''), delivery:str(c.delivery,''), why:str(c.why,''), caution:str(c.caution,''), searchQuery:str(c.searchQuery,'')},
+    timing:{advice:t.advice==='wait' ? 'wait' : 'now', event:str(t.event,''), when:str(t.when,''), expect:str(t.expect,''), why:str(t.why,'')}
+  };
 }
 function runRecommend(r){
   if(!r) return;
@@ -927,31 +1253,40 @@ function runRecommend(r){
   r.status = 'searching';
   S.ui.search = {phase:1, found:0, err:''};
   if(S.route==='searching') render(); else go('searching');
-  var c = r.clarify, ch = c ? c.channel : 'online';
+  var c = r.clarify, ch = c ? c.channel : 'online', cat = c ? c.category : 'etc';
   var ans = Object.keys(r.answers||{}).map(function(k){ var q = c && c.questions[k]; return q ? q.q+' → '+r.answers[k] : r.answers[k]; });
-  var prompt = "너는 한국 사용자의 쇼핑 비서 '곁'이다. 오늘은 "+TODAY+"이다.\n"
-   + "아래 부탁과 사용자 정보에 맞춰 한국에서 지금 살 수 있는 상품(음식 배달이면 메뉴)을 10개 고른다.\n규칙:\n"
-   + "- 실제로 판매되는 브랜드와 제품을 고른다. 정확한 모델명이 확실하지 않으면 브랜드와 제품 유형까지만 쓰고, 없는 모델을 지어내지 않는다.\n"
-   + "- price는 한국 온라인 판매가 기준 예상가(원, 정수)다. 예산이 있으면 넘지 않는다. shipping은 예상 배송비 또는 배달비(원)이고, 무료배송이 흔하면 0이다.\n"
-   + "- 1~3번은 성격이 다른 추천이다. 1번 균형 잡힌 선택, 2번 특정 장점이 뚜렷한 선택, 3번 더 경제적인 선택. tag에 그 성격을 짧게 쓴다(예: 균형 있는 선택, 더 가볍게, 더 경제적으로). 4~10번은 추가 대안이고 tag는 빈 문자열이다.\n"
-   + "- reason은 20자 안팎의 한 줄, why는 이 사용자에게 고른 이유 1~2문장이다.\n"
-   + "- where는 주로 사는 곳 하나다(쿠팡, 네이버쇼핑, 11번가, G마켓, 무신사, 올리브영, 브랜드 공식몰, 배달의민족, 쿠팡이츠, 요기요, 매장 중). channel은 online, delivery, offline 중 하나다.\n"
-   + "- searchQuery는 그 판매처에서 그대로 검색할 짧은 검색어, specs는 핵심 사양 한 줄, eta는 배송·도착 안내 한 줄이다.\n"
-   + "- icon은 luggage, food, device, clothing, homegoods, beauty, health, sports, gift, box 중 하나다.\n"
-   + "- 사용자가 피하고 싶은 것은 빼고, 건강 관련이면 진단이나 치료 효과를 말하지 않는다.\n\n"
-   + "[사용자 정보]\n"+profileText()+"\n\n[부탁]\n"+r.text+"\n\n[확인한 조건]\n"+(ans.length?ans.join('\n'):'추가 조건 없음')+(r.extra?"\n\n[더 알려준 것]\n"+r.extra:'')+"\n\n"
-   + 'JSON 하나만 답한다:\n{"conditions":"기내용 · 가벼움 우선 · 15만 원 이하","items":[{"name":"","brand":"","tag":"","reason":"","why":"","specs":"","price":0,"shipping":0,"where":"","channel":"online","searchQuery":"","eta":"","icon":"luggage"}]}';
-  sample.json(prompt, {modelTier:'default', cache:false, signal:ctl.signal, onText:function(u){
+  var prompt = "너는 한국 사용자의 개인 쇼퍼 '곁'이다. 똑똑한 비서처럼 부탁의 진짜 목적을 파악해서 꼭 맞는 상품을 2~3개만 골라 자세히 설명한다. 오늘은 "+TODAY+"이다.\n\n"
+   + "[고르는 원칙]\n"
+   + "- 목적·상황·기한·예산·쓰는 사람을 intent에 정리하고, 그 목적에 가장 잘 맞는 것만 고른다. 많이 보여주지 말고 2~3개로 좁힌다. 1번이 가장 추천하는 것이다.\n"
+   + "- 쿠팡·네이버쇼핑·무신사·올리브영·11번가 등에서 평점이 높고, 리뷰가 많고, 많이 팔리는 것으로 알려진 제품을 우선한다. 세 가지를 함께 만족하는 스테디셀러를 먼저 본다. popularity에 그 근거를 아는 범위에서 쓰되, 평점·리뷰 수·판매량 숫자는 지어내지 않는다.\n"
+   + "- 실제로 판매되는 브랜드와 제품만 고른다. 정확한 모델명이 확실하지 않으면 브랜드와 제품 유형까지만 쓴다.\n"
+   + "- price는 한국 온라인 판매가 기준 예상가(원, 정수), shipping은 예상 배송비(원)다. 예산을 넘지 않는다.\n"
+   + "- 옷장 목록을 먼저 본다. 이미 가진 것으로 부탁이 해결되면 owned.enough를 true로 하고 어떤 아이템으로 되는지 id와 이유를 쓴다. 각 추천에는 옷장에서 함께 입을 아이템 id를 coordi에 최대 3개, 이유와 함께 넣는다. 목록에 없는 id는 쓰지 않는다. 가진 것과 겹치는 물건은 추천하지 않는다.\n"
+   + "- 옷·신발이면 fit에 사용자의 키·사이즈·체형을 근거로 추천 사이즈와 핏을 구체적으로 쓴다.\n"
+   + "- summary는 20자 안팎의 한 줄, why는 이 사용자에게 맞는 이유 2~3문장, pros·cons는 각각 2~3개, check는 사기 전에 확인할 것 2~3개다. tag는 '균형 있는 선택', '더 오래 입는', '더 경제적으로'처럼 각 추천의 성격이다.\n"
+   + "- where는 주로 사는 곳 하나(쿠팡, 네이버쇼핑, 무신사, 29CM, 올리브영, 11번가, G마켓, 브랜드 공식몰, 배달의민족, 쿠팡이츠, 매장 중), channel은 online, delivery, offline 중 하나, searchQuery는 판매처에서 그대로 검색할 짧은 검색어, eta는 배송 안내 한 줄, icon은 "+ITEM_ICONS.join(', ')+" 중 하나다.\n\n"
+   + "[더 싼 곳 제안: cheaper]\n"
+   + "- 테무·알리익스프레스에 같은 기능의 훨씬 싼 대안이 있고 사용자에게 손해가 적을 때만 show를 true로 한다. 쿠팡이 가격과 배송 모두 유리하면 쿠팡을 제안해도 된다. 아니면 show는 false다.\n"
+   + "- 기준: 브랜드·정품이 중요하지 않은 소모품·잡화·액세서리·간단한 도구인가, 해외 배송 7~15일을 기다려도 기한에 맞는가, 아이 용품·전기 제품·화장품·식품처럼 안전 인증이 중요한 품목인가(이때는 제안하지 않음), 사이즈 편차와 반품이 번거로운가.\n"
+   + "- why에는 가격 차이, 배송 기간, 품질 편차, 반품, 해외직구 면세 한도 같은 점을 구체적으로 쓰고, caution에 주의할 점을 쓴다.\n\n"
+   + "[사는 시기: timing]\n"
+   + "- 아래 세일 일정만 날짜 근거로 쓴다. 기한 안에 있고 할인 폭이 의미 있으면 advice를 wait로, 기한이 급하거나 기다릴 이유가 약하면 now로 한다. 예상 일정은 '예상'이라고 밝힌다. 목록에 없는 시기는 '보통'이라고 표현하고 날짜를 지어내지 않는다.\n\n"
+   + "[세일 일정 ("+TODAY+" 기준)]\n"+salesText(cat)+"\n\n"
+   + "[사용자 정보]\n"+profileText()+"\n\n[체형]\n"+bodyText()+"\n\n[옷장 목록 (id | 종류 | 이름 | 색 | 스타일)]\n"+closetText()+"\n\n"
+   + "[부탁]\n"+r.text+"\n\n[확인한 조건]\n"+(ans.length?ans.join('\n'):'추가 조건 없음')+(r.extra?"\n\n[더 알려준 것]\n"+r.extra:'')+"\n\n"
+   + 'JSON 하나만 답한다:\n{"intent":"","conditions":"짧은 조건 요약","category":"'+cat+'","owned":{"enough":false,"items":[],"why":""},"picks":[{"name":"","brand":"","tag":"","summary":"","why":"","pros":[],"cons":[],"fit":"","popularity":"","check":[],"specs":"","price":0,"shipping":0,"where":"","channel":"online","searchQuery":"","eta":"","icon":"box","coordi":[{"id":"","why":""}]}],"cheaper":{"show":false,"where":"","what":"","price":"","delivery":"","why":"","caution":"","searchQuery":""},"timing":{"advice":"now","event":"","when":"","expect":"","why":""}}';
+  sample.json(prompt, {modelTier:'complex', cache:false, signal:ctl.signal, onText:function(u){
     if(ctl!==searchCtl) return;
-    var s = S.ui.search, n = (u.text.match(/"name"\s*:/g)||[]).length, changed = false;
+    var s = S.ui.search, n = Math.min(3, (u.text.match(/"summary"\s*:/g)||[]).length), changed = false;
     if(s.phase===1){ s.phase = 2; changed = true; }
     if(n!==s.found){ s.found = n; changed = true; }
     if(changed && S.route==='searching') render();
   }}).then(function(j){
     if(ctl!==searchCtl) return;
-    var rec = normRecs(j, ch);
+    var rec = normRecs(j, ch, cat);
     if(!rec.items.length) throw {code:'empty_completion'};
     if(!rec.conditions && c) rec.conditions = c.understood.join(' · ');
+    if(!rec.intent && c) rec.intent = c.intent;
     r.recs = rec; r.sel = 0; r.payKey = 'best'; r.status = 'recommended'; persist('requests');
     S.ui.search.phase = 3; S.ui.search.found = rec.items.length;
     if(S.route==='searching') render();
@@ -988,28 +1323,126 @@ function runImport(){
   if(!text && !files.length){ toast('가져올 내역을 붙여넣거나 파일을 골라 주세요.'); return; }
   if(!sample){ aiMissing(); return; }
   S.ui.importBusy = true; S.ui.importErr = ''; S.ui.importOpen = true; render();
-  var prompt = '아래는 사용자의 쇼핑 주문내역 또는 영수증이다'+(files.length?'(첨부 이미지 포함)':'')+'. 상품 구매 기록과 쇼핑 취향 단서를 뽑는다. 주소, 전화번호, 카드번호, 주문번호 같은 개인정보는 버린다. purchases는 최대 30개, notes는 최대 5개의 짧은 문장이다. 날짜는 YYYY-MM-DD, 모르면 빈 문자열이다.\n'
-   + 'JSON 하나만 답한다:\n{"purchases":[{"name":"상품명","price":12000,"date":"2026-09-30","store":"쿠팡"}],"notes":["가벼운 제품을 자주 산다"]}\n\n[자료]\n'+(text ? text.slice(0,12000) : '첨부 이미지만 있음');
-  var o = {modelTier:'default'}; if(files.length) o.images = files;
-  sample.json(prompt, o).then(function(j){
+  var prompt = '아래는 사용자의 쇼핑 주문내역 또는 영수증이다'+(files.length?'(첨부 이미지 포함)':'')+'. 상품 구매 기록과 쇼핑 취향 단서를 뽑는다. 주소, 전화번호, 카드번호, 주문번호 같은 개인정보는 버린다. purchases는 최대 30개, notes는 최대 5개의 짧은 문장이다. 날짜는 YYYY-MM-DD, 모르면 빈 문자열이다. 옷·신발·가방·액세서리면 fashion을 true로 한다.\n'
+   + 'JSON 하나만 답한다:\n{"purchases":[{"name":"상품명","price":12000,"date":"2026-09-30","store":"쿠팡","fashion":false}],"notes":["가벼운 제품을 자주 산다"]}\n\n[자료]\n'+(text ? text.slice(0,12000) : '첨부 이미지만 있음');
+  var o = {modelTier:'default'};
+  var prep = files.length ? Promise.all(files.map(function(f){ return shrink(f, 1600).then(function(s){ return s.blob; }); })) : Promise.resolve(null);
+  prep.then(function(blobs){ if(blobs) o.images = blobs; return sample.json(prompt, o); }).then(function(j){
     j = j && typeof j==='object' ? j : {};
     S.ui.importResult = {
-      purchases:(Array.isArray(j.purchases) ? j.purchases : []).map(function(p){ p = p||{}; return {name:str(p.name,''), price:Math.round(num(p.price)), date:str(p.date,''), store:str(p.store,''), pick:true}; }).filter(function(p){ return p.name; }).slice(0,30),
+      purchases:(Array.isArray(j.purchases) ? j.purchases : []).map(function(p){ p = p||{}; return {name:str(p.name,''), price:Math.round(num(p.price)), date:str(p.date,''), store:str(p.store,''), fashion:!!p.fashion, pick:true}; }).filter(function(p){ return p.name; }).slice(0,30),
       notes:(Array.isArray(j.notes) ? j.notes : []).map(function(n){ return {text:String(n).trim(), pick:true}; }).filter(function(n){ return n.text; }).slice(0,5)
     };
   }).catch(function(e){ S.ui.importErr = aiError(e); }).then(function(){ S.ui.importBusy = false; render(); });
+}
+function normWardrobe(j, shots){
+  j = j && typeof j==='object' ? j : {};
+  var cats = CATS.map(function(c){ return c[0]; });
+  return (Array.isArray(j.items) ? j.items : []).map(function(x){
+    x = x || {};
+    var shot = shots && shots[Math.floor(num(x.photo))] || (shots && shots.length===1 ? shots[0] : null);
+    var box = Array.isArray(x.box) && x.box.length===4 ? x.box.map(num) : null;
+    return {name:str(x.name,''), cat:cats.indexOf(x.cat)>=0 ? x.cat : 'etc', color:str(x.color,''), style:str(x.style,''), season:str(x.season,''), photo:shot && shot.id ? {id:shot.id, r:shot.r} : null, box:box, pick:true};
+  }).filter(function(x){ return x.name; }).slice(0,20);
+}
+var WARDROBE_FIELDS = 'cat는 top, bottom, outer, dress, shoes, bag, acc, etc 중 하나, name은 "네이비 울 크루넥 니트"처럼 색과 소재를 담은 이름, color, style(캐주얼, 미니멀, 포멀, 스포티, 스트릿 등), season(사계절, 봄가을, 여름, 겨울)이다.';
+function wqPhotos(files, ctx){
+  if(!sample || !S.ui.imgOk){ toast('이 화면에서는 AI가 사진을 읽을 수 없어요. 말로 적어 주세요.'); return; }
+  files = files.slice(0, S.ui.imgMax || 4);
+  S.ui.wq = {ctx:ctx, busy:true, msg:'사진을 정리하는 중'}; render();
+  var shots;
+  Promise.all(files.map(function(f){ return shrink(f); })).then(function(list){
+    shots = list;
+    return Promise.all(shots.map(function(s){ return savePhoto(s.blob).then(function(id){ s.id = id; }); }));
+  }).then(function(){
+    S.ui.wq.msg = 'AI가 옷을 하나씩 찾는 중'; render();
+    var prompt = '첨부한 사진 '+shots.length+'장은 사용자가 가진 옷을 찍은 것이다(입은 모습, 바닥에 펼친 것, 옷걸이에 건 것 등). 사진마다 보이는 옷·신발·가방·액세서리를 하나씩 찾는다. 같은 물건을 두 번 세지 않는다. 사람의 얼굴이나 몸은 묘사하지 않는다.\n'
+     + '각 항목: photo는 몇 번째 사진인지(0부터), box는 사진 안 위치 [x, y, 너비, 높이](0~1 비율), '+WARDROBE_FIELDS+'\n'
+     + 'JSON 하나만 답한다:\n{"items":[{"photo":0,"box":[0.25,0.1,0.5,0.4],"cat":"top","name":"","color":"","style":"","season":""}]}';
+    return sample.json(prompt, {modelTier:'default', images:shots.map(function(s){ return s.blob; })});
+  }).then(function(j){
+    var items = normWardrobe(j, shots);
+    shots.forEach(function(s){ if(s.id && !items.some(function(x){ return x.photo && x.photo.id===s.id; })) dropPhoto(s.id); });
+    S.ui.wq = items.length ? {ctx:ctx, result:items} : {ctx:ctx, err:'사진에서 옷을 찾지 못했어요. 옷이 잘 보이게 다시 찍거나 말로 적어 주세요.'};
+  }).catch(function(e){
+    if(shots) shots.forEach(function(s){ if(s.id) dropPhoto(s.id); });
+    S.ui.wq = {ctx:ctx, err:aiError(e)};
+  }).then(function(){ render(); });
+}
+function wqText(ctx){
+  var t = String(S.ui.wqText||'').trim();
+  if(!t){ toast('가진 옷을 적어 주세요. 예: 검정 슬랙스, 흰 셔츠'); return; }
+  var simple = function(){ return t.split(/[,\n]+/).map(function(s){ return {name:s.trim(), cat:'etc', color:'', style:'', season:'', photo:null, box:null, pick:true}; }).filter(function(x){ return x.name; }); };
+  if(!sample){ S.ui.wq = {ctx:ctx, result:simple()}; S.ui.wqText = ''; render(); return; }
+  S.ui.wq = {ctx:ctx, busy:true, msg:'적어 준 옷을 나누는 중'}; render();
+  var prompt = '사용자가 가진 옷·신발·가방·액세서리를 말로 적었다. 항목별로 나눈다. '+WARDROBE_FIELDS+' 개수가 적혀 있으면(예: 흰 셔츠 2개) 하나로 쓰고 이름에 개수를 붙인다.\n'
+   + 'JSON 하나만 답한다:\n{"items":[{"cat":"bottom","name":"검정 슬랙스","color":"검정","style":"미니멀","season":"사계절"}]}\n\n[적은 내용]\n'+t.slice(0,2000);
+  sample.json(prompt, {modelTier:'quick'}).then(function(j){
+    var items = normWardrobe(j, null);
+    S.ui.wq = {ctx:ctx, result:items.length ? items : simple()}; S.ui.wqText = '';
+  }).catch(function(){ S.ui.wq = {ctx:ctx, result:simple()}; S.ui.wqText = ''; }).then(function(){ render(); });
+}
+function runBody(file){
+  if(!sample){ aiMissing(); return; }
+  var b = S.closet.body;
+  S.ui.bodyBusy = true; S.ui.bodyErr = ''; render();
+  var shot = null;
+  var prep = file ? shrink(file, 1400).then(function(s){ shot = s; if(b.keepPhoto!==false) return savePhoto(s.blob).then(function(id){ s.id = id; }); }) : Promise.resolve();
+  prep.then(function(){
+    var prompt = '사용자가 옷을 고를 때 쓰려고 직접 알려준 신체 정보'+(shot?'와 본인 전신 사진':'')+'이다. 사이즈와 핏 조언에 필요한 체형 특징만 중립적이고 존중하는 말로 정리한다. 외모나 체중을 평가하지 않고 다이어트 조언도 하지 않는다. 얼굴은 묘사하지 않는다.\n'
+     + '[알려준 정보] '+bodyText()+'\n'
+     + 'JSON 하나만 답한다:\n{"shape":"어깨가 넓고 상하체 균형이 좋은 편","proportion":"다리가 긴 편","fitTips":["상의는 어깨선이 맞는 레귤러핏","바지는 일자핏"],"colors":["네이비","차콜"],"avoid":["어깨가 과하게 강조되는 패드"]}';
+    var o = {modelTier:'default'}; if(shot) o.images = [shot.blob];
+    return sample.json(prompt, o);
+  }).then(function(j){
+    j = j && typeof j==='object' ? j : {};
+    if(shot && shot.id){ var old = b.photo && b.photo.id; b.photo = {id:shot.id, r:shot.r}; if(old && old!==shot.id) dropPhoto(old); }
+    b.analysis = {shape:str(j.shape,''), proportion:str(j.proportion,''), fitTips:strList(j.fitTips,4), colors:strList(j.colors,4), avoid:strList(j.avoid,3)};
+    b.at = TODAY; S.ui.bodyOpen = false; persist('closet');
+    toast('체형을 정리했어요. 추천과 입혀보기에 반영할게요.');
+  }).catch(function(e){
+    if(shot && shot.id && !(b.photo && b.photo.id===shot.id)) dropPhoto(shot.id);
+    S.ui.bodyErr = aiError(e);
+  }).then(function(){ S.ui.bodyBusy = false; render(); });
+}
+function runTryon(){
+  var r = cur(), it = curItem(); if(!it) return;
+  if(!sample){ aiMissing(); return; }
+  S.ui.tryonBusy = it.name; S.ui.tryonErr = ''; render();
+  var b = S.closet.body;
+  var ids = (it.coordi||[]).map(function(x){ return x.id; });
+  var photos = [];
+  if(S.ui.imgOk){
+    if(b.photo && b.photo.id) photos.push({kind:'body', id:b.photo.id});
+    ids.forEach(function(id){ var w = closetItem(id); if(w && w.photo && w.photo.id && !photos.some(function(p){ return p.id===w.photo.id; })) photos.push({kind:'item', id:w.photo.id, name:w.name}); });
+    photos = photos.slice(0, S.ui.imgMax || 4);
+  }
+  Promise.all(photos.map(function(p){ return fetchPhoto(p.id).then(function(bl){ p.blob = bl; return p; }); })).then(function(list){
+    var got = list.filter(function(p){ return p.blob; });
+    var desc = got.map(function(p,i){ return (i+1)+'번 사진: '+(p.kind==='body' ? '사용자 본인 전신 사진' : '사용자가 가진 옷('+p.name+')'); }).join('\n');
+    var prompt = '사용자가 이 상품을 입었을 때를 예상해서 짧게 보고한다. 사진을 합성하지 않고, 체형·사이즈·가진 옷 정보로 판단한다. 외모나 체중을 평가하지 않는다.\n'
+     + '[상품] '+it.name+(it.specs?' · '+it.specs:'')+(it.fit?' · 참고: '+it.fit:'')+'\n[체형] '+bodyText()+'\n[옷장 목록 (id | 종류 | 이름 | 색 | 스타일)]\n'+closetText()+'\n'+(desc?'[첨부 사진]\n'+desc+'\n':'')
+     + 'verdict는 한 줄 결론, size는 추천 사이즈와 근거, fit은 어깨·기장·품 같은 맞음새 2~4개, look은 전체 인상 1~2문장, coordi는 함께 입을 옷장 아이템 id 최대 3개(목록에 있는 id만), risk는 주의할 점 한 줄이다.\n'
+     + 'JSON 하나만 답한다:\n{"verdict":"","size":"","fit":[],"look":"","coordi":[{"id":"","why":""}],"risk":""}';
+    var o = {modelTier:'default'}; if(got.length) o.images = got.map(function(p){ return p.blob; });
+    return sample.json(prompt, o);
+  }).then(function(j){
+    j = j && typeof j==='object' ? j : {};
+    it.tryon = {verdict:str(j.verdict,''), size:str(j.size,''), fit:strList(j.fit,4), look:str(j.look,''), coordi:validIds(j.coordi).map(function(c){ return {id:typeof c==='string'?c:c.id}; }).slice(0,3), risk:str(j.risk,'')};
+    persist('requests');
+  }).catch(function(e){ S.ui.tryonErr = aiError(e); }).then(function(){ S.ui.tryonBusy = null; render(); });
 }
 
 /* ---------- actions ---------- */
 function finishOnb(){ S.app.onboarded = true; persist('app'); S.stack = []; S.route = 'home'; render(); window.scrollTo(0,0); }
 function twoStep(key, fn){ if(S.ui.confirm===key){ S.ui.confirm = null; fn(); } else { S.ui.confirm = key; } render(); }
-function rootOf(k){ if(k==='app') return S.app; if(k==='ui') return S.ui; if(k==='cur') return cur(); if(k==='item') return curItem(); return null; }
+function rootOf(k){ if(k==='app') return S.app; if(k==='ui') return S.ui; if(k==='cur') return cur(); if(k==='item') return curItem(); if(k==='closet') return S.closet; if(k==='wsel') return closetItem(S.ui.wsel); return null; }
 function setPath(path, v){
   var parts = path.split('.'), o = rootOf(parts[0]); if(!o) return;
   for(var i=1;i<parts.length-1;i++){ var k = parts[i]; if(o[k]==null || typeof o[k]!=='object') o[k] = {}; o = o[k]; }
   o[parts[parts.length-1]] = v;
 }
-function afterSet(path){ var r = path.split('.')[0]; if(r==='app') persist('app'); else if(r==='cur' || r==='item') persist('requests'); }
+function afterSet(path){ var r = path.split('.')[0]; if(r==='app') persist('app'); else if(r==='cur' || r==='item') persist('requests'); else if(r==='closet' || r==='wsel') persist('closet'); }
 function doAsk(){
   var t = String(S.ui.ask||'').trim();
   if(!t){ toast('무엇을 도와드릴지 적어 주세요.'); var a = document.getElementById('ask'); if(a) a.focus(); return; }
@@ -1029,8 +1462,13 @@ function openReq(id){
 }
 function savePurchase(skip){
   var r = cur(), it = curItem(); if(!it) return;
-  var o = chosen(r, it), fb = r.fb || {};
-  var p = {id:uid(), date:TODAY, name:it.name, where:it.where, price:payNow(o), method:methodLabel(o)+(o.months?' · '+o.months+'개월 무이자':''), saved:Math.max(0, o.base-o.real), icon:it.icon, source:'app', feeling:skip?'':(fb.feeling||''), memo:skip?'':String(fb.memo||'').trim(), gift:!!fb.gift, returned:!!fb.returned};
+  var o = chosen(r, it), fb = r.fb || {}, fashion = r.recs && r.recs.category==='fashion';
+  var p = {id:uid(), date:TODAY, name:it.name, where:it.where, price:payNow(o), method:methodLabel(o)+(o.months?' · '+o.months+'개월 무이자':''), saved:Math.max(0, o.base-o.real), icon:it.icon, cat:r.recs ? r.recs.category : '', source:'app', feeling:skip?'':(fb.feeling||''), memo:skip?'':String(fb.memo||'').trim(), gift:!!fb.gift, returned:!!fb.returned};
+  if(fashion && fb.toCloset!==false && !fb.gift && !fb.returned){
+    var guess = {clothing:'top', pants:'bottom', shoe:'shoes', bag:'bag', gem:'acc'}[it.icon] || 'etc';
+    S.closet.items.push({id:'w'+uid(), name:it.name, cat:guess, color:'', style:'', season:'', photo:null, box:null, source:'purchase', added:TODAY});
+    p.inCloset = true; persist('closet');
+  }
   S.purchases.unshift(p);
   if(!skip && !p.gift){
     var notes = S.app.profile.notes;
@@ -1040,13 +1478,16 @@ function savePurchase(skip){
   }
   r.status = 'done'; persist('requests'); persist('purchases');
   S.stack = []; S.route = 'home'; render(); window.scrollTo(0,0);
-  toast(skip ? '구매를 기록했어요.' : '기억했어요. 다음 추천에 반영할게요.');
+  toast(skip ? '구매를 기록했어요.' : (p.inCloset ? '기억했어요. 옷장에도 넣었어요.' : '기억했어요. 다음 추천에 반영할게요.'));
 }
 function onFile(el){
-  S.ui.importOpen = true;
   var files = Array.prototype.slice.call(el.files||[]);
   if(!files.length) return;
-  if(el.dataset.file==='img'){ S.ui.importFiles = files.slice(0, 4); render(); return; }
+  var kind = el.dataset.file;
+  if(kind==='wq'){ wqPhotos(files, el.dataset.ctx || 'closet'); return; }
+  if(kind==='body'){ runBody(files[0]); return; }
+  S.ui.importOpen = true;
+  if(kind==='img'){ S.ui.importFiles = files.slice(0, S.ui.imgMax || 4); render(); return; }
   var f = files[0];
   if(f.size > 2000000){ toast('파일이 너무 커요. 2MB 이하로 골라 주세요.'); return; }
   var fr = new FileReader();
@@ -1069,17 +1510,43 @@ var A = {
   retryClarify:function(){ runClarify(cur()); },
   search:function(){ runRecommend(cur()); },
   stopSearch:function(){ if(searchCtl) searchCtl.abort(); },
-  changeCond:function(){ var r = cur(); if(r && r.clarify){ go('clarify'); } else { go('clarify'); runClarify(r); } },
-  detail:function(el){ var r = cur(); if(!r) return; r.sel = +el.dataset.i; r.payKey = 'best'; persist('requests'); go('detail'); },
+  changeCond:function(){ var r = cur(); go('clarify'); if(r && !r.clarify) runClarify(r); },
+  detail:function(el){ var r = cur(); if(!r) return; r.sel = +el.dataset.i; r.payKey = 'best'; S.ui.tryonErr = ''; persist('requests'); go('detail'); },
+  tryon:function(){ runTryon(); },
+  avoidBuy:function(){
+    var r = cur(); if(!r || !r.recs) return;
+    var top = r.recs.items[0], saved = top ? num(top.price)+num(top.shipping) : 0;
+    S.purchases.unshift({id:uid(), date:TODAY, name:r.text, where:'', price:0, method:'가진 것으로 해결', saved:saved, icon:'hanger', cat:r.recs.category, source:'avoided'});
+    r.status = 'done'; persist('purchases'); persist('requests');
+    S.stack = []; S.route = 'home'; render(); window.scrollTo(0,0);
+    toast('사지 않고 해결했어요. 약 '+won(saved)+'을 아꼈어요.');
+  },
   pickPay:function(el){ var r = cur(); if(!r) return; r.payKey = el.dataset.k; persist('requests'); render(); },
   prepare:function(){ var r = cur(), it = curItem(); if(!it) return; r.payKey = chosen(r, it).key; r.status = 'ready'; r.checks = {}; persist('requests'); go('ready'); },
   feel:function(el){ var r = cur(); r.fb = r.fb || {}; r.fb.feeling = r.fb.feeling===el.dataset.v ? '' : el.dataset.v; persist('requests'); render(); },
-  fbFlag:function(el){ var r = cur(); r.fb = r.fb || {}; r.fb[el.dataset.k] = !r.fb[el.dataset.k]; persist('requests'); render(); },
+  fbFlag:function(el){ var r = cur(); r.fb = r.fb || {}; var k = el.dataset.k; r.fb[k] = k==='toCloset' ? (r.fb[k]===false) : !r.fb[k]; persist('requests'); render(); },
   savePurchase:function(){ savePurchase(false); },
   savePurchaseSkip:function(){ savePurchase(true); },
   open:function(el){ openReq(el.dataset.id); },
   delReq:function(el){ var id = el.dataset.id; twoStep('req'+id, function(){ S.requests = S.requests.filter(function(r){ return r.id!==id; }); persist('requests'); }); },
   delBuy:function(el){ var id = el.dataset.id; twoStep('buy'+id, function(){ S.purchases = S.purchases.filter(function(p){ return p.id!==id; }); persist('purchases'); }); },
+  wqText:function(el){ wqText(el.dataset.ctx || 'closet'); },
+  wqCancel:function(){ var wq = S.ui.wq; if(wq && wq.result) wq.result.forEach(function(x){ if(x.photo) dropPhoto(x.photo.id); }); S.ui.wq = null; render(); },
+  wqSave:function(){
+    var wq = S.ui.wq; if(!wq || !wq.result) return;
+    var add = wq.result.filter(function(x){ return x.pick && String(x.name||'').trim(); });
+    add.forEach(function(x){ S.closet.items.push({id:'w'+uid(), name:String(x.name).trim(), cat:x.cat, color:x.color, style:x.style, season:x.season, photo:x.photo, box:x.box, source:x.photo?'photo':'text', added:TODAY}); });
+    wq.result.forEach(function(x){ if(!x.pick && x.photo) dropPhoto(x.photo.id); });
+    S.ui.wq = null; persist('closet'); render();
+    toast(add.length ? '옷장에 '+add.length+'개를 넣었어요.' : '아무것도 고르지 않았어요.');
+  },
+  wEdit:function(el){ S.ui.wsel = S.ui.wsel===el.dataset.id ? null : el.dataset.id; S.ui.confirm = null; render(); },
+  wDel:function(el){ var id = el.dataset.id; twoStep('w'+id, function(){ var w = closetItem(id); S.closet.items = S.closet.items.filter(function(x){ return x.id!==id; }); if(w && w.photo) dropPhoto(w.photo.id); S.ui.wsel = null; persist('closet'); }); },
+  fromPurchase:function(el){ var p = null; S.purchases.forEach(function(x){ if(x.id===el.dataset.id) p = x; }); if(!p) return; S.closet.items.push({id:'w'+uid(), name:p.name, cat:'etc', color:'', style:'', season:'', photo:null, box:null, source:'purchase', added:TODAY}); p.inCloset = true; persist('closet'); persist('purchases'); render(); toast('옷장에 넣었어요. 종류는 눌러서 고칠 수 있어요.'); },
+  bodyOpen:function(){ S.ui.bodyOpen = true; render(); },
+  bodyClose:function(){ S.ui.bodyOpen = false; persist('closet'); render(); },
+  bodyRun:function(){ runBody(null); },
+  bodyPhotoDel:function(){ twoStep('bodyphoto', function(){ var b = S.closet.body, id = b.photo && b.photo.id; b.photo = null; if(id) dropPhoto(id); persist('closet'); }); },
   editCard:function(el){ var i = +el.dataset.i; S.ui.editCard = S.ui.editCard===i ? null : i; S.ui.confirm = null; render(); },
   setVal:function(el){ setPath(el.dataset.path, el.dataset.v); afterSet(el.dataset.path); render(); },
   addCard:function(){
@@ -1098,13 +1565,18 @@ var A = {
   addPoint:function(){ S.app.wallet.points.push({name:'', balance:'', where:''}); persist('app'); render(); var x = document.getElementById('ptn'+(S.app.wallet.points.length-1)); if(x) x.focus(); },
   delPoint:function(el){ S.app.wallet.points.splice(+el.dataset.i, 1); persist('app'); render(); },
   delNote:function(el){ S.app.profile.notes.splice(+el.dataset.i, 1); persist('app'); render(); },
-  resetAll:function(){ twoStep('reset', function(){ S.app = freshApp(); S.requests = []; S.purchases = []; S.ui = {}; S.stack = []; S.route = 'welcome'; persist('app'); persist('requests'); persist('purchases'); }); },
+  resetAll:function(){ twoStep('reset', function(){
+    var ids = S.closet.items.map(function(w){ return w.photo && w.photo.id; }).concat([S.closet.body.photo && S.closet.body.photo.id]).filter(Boolean);
+    S.app = freshApp(); S.closet = freshCloset(); S.requests = []; S.purchases = []; S.ui = {}; S.stack = []; S.route = 'welcome';
+    if(assets) ids.forEach(function(id){ assets.delete(id).catch(function(){}); });
+    persist('app'); persist('closet'); persist('requests'); persist('purchases');
+  }); },
   manualGo:function(){
     var m = S.ui.manual || {};
     var name = String(m.name||'').trim(), price = num(m.price);
     if(!name || price<=0){ toast('상품 이름과 가격을 적어 주세요.'); return; }
-    var it = {name:name, brand:'', tag:'', reason:'직접 고른 상품', why:'', specs:'', price:price, est:price, shipping:num(m.shipping), where:String(m.where||'').trim() || '온라인', channel:m.channel||'online', searchQuery:name, eta:'', icon:'box', manual:true};
-    var r = {id:uid(), text:name+' 결제 비교', createdAt:Date.now(), status:'recommended', manual:true, clarify:null, answers:{}, extra:'', recs:{conditions:'직접 고른 상품', channel:it.channel, items:[it]}, sel:0, payKey:'best', checks:{}, fb:{}};
+    var it = {name:name, brand:'', tag:'', reason:'직접 고른 상품', why:'', pros:[], cons:[], fit:'', popularity:'', check:[], specs:'', price:price, est:price, shipping:num(m.shipping), where:String(m.where||'').trim() || '온라인', channel:m.channel||'online', searchQuery:name, eta:'', icon:'box', coordi:[], manual:true};
+    var r = {id:uid(), text:name+' 결제 비교', createdAt:Date.now(), status:'recommended', manual:true, clarify:null, answers:{}, extra:'', recs:{intent:'', conditions:'직접 고른 상품', category:'etc', channel:it.channel, items:[it], owned:{enough:false, items:[], why:''}, cheaper:{show:false}, timing:{}}, sel:0, payKey:'best', checks:{}, fb:{}};
     S.requests.unshift(r); S.requests = S.requests.slice(0,20); S.curId = r.id; S.ui.manual = null; persist('requests');
     go('pay', {replace:true});
   },
@@ -1113,7 +1585,7 @@ var A = {
   importSave:function(){
     var res = S.ui.importResult; if(!res) return;
     var ps = res.purchases.filter(function(p){ return p.pick; }), ns = res.notes.filter(function(n){ return n.pick; });
-    ps.forEach(function(p){ S.purchases.push({id:uid(), date:p.date, name:p.name, where:p.store, price:p.price, method:'', saved:0, icon:'box', source:'import'}); });
+    ps.forEach(function(p){ S.purchases.push({id:uid(), date:p.date, name:p.name, where:p.store, price:p.price, method:'', saved:0, icon:p.fashion?'clothing':'box', cat:p.fashion?'fashion':'', source:'import'}); });
     S.purchases.sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); });
     ns.forEach(function(n){ S.app.profile.notes.push(n.text); }); S.app.profile.notes = S.app.profile.notes.slice(-20);
     S.ui.importResult = null; S.ui.importText = ''; S.ui.importFiles = [];
@@ -1140,14 +1612,17 @@ $app.addEventListener('input', function(e){
 $app.addEventListener('change', function(e){
   var el = e.target;
   if(el.dataset.file){ onFile(el); el.value = ''; return; }
-  if(el.dataset.pick){ var res = S.ui.importResult; if(res){ (el.dataset.pick==='p' ? res.purchases : res.notes)[+el.dataset.i].pick = el.checked; } return; }
-  if(el.dataset.bind && (el.type==='checkbox' || el.tagName==='SELECT')){ setPath(el.dataset.bind, el.type==='checkbox' ? el.checked : el.value); afterSet(el.dataset.bind); if(el.hasAttribute('data-rerender')) render(); return; }
+  if(el.dataset.pick){
+    if(el.dataset.pick==='w'){ var wq = S.ui.wq; if(wq && wq.result) wq.result[+el.dataset.i].pick = el.checked; return; }
+    var res = S.ui.importResult; if(res){ (el.dataset.pick==='p' ? res.purchases : res.notes)[+el.dataset.i].pick = el.checked; } return;
+  }
+  if(el.dataset.bind && (el.type==='checkbox' || el.tagName==='SELECT')){ setPath(el.dataset.bind, el.type==='checkbox' ? el.checked : el.value); afterSet(el.dataset.bind); if(el.hasAttribute('data-rerender') || el.dataset.bind.indexOf('wsel.')===0) render(); return; }
   if(el.hasAttribute('data-recalc')) render();
 });
 
 /* ---------- boot ---------- */
 var cached = lsLoad();
-if(cached){ S.app = mergeApp(cached.app); S.requests = Array.isArray(cached.requests) ? cached.requests : []; S.purchases = Array.isArray(cached.purchases) ? cached.purchases : []; }
+if(cached){ S.app = mergeApp(cached.app); S.closet = mergeCloset(cached.closet); S.requests = Array.isArray(cached.requests) ? cached.requests : []; S.purchases = Array.isArray(cached.purchases) ? cached.purchases : []; }
 S.route = S.app.onboarded ? 'home' : 'welcome';
 render();
 
@@ -1156,19 +1631,21 @@ render();
   if(!c || typeof c.use!=='function'){ aiState = 'off'; render(); return; }
   c.use('sample').then(function(s){
     sample = s; aiState = s ? 'on' : 'off';
-    if(s && s.limits){ s.limits().then(function(l){ S.ui.imgOk = !!(l && l.images); S.ui.imgTypes = l && l.images ? l.images.mediaTypes : []; render(); }, function(){}); }
+    if(s && s.limits){ s.limits().then(function(l){ S.ui.imgOk = !!(l && l.images); S.ui.imgMax = l && l.images ? l.images.maxCount : 0; render(); }, function(){}); }
     render();
   });
+  c.use('assets').then(function(a){ assets = a; });
   Promise.all([c.use('user'), c.use('db')]).then(function(x){
     var u = x[0], d = x[1]; if(!u || !d) return null;
     return u.id().then(function(id){
       if(!id) return null;
       var base = 'data/users/'+id;
-      var r = {app:d.doc(base+'/app'), requests:d.doc(base+'/requests'), purchases:d.doc(base+'/purchases')};
-      return Promise.all([r.app.get(), r.requests.get(), r.purchases.get()]).then(function(g){
-        refs.app = r.app; refs.requests = r.requests; refs.purchases = r.purchases; storage = 'cloud';
+      var r = {app:d.doc(base+'/app'), closet:d.doc(base+'/closet'), requests:d.doc(base+'/requests'), purchases:d.doc(base+'/purchases')};
+      return Promise.all([r.app.get(), r.closet.get(), r.requests.get(), r.purchases.get()]).then(function(g){
+        refs.app = r.app; refs.closet = r.closet; refs.requests = r.requests; refs.purchases = r.purchases; storage = 'cloud';
         if(g[0].exists) S.app = mergeApp(g[0].data()); else if(cached) persist('app');
-        var q = g[1].exists && g[1].data(), p = g[2].exists && g[2].data();
+        if(g[1].exists) S.closet = mergeCloset(g[1].data()); else if(cached && cached.closet) persist('closet');
+        var q = g[2].exists && g[2].data(), p = g[3].exists && g[3].data();
         if(q && Array.isArray(q.list)) S.requests = clone(q.list); else if(S.requests.length) persist('requests');
         if(p && Array.isArray(p.list)) S.purchases = clone(p.list); else if(S.purchases.length) persist('purchases');
         lsSave();
