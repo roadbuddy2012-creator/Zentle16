@@ -184,8 +184,17 @@ details>summary::-webkit-details-marker{display:none}
 .pick{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
 .pick.first{border-color:var(--gold-2)}
 .pick-top{display:flex;gap:14px;align-items:flex-start}
-.rank{font-family:var(--font-display);font-size:26px;line-height:1;color:var(--gold);font-weight:500;letter-spacing:-.04em;flex:none;min-width:36px;white-space:nowrap;padding-top:2px}
 .tagline{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.thumb{position:relative;width:76px;height:76px;border-radius:18px;flex:none;display:grid;place-items:center;background:var(--gold-soft);color:var(--gold);border:1px solid var(--line)}
+.thumb.sw{background:var(--sw);background:linear-gradient(145deg,color-mix(in srgb,var(--sw) 72%,#fff) 0%,var(--sw) 70%);color:var(--sw-fg);border-color:transparent}
+.thumb .ic{width:34px;height:34px;stroke-width:1.3}
+.thumb .rk{position:absolute;left:8px;top:6px;font-family:var(--font-display);font-size:12.5px;font-weight:600;letter-spacing:-.02em;opacity:.85}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.acts .btn{min-height:40px;font-size:13.5px;padding:0 14px;border-radius:12px}
+.palette{display:flex;gap:6px;flex-wrap:wrap}
+.palette span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 4px;background:var(--surface)}
+.palette i{width:16px;height:16px;border-radius:50%;background:var(--sw);border:1px solid rgba(0,0,0,.12)}
+.allsites{display:flex;flex-direction:column;gap:8px}
 .pick-name{font-weight:600;font-size:16px;line-height:1.42}
 .pick-meta{font-size:12.5px;color:var(--muted);margin-top:2px}
 .price{font-size:21px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
@@ -580,8 +589,11 @@ function aiMsg(m, isLast){
     var sum = picks.reduce(function(s,p){ return s+num(p.price)+num(p.shipping); }, 0);
     h += '<div class="res-head"><p class="res-title">'+esc(m.title || (look ? '코디 제안' : '먼저 보여 드리는 베스트 '+picks.length))+'</p>'
       + (look ? '<p class="res-total">전체 약 <b>'+won(sum)+'</b> · 부위별로 골라 살 수 있어요</p>' : '')
-      + '<p class="res-src">'+ic('trend','xs')+'<span>쿠팡·네이버쇼핑·무신사·11번가·올리브영 등에서 평점·리뷰·판매량이 함께 높은 순 · AI가 아는 정보 기준이라 가격은 예상가예요</span></p></div>';
+      + '<p class="res-src">'+ic('trend','xs')+'<span>쿠팡·네이버쇼핑·무신사·11번가·올리브영 등에서 평점·리뷰·판매량이 함께 높은 순 · AI가 아는 정보 기준이라 가격은 예상가예요. 사진과 실제 가격은 각 상품의 보기 버튼에서 확인하세요</span></p></div>';
+    var pal = look ? picks.filter(function(p){ return hexOk(p.color); }) : [];
+    if(pal.length>1) h += '<div class="palette" aria-label="코디 색 조합">'+pal.map(function(p){ return '<span><i style="--sw:'+p.color+'"></i>'+esc(p.part || p.tag || '')+'</span>'; }).join('')+'</div>';
     picks.forEach(function(p,i){ h += pickCard(m, p, i); });
+    h += allSites(m.query || picks[0].searchQuery || picks[0].name, look || FASHION_ICONS.indexOf(picks[0].icon)>=0, picks[0].icon==='beauty');
   }
   var c = m.cheaper || {};
   if(c.show) h += note('tag', '더 싸게 사려면: '+c.where, [{sub:[c.what, c.price, c.delivery && '배송 '+c.delivery].filter(Boolean).join(' · ')}, c.why, c.caution && '주의: '+c.caution], [c.where+'에서 찾아보기', storeUrl(c.where, c.searchQuery || c.what || (picks[0] && picks[0].searchQuery) || '')]);
@@ -598,20 +610,42 @@ function aiMsg(m, isLast){
 function pickCard(m, p, i){
   var look = m.kind==='look', key = m.id+':'+i, open = (!look && i===0) || S.ui.open[key];
   var tags = [look ? p.part : '', p.tag].filter(Boolean);
-  var h = '<section class="pick'+(!look && i===0 ? ' first' : '')+'"><div class="pick-top"><span class="rank">'+pad(i+1)+'</span><div class="grow">'
+  var h = '<section class="pick'+(!look && i===0 ? ' first' : '')+'"><div class="pick-top">'+thumb(p, i)+'<div class="grow">'
     + (tags.length ? '<div class="tagline">'+tags.map(function(t){ return '<span class="pill">'+esc(t)+'</span>'; }).join('')+'</div>' : '')
     + '<p class="pick-name">'+esc(p.name)+'</p><p class="pick-meta">'+esc([p.brand, p.where].filter(Boolean).join(' · '))+'</p></div></div>'
     + '<p class="price">'+won(p.price)+(num(p.shipping) ? '<small>배송비 '+won(p.shipping)+'</small>' : '')+'</p>'
     + (p.why ? '<p class="why">'+esc(p.why)+'</p>' : '');
+  var st = storeOf(p.where), q = p.searchQuery || p.name;
+  h += '<div class="acts"><a class="btn btn-ink" href="'+storeUrl(p.where, q)+'" target="_blank" rel="noopener">'+esc(st)+'에서 보기'+ic('ext','xs')+'</a><a class="btn" href="'+photoUrl(q)+'" target="_blank" rel="noopener">'+ic('image','sm')+'사진 보기</a></div>';
   if(open){
     if((p.good||[]).length || (p.bad||[]).length) h += '<div class="pc"><ul class="plus">'+(p.good||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul><ul class="minus">'+(p.bad||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul></div>';
     if(p.signal) h += '<p class="signal">'+ic('trend','sm')+'<span>'+esc(p.signal)+'</span></p>';
     if(p.fit) h += '<p class="signal">'+ic('hanger','sm')+'<span>'+esc(p.fit)+'</span></p>';
     h += siteLinks(p, look);
   } else {
-    h += '<button class="more" data-act="openPick" data-k="'+key+'">좋은 점 · 아쉬운 점 · 사이트별 확인 '+ic('chevD','xs')+'</button>';
+    h += '<button class="more" data-act="openPick" data-k="'+key+'">좋은 점 · 아쉬운 점 · 다른 사이트 '+ic('chevD','xs')+'</button>';
   }
   return h + myPayLine(p) + '</section>';
+}
+/* 사이트는 외부 이미지를 불러올 수 없어서, 상품 대표 색과 종류로 타일을 그리고 사진은 링크로 연다 */
+function hexOk(c){ return /^#[0-9a-fA-F]{6}$/.test(String(c||'')); }
+function inkOn(hex){ var n = parseInt(hex.slice(1),16), r = n>>16&255, g = n>>8&255, b = n&255; return (0.299*r+0.587*g+0.114*b) > 150 ? '#15171C' : '#F7F2E8'; }
+function thumb(p, i){
+  var c = hexOk(p.color) ? p.color : '';
+  return '<span class="thumb'+(c ? ' sw' : '')+'"'+(c ? ' style="--sw:'+c+';--sw-fg:'+inkOn(c)+'"' : '')+' aria-hidden="true"><span class="rk">'+pad(i+1)+'</span>'+ic(p.icon)+'</span>';
+}
+function photoUrl(q){ return 'https://search.naver.com/search.naver?where=image&query='+encodeURIComponent(q); }
+function storeOf(where){
+  var w = String(where||'');
+  if(/쿠팡/.test(w)) return '쿠팡'; if(/알리/.test(w)) return '알리'; if(/테무/i.test(w)) return '테무';
+  if(/무신사/.test(w)) return '무신사'; if(/올리브/.test(w)) return '올리브영'; if(/11번가/.test(w)) return '11번가';
+  return '네이버쇼핑';
+}
+function allSites(q, look, beauty){
+  var u = siteUrls(q), L = [['쿠팡 판매량순', u.coupang], ['네이버 리뷰 많은순', u.naver]];
+  if(look) L.push(['무신사', u.musinsa]); if(beauty) L.push(['올리브영', u.olive]);
+  L.push(['11번가', u.eleven], ['알리 주문순', u.ali], ['테무', u.temu]);
+  return '<div class="allsites"><p class="sec-label">사이트별 검색 결과 · '+esc(q)+'</p><div class="sites">'+L.map(function(x){ return '<a class="site" href="'+x[1]+'" target="_blank" rel="noopener">'+esc(x[0])+ic('ext','xs')+'</a>'; }).join('')+'</div></div>';
 }
 function siteUrls(q){
   var e = encodeURIComponent(q);
@@ -959,6 +993,7 @@ function turnPrompt(c, hasImg, star){
     + "- 연예인·스타일 코디, 'OO룩' 요청: kind는 look, picks는 부위별(아우터·상의·하의·원피스·신발·가방·액세서리 중 필요한 것) 3~5개, part에 부위를 쓴다. 기억된 가진 옷으로 되는 부위는 빼고 owned.why에 무엇을 활용하는지 쓴다. 연예인이 실제로 입은 제품이라고 말하지 않고 '비슷한 분위기'로 고른다. 연예인의 외모·사생활은 평가하지 않는다.\n"
     + "- 쇼핑이 아닌 질문이나 결제 질문: kind는 answer, picks는 빈 배열, say에 짧게 답한다.\n"
     + "- 실제로 파는 브랜드·제품만 쓴다. 정확한 모델명이 확실하지 않으면 브랜드와 제품 유형까지만 쓴다. price는 한국 온라인 판매가 기준 예상가(원, 정수), shipping은 예상 배송비(원)다. 예산을 넘지 않는다.\n"
+    + "- query는 이번 결과 전체를 판매처에서 검색할 짧은 검색어(예: '등산 무릎 보호대'). color는 그 상품의 대표 색을 #RRGGBB로(모르면 빈 문자열).\n"
     + "- why는 이 사용자에게 맞는 이유 1~2문장, good 2개, bad 1~2개(짧게). fit은 옷·신발이면 기억된 키·사이즈로 추천 사이즈를, 아니면 빈 문자열. tag는 '가장 무난한', '가성비', '오래 쓰는'처럼 성격. where는 주로 사는 곳 하나. channel은 online, delivery, offline 중 하나. searchQuery는 판매처에서 그대로 검색할 짧은 검색어. icon은 "+ITEM_ICONS.join(', ')+" 중 하나.\n"
     + "- cheaper: 테무·알리익스프레스(또는 쿠팡)에 같은 기능의 훨씬 싼 대안이 있고 손해가 적을 때만 show를 true로 한다. 브랜드가 중요하지 않은 소모품·잡화·액세서리면 고려하고, 아이 용품·전기 제품·화장품·식품처럼 안전 인증이 중요한 품목이거나 기한이 급하면 제안하지 않는다. why에 가격 차이·배송 기간·품질 편차·반품을 구체적으로 쓴다.\n"
     + "- timing: 아래 세일 일정만 날짜 근거로 쓴다. 기다릴 만하면 advice를 wait, 아니면 now. 예상 일정은 '예상'이라고 밝히고 목록에 없는 날짜는 지어내지 않는다. 할 말이 없으면 why를 비운다.\n"
@@ -969,19 +1004,19 @@ function turnPrompt(c, hasImg, star){
     + (hasImg ? "- 첨부 사진: 사용자가 이번 메시지와 함께 보낸 사진이다. 상품 사진이면 같은 제품이나 비슷한 대안을 찾는다. 옷 사진이면 어울리는 것을 찾고, 사용자의 옷이면 remember에 넣는다. 코디 사진이면 부위별로 나눠 비슷한 상품을 찾는다(kind는 look). 사진 속 사람이 누구인지는 추측하지 않는다.\n" : "")
     + (star ? "- 이번 요청은 연예인·스타일 코디 메뉴에서 왔다. kind는 look이다.\n" : "")
     + "\n[세일 일정 ("+TODAY+" 기준)]\n"+salesText()+"\n\n[기억하는 사용자 정보]\n"+memoryText()+(memberText() ? '\n'+memberText() : '')+"\n\n[지금까지 대화]\n"+transcript(c)+"\n\n"
-    + 'JSON 하나만 답한다. say를 가장 먼저 쓴다:\n{"say":"한두 문장","kind":"results","title":"결과 묶음 제목","picks":[{"name":"","brand":"","part":"","tag":"","why":"","good":["",""],"bad":[""],"signal":"","fit":"","price":0,"shipping":0,"where":"","channel":"online","searchQuery":"","icon":"box"}],"owned":{"why":""},"cheaper":{"show":false,"where":"","what":"","price":"","delivery":"","why":"","caution":"","searchQuery":""},"timing":{"advice":"now","event":"","when":"","why":""},"ask":{"q":"","options":[]},"chips":[],"remember":[]}';
+    + 'JSON 하나만 답한다. say를 가장 먼저 쓴다:\n{"say":"한두 문장","kind":"results","title":"결과 묶음 제목","query":"","picks":[{"name":"","brand":"","part":"","tag":"","color":"","why":"","good":["",""],"bad":[""],"signal":"","fit":"","price":0,"shipping":0,"where":"","channel":"online","searchQuery":"","icon":"box"}],"owned":{"why":""},"cheaper":{"show":false,"where":"","what":"","price":"","delivery":"","why":"","caution":"","searchQuery":""},"timing":{"advice":"now","event":"","when":"","why":""},"ask":{"q":"","options":[]},"chips":[],"remember":[]}';
 }
 function normAi(j){
   j = j && typeof j==='object' ? j : {};
   var kind = ['results','look','answer'].indexOf(j.kind)>=0 ? j.kind : 'results';
   var picks = (Array.isArray(j.picks) ? j.picks : []).map(function(x){
     x = x || {};
-    return {name:str(x.name,''), brand:str(x.brand,''), part:str(x.part,''), tag:str(x.tag,''), why:str(x.why,''), good:strList(x.good,3), bad:strList(x.bad,2), signal:str(x.signal,''), fit:str(x.fit,''), price:Math.round(num(x.price)), shipping:Math.round(num(x.shipping)), where:str(x.where,'온라인'), channel:['online','delivery','offline'].indexOf(x.channel)>=0 ? x.channel : 'online', searchQuery:str(x.searchQuery, str(x.name,'')), icon:ITEM_ICONS.indexOf(x.icon)>=0 ? x.icon : 'box'};
+    return {name:str(x.name,''), brand:str(x.brand,''), part:str(x.part,''), tag:str(x.tag,''), color:hexOk(x.color) ? x.color : '', why:str(x.why,''), good:strList(x.good,3), bad:strList(x.bad,2), signal:str(x.signal,''), fit:str(x.fit,''), price:Math.round(num(x.price)), shipping:Math.round(num(x.shipping)), where:str(x.where,'온라인'), channel:['online','delivery','offline'].indexOf(x.channel)>=0 ? x.channel : 'online', searchQuery:str(x.searchQuery, str(x.name,'')), icon:ITEM_ICONS.indexOf(x.icon)>=0 ? x.icon : 'box'};
   }).filter(function(p){ return p.name && p.price>0; }).slice(0, kind==='look' ? 6 : 3);
   if(!picks.length) kind = 'answer'; else if(kind==='answer') kind = 'results';
   var o = j.owned && typeof j.owned==='object' ? j.owned : {}, c = j.cheaper && typeof j.cheaper==='object' ? j.cheaper : {};
   var t = j.timing && typeof j.timing==='object' ? j.timing : {}, a = j.ask && typeof j.ask==='object' ? j.ask : {};
-  return {kind:kind, say:str(j.say,''), title:str(j.title,''), picks:picks,
+  return {kind:kind, say:str(j.say,''), title:str(j.title,''), query:str(j.query,''), picks:picks,
     owned:{why:picks.length ? str(o.why,'') : ''},
     cheaper:{show:!!c.show && !!str(c.where,'') && picks.length>0, where:str(c.where,''), what:str(c.what,''), price:str(c.price,''), delivery:str(c.delivery,''), why:str(c.why,''), caution:str(c.caution,''), searchQuery:str(c.searchQuery,'')},
     timing:{advice:t.advice==='wait' ? 'wait' : 'now', event:str(t.event,''), when:str(t.when,''), why:picks.length ? str(t.why,'') : ''},
@@ -1027,7 +1062,7 @@ function runTurn(c, images, star){
   sample.json(turnPrompt(c, !!images, star), o).then(function(j){
     if(ctl!==turnCtl) return;
     var r = normAi(j);
-    var m = {id:'m'+uid(), role:'ai', at:Date.now(), kind:r.kind, say:r.say, title:r.title, picks:r.picks, owned:r.owned, cheaper:r.cheaper, timing:r.timing, ask:r.ask, chips:r.chips, remembered:remember(r.remember), basket:null};
+    var m = {id:'m'+uid(), role:'ai', at:Date.now(), kind:r.kind, say:r.say, title:r.title, query:r.query, picks:r.picks, owned:r.owned, cheaper:r.cheaper, timing:r.timing, ask:r.ask, chips:r.chips, remembered:remember(r.remember), basket:null};
     if(!m.say && !m.picks.length) m.say = '답을 정리하지 못했어요. 조금 다르게 말해 주세요.';
     c.msgs.push(m); c.msgs = c.msgs.slice(-30); c.at = Date.now();
     finish();
@@ -1096,29 +1131,29 @@ function aiFillCard(i, done){
 function dp(o){ var b = {brand:'예시 브랜드', part:'', tag:'', why:'', good:[], bad:[], signal:'예시 화면이에요. 실제 결과에서는 판매처별 평점·리뷰·판매 근거가 여기에 나와요.', fit:'', shipping:0, channel:'online', icon:'box'}; for(var k in o) b[k] = o[k]; if(!b.searchQuery) b.searchQuery = b.name.replace(/^예시\)\s*/,''); return b; }
 function demoData(){
   var now = Date.now(), H = 3600e3;
-  var knee1 = dp({name:'예시) 스트랩 조절형 무릎 보호대', tag:'가장 무난한', why:'내리막에서 무릎이 흔들릴 때 스트랩으로 조임을 조절할 수 있어 산행용으로 가장 많이 찾는 형태예요.', good:['조임 조절이 쉬움','양옆 지지대'], bad:['여름엔 더울 수 있음'], price:42000, where:'쿠팡', icon:'health'});
+  var knee1 = dp({name:'예시) 스트랩 조절형 무릎 보호대', tag:'가장 무난한', why:'내리막에서 무릎이 흔들릴 때 스트랩으로 조임을 조절할 수 있어 산행용으로 가장 많이 찾는 형태예요.', good:['조임 조절이 쉬움','양옆 지지대'], bad:['여름엔 더울 수 있음'], price:42000, where:'쿠팡', icon:'health', color:'#2E3036'});
   var c1 = {id:'demo-c1', title:'등산할 때 쓸 무릎 보호대', at:now-H, msgs:[
     {id:'demo-m1', role:'user', at:now-H, text:'요즘 등산할 때 무릎이 아파. 무릎 보호대 5만 원 안팎으로 찾아줘.'},
-    {id:'demo-m2', role:'ai', at:now-H, kind:'results', say:'등산용 무릎 보호대 중 평점·리뷰·판매량이 함께 높은 것부터 골랐어요. 진단이 아니라 착용 용품만 골랐어요. 통증이 계속되면 진료를 받아 보세요.', title:'등산용 무릎 보호대 베스트 3',
+    {id:'demo-m2', role:'ai', at:now-H, kind:'results', say:'등산용 무릎 보호대 중 평점·리뷰·판매량이 함께 높은 것부터 골랐어요. 진단이 아니라 착용 용품만 골랐어요. 통증이 계속되면 진료를 받아 보세요.', title:'등산용 무릎 보호대 베스트 3', query:'등산 무릎 보호대',
       picks:[knee1,
-        dp({name:'예시) 슬리브형 무릎 보호대', tag:'가볍게', why:'가벼운 산행이나 걷기에 부담 없이 오래 쓰기 좋아요.', good:['가볍고 통기성 좋음','옷 안에 입기 쉬움'], bad:['지지력은 약한 편'], price:29000, shipping:3000, where:'네이버쇼핑', icon:'health'}),
-        dp({name:'예시) 힌지형 무릎 보호대', tag:'단단하게', why:'양옆 경첩이 있어 지지력이 가장 강해요. 장거리 산행에 맞아요.', good:['지지력이 강함'], bad:['무겁고 부피가 큼','가격이 높은 편'], price:56000, where:'11번가', icon:'health'})],
+        dp({name:'예시) 슬리브형 무릎 보호대', tag:'가볍게', why:'가벼운 산행이나 걷기에 부담 없이 오래 쓰기 좋아요.', good:['가볍고 통기성 좋음','옷 안에 입기 쉬움'], bad:['지지력은 약한 편'], price:29000, shipping:3000, where:'네이버쇼핑', icon:'health', color:'#4A5560'}),
+        dp({name:'예시) 힌지형 무릎 보호대', tag:'단단하게', why:'양옆 경첩이 있어 지지력이 가장 강해요. 장거리 산행에 맞아요.', good:['지지력이 강함'], bad:['무겁고 부피가 큼','가격이 높은 편'], price:56000, where:'11번가', icon:'health', color:'#1F2124'})],
       owned:{why:''}, cheaper:{show:false}, timing:{advice:'now', why:'가격 변동이 크지 않은 품목이라 필요할 때 사는 게 나아요. K-세일페스타(10/29~11/15)에 쿠폰이 붙을 수는 있어요.', event:'', when:''},
       ask:{q:'주로 어떤 산행이세요?', options:['가벼운 둘레길','3~4시간 산행','장거리 종주']}, chips:[], remembered:[]},
     {id:'demo-m3', role:'user', at:now-H+60e3, text:'3~4시간 산행이고 내리막에서 특히 아파'},
-    {id:'demo-m4', role:'ai', at:now-H+90e3, kind:'results', say:'내리막이 힘들면 지지력이 중요해요. 3~4시간이면 무거운 힌지형보다 스트랩형이 균형이 좋아서, 그 안에서 다시 골랐어요.', title:'내리막에 강한 보호대 2',
-      picks:[dp({name:'예시) 스트랩 조절형 무릎 보호대', tag:'가장 무난한', why:'내리막에서 무릎이 흔들리지 않게 위아래를 따로 조여요. 3~4시간 산행에 무게 부담도 적어요.', good:['위아래 따로 조임','가벼운 편'], bad:['여름엔 더울 수 있음'], price:42000, where:'쿠팡', icon:'health'}),
-        dp({name:'예시) 실리콘 패드 스트랩 보호대', tag:'더 단단하게', why:'무릎뼈 둘레를 실리콘 패드가 잡아 줘서 내리막 충격을 더 줄여요.', good:['무릎뼈 고정이 좋음','미끄러짐이 적음'], bad:['처음엔 조금 뻣뻣함'], price:48000, where:'네이버쇼핑', icon:'health'})],
+    {id:'demo-m4', role:'ai', at:now-H+90e3, kind:'results', say:'내리막이 힘들면 지지력이 중요해요. 3~4시간이면 무거운 힌지형보다 스트랩형이 균형이 좋아서, 그 안에서 다시 골랐어요.', title:'내리막에 강한 보호대 2', query:'등산 무릎 보호대 스트랩',
+      picks:[dp({name:'예시) 스트랩 조절형 무릎 보호대', tag:'가장 무난한', why:'내리막에서 무릎이 흔들리지 않게 위아래를 따로 조여요. 3~4시간 산행에 무게 부담도 적어요.', good:['위아래 따로 조임','가벼운 편'], bad:['여름엔 더울 수 있음'], price:42000, where:'쿠팡', icon:'health', color:'#2E3036'}),
+        dp({name:'예시) 실리콘 패드 스트랩 보호대', tag:'더 단단하게', why:'무릎뼈 둘레를 실리콘 패드가 잡아 줘서 내리막 충격을 더 줄여요.', good:['무릎뼈 고정이 좋음','미끄러짐이 적음'], bad:['처음엔 조금 뻣뻣함'], price:48000, where:'네이버쇼핑', icon:'health', color:'#3B4A5A'})],
       owned:{why:''}, cheaper:{show:false}, timing:{why:''}, ask:{q:'', options:[]}, chips:['양쪽 다 살게','더 가벼운 걸로','3만 원 아래로'], remembered:['주로 3~4시간 산행, 내리막에서 무릎이 아픔']}
   ]};
   var c2 = {id:'demo-c2', title:'올드머니 룩 출근 코디', at:now-26*H, msgs:[
     {id:'demo-m5', role:'user', at:now-26*H, star:true, text:'올드머니 룩 스타일 출근룩 코디해줘, 전체 예산 30만 원. 내가 가진 옷으로 되는 건 빼고.'},
-    {id:'demo-m6', role:'ai', at:now-26*H, kind:'look', say:'올드머니 룩은 차분한 색, 좋은 소재, 로고 없는 디자인이 핵심이에요. 가진 슬랙스·셔츠·로퍼를 살리고 네 가지만 더했어요.', title:'올드머니 출근룩',
+    {id:'demo-m6', role:'ai', at:now-26*H, kind:'look', say:'올드머니 룩은 차분한 색, 좋은 소재, 로고 없는 디자인이 핵심이에요. 가진 슬랙스·셔츠·로퍼를 살리고 네 가지만 더했어요.', title:'올드머니 출근룩', query:'올드머니룩 출근 코디',
       picks:[
-        dp({name:'예시) 울 블렌드 싱글 코트 (카멜)', part:'아우터', tag:'핵심 아이템', why:'카멜 코트 하나로 올드머니 분위기가 완성돼요. 가진 검정 슬랙스와 잘 맞아요.', good:['로고 없는 깔끔한 디자인','출근룩에 두루 맞음'], bad:['울 함량이 낮으면 보풀이 생길 수 있음'], fit:'키 175cm·상의 L이면 L을 추천해요. 어깨가 넓은 편이라 어깨 실측을 꼭 보세요.', price:159000, where:'무신사', icon:'clothing'}),
-        dp({name:'예시) 케이블 니트 베스트 (크림)', part:'상의', tag:'레이어드', why:'흰 옥스퍼드 셔츠 위에 겹치면 단정하면서 부드러운 인상이 돼요.', good:['셔츠와 레이어드 쉬움'], bad:['단독으로 입기는 애매함'], fit:'L을 추천해요.', price:49000, where:'무신사', icon:'clothing'}),
-        dp({name:'예시) 로고 없는 가죽 토트백', part:'가방', tag:'오래 쓰는', why:'로고 없는 가죽 가방이 올드머니 룩의 마무리예요. 노트북도 들어가요.', good:['수납 넉넉함'], bad:['가죽이 무거운 편'], price:59000, where:'쿠팡', icon:'bag'}),
-        dp({name:'예시) 실크 스카프', part:'액세서리', tag:'포인트', why:'목에 두르거나 가방에 묶으면 분위기가 확 살아요.', good:['작은 돈으로 큰 변화'], bad:['관리가 까다로움'], price:25000, shipping:3000, where:'네이버쇼핑', icon:'gem'})],
+        dp({name:'예시) 울 블렌드 싱글 코트 (카멜)', part:'아우터', tag:'핵심 아이템', why:'카멜 코트 하나로 올드머니 분위기가 완성돼요. 가진 검정 슬랙스와 잘 맞아요.', good:['로고 없는 깔끔한 디자인','출근룩에 두루 맞음'], bad:['울 함량이 낮으면 보풀이 생길 수 있음'], fit:'키 175cm·상의 L이면 L을 추천해요. 어깨가 넓은 편이라 어깨 실측을 꼭 보세요.', price:159000, where:'무신사', icon:'clothing', color:'#B98A55'}),
+        dp({name:'예시) 케이블 니트 베스트 (크림)', part:'상의', tag:'레이어드', why:'흰 옥스퍼드 셔츠 위에 겹치면 단정하면서 부드러운 인상이 돼요.', good:['셔츠와 레이어드 쉬움'], bad:['단독으로 입기는 애매함'], fit:'L을 추천해요.', price:49000, where:'무신사', icon:'clothing', color:'#EDE3CF'}),
+        dp({name:'예시) 로고 없는 가죽 토트백', part:'가방', tag:'오래 쓰는', why:'로고 없는 가죽 가방이 올드머니 룩의 마무리예요. 노트북도 들어가요.', good:['수납 넉넉함'], bad:['가죽이 무거운 편'], price:59000, where:'쿠팡', icon:'bag', color:'#24201D'}),
+        dp({name:'예시) 실크 스카프', part:'액세서리', tag:'포인트', why:'목에 두르거나 가방에 묶으면 분위기가 확 살아요.', good:['작은 돈으로 큰 변화'], bad:['관리가 까다로움'], price:25000, shipping:3000, where:'네이버쇼핑', icon:'gem', color:'#7A2E3A'})],
       owned:{why:'검정 울 슬랙스, 흰 옥스퍼드 셔츠, 갈색 페니 로퍼는 가진 걸로 맞춰요.'},
       cheaper:{show:true, where:'알리익스프레스', what:'비슷한 무늬의 스카프', price:'1만 원 안팎', delivery:'7~15일', why:'스카프는 브랜드보다 색과 무늬가 중요해서 싼 대안도 괜찮아요. 출근룩에 바로 필요하지 않다면 기다릴 만해요.', caution:'실크 100%가 아닌 경우가 많아요. 소재 표기를 확인하세요.', searchQuery:'실크 스카프'},
       timing:{advice:'wait', event:'무신사 무진장 겨울 블랙프라이데이', when:'11월 중순(예상)', why:'코트처럼 비싼 겨울 아우터는 이때 할인 폭이 커요. 급하지 않다면 기다려 보세요.'},
