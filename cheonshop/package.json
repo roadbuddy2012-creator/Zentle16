@@ -1,0 +1,17 @@
+{
+  "name": "cheonshop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "천샵 — 뭐든 천 원. 사진·쇼츠로 올리는 동네 단일가 마켓 (안드로이드 시제품)",
+  "scripts": {
+    "sync": "cap sync android",
+    "apk": "cap sync android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/core": "8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2"
+  }
+}

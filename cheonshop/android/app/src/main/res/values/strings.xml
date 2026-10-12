@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">천샵</string>
+    <string name="title_activity_main">천샵</string>
+    <string name="package_name">com.zentle.cheonshop</string>
+    <string name="custom_url_scheme">com.zentle.cheonshop</string>
+</resources>
