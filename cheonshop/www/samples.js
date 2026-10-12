@@ -12,12 +12,12 @@ window.CHEON_SAMPLES = (function(){
   };
   var H = 3600e3;
   return [
-    {key:'mug', bg:'#F3EEE6', title:'머그컵 2개 (거의 새것)', desc:'선물 받고 한 번도 안 썼어요. 하나는 주황 줄, 하나는 파랑 줄이에요.', cond:'new', ship:false, place:'역삼역 3번 출구', seller:{nick:'하늘이네', temp:38.2}, ago:0.3*H, likes:12, wants:3},
+    {key:'mug', bg:'#F3EEE6', title:'머그컵 2개 (거의 새것)', desc:'선물 받고 한 번도 안 썼어요. 하나는 주황 줄, 하나는 파랑 줄이에요.', cond:'new', ship:false, place:'역삼역 3번 출구', seller:{nick:'정리하는집', temp:38.2}, ago:0.3*H, likes:12, wants:3},
     {key:'books', bg:'#EEF2EF', title:'아이 그림책 5권 묶음', desc:'5~7세 그림책이에요. 모서리가 조금 닳았지만 찢어진 곳은 없어요. 택배도 돼요(택배비 따로).', cond:'used', ship:true, place:'', seller:{nick:'책읽는곰', temp:41.5}, ago:1.2*H, likes:24, wants:7},
     {key:'plant', bg:'#EDF3EA', title:'몬스테라 작은 화분', desc:'포기 나눔 했어요. 화분째 드려요. 물은 일주일에 한 번.', cond:'used', ship:false, place:'역삼2동 주민센터 앞', seller:{nick:'초록손', temp:37.1}, ago:2.5*H, likes:31, wants:9},
     {key:'sneaker', bg:'#F1F1F1', title:'흰 운동화 250', desc:'두세 번 신었어요. 밑창 깨끗해요. 사이즈가 안 맞아서 내놓아요.', cond:'used', ship:true, place:'', seller:{nick:'달리기왕', temp:36.8}, ago:5*H, likes:9, wants:2},
     {key:'lamp', bg:'#F6F1E3', title:'책상 스탠드', desc:'전구 포함이에요. 불 잘 들어와요. 이사 정리 중이에요.', cond:'used', ship:false, place:'선릉역 1번 출구', seller:{nick:'이사가요', temp:36.5}, ago:9*H, likes:15, wants:4},
-    {key:'car', bg:'#F8ECEC', title:'장난감 자동차 3대', desc:'아이가 커서 정리해요. 바퀴 다 잘 굴러가요.', cond:'used', ship:true, place:'', seller:{nick:'하늘이네', temp:38.2}, ago:20*H, likes:18, wants:5},
+    {key:'car', bg:'#F8ECEC', title:'장난감 자동차 3대', desc:'아이가 커서 정리해요. 바퀴 다 잘 굴러가요.', cond:'used', ship:true, place:'', seller:{nick:'장난감부자', temp:38.2}, ago:20*H, likes:18, wants:5},
     {key:'umbrella', bg:'#EAEFF5', title:'장우산 (새것)', desc:'회사 행사에서 받은 거예요. 비닐도 안 뜯었어요.', cond:'new', ship:false, place:'역삼역 3번 출구', seller:{nick:'비오는날', temp:36.9}, ago:30*H, likes:7, wants:1},
     {key:'vest', bg:'#F5EEE6', title:'니트 베스트 L', desc:'한 시즌 입었어요. 보풀 제거해서 드려요. 택배 가능해요.', cond:'used', ship:true, place:'', seller:{nick:'옷장비움', temp:39.4}, ago:46*H, likes:21, wants:6}
   ].map(function(x){ x.svg = S[x.key]; return x; });

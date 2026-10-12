@@ -2,7 +2,10 @@
   "appId": "com.zentle.cheonshop",
   "appName": "천샵",
   "webDir": "www",
-  "android": {
-    "backgroundColor": "#FFFFFF"
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "native",
+      "initialViewportFitValueHint": "cover"
+    }
   }
 }
