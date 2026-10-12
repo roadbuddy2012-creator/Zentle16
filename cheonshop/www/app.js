@@ -19,9 +19,16 @@ var RULES = [
 ];
 var GOOD_TAGS = ['시간 약속을 잘 지켜요','친절해요','설명과 물건 상태가 같아요','답장이 빨라요'];
 var BAD_TAGS = ['약속 시간에 늦었어요','설명과 물건이 달라요','불친절해요','연락이 잘 안 돼요'];
-/* 연락처·계좌·외부 메신저: 전화번호, 하이픈 없는 계좌, 은행 계좌 형식, 메신저·송금 표현 (날짜·텔레비전·토스터·페이지는 안 걸리게) */
-var RISK = /(01[016789][\s.\-]?\d{3,4}[\s.\-]?\d{4})|(^|\D)\d{10,14}(?!\d)|(^|\D)\d{2,6}-\d{2,6}-\d{3,8}(?!\d)|(카톡|카카오톡|카카오\s?(페이|아이디|id)|오픈\s?(톡|채팅)|텔레그램|텔레\s?(아이디|id)|telegram|kakao|wechat|위챗|라인\s?(아이디|id)|line\s?id|인스타\s?(아이디|id|디엠|dm)|디엠|\bdm\b|계좌|입금|송금|이체|토스\s?(로|으로|페이|아이디|id)|페이\s?(로|으로)|@[a-z0-9_.]{3,})/i;
-function risky(s){ return RISK.test(String(s).replace(/(?:19|20)\d{2}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|[12]\d|3[01])(?!\d)/g, ' ')); }
+/* 연락처·계좌·외부 메신저·선입금: 전화번호, 계좌 형식, 메신저·송금 표현, 바깥 링크 (날짜·텔레비전·토스터·디엠씨역은 안 걸리게) */
+var RISK = /(01[016789][\s.\-]?\d{3,4}[\s.\-]?\d{4})|(^|\D)\d{10,14}(?!\d)|(^|\D)\d{2,6}-\d{2,6}-\d{3,8}(?!\d)|(카톡|카카오톡|카카오\s?톡|까톡|카카오\s?(페이|아이디|id)|오픈\s?(톡|채팅)|텔레그램|텔레\s?(아이디|id)|telegram|kakao|wechat|위챗|라인\s?(아이디|id)|line\s?id|인스타\s?(아이디|id|디엠|dm)|디엠(?!씨)|\bdm\b|계좌|입금|송금|이체(?!육)|토스(로|으로)|토스\s?(페이|아이디|id)|페이(로|으로)|선결제|선입금|먼저\s?(보내|입금|결제|송금|이체)|연락처|(전화|폰|핸드폰|휴대폰)\s?번호|번호\s?(좀|주|줘|알려)|문자\s?(로|주|줘|보내)|https?:\/\/|www\.|\bt\.me\b|[a-z0-9-]+\.(com|kr|net|me|ly|co|io)\b|@[a-z0-9_.]{3,})/i;
+var FULL_DATE = /(?:19|20)\d{2}[-.](?:0?[1-9]|1[0-2])[-.](?:0?[1-9]|[12]\d|3[01])(?!\d)/g;
+function risky(s){
+  var t = String(s).replace(FULL_DATE, ' ');
+  if(RISK.test(t)) return true;
+  /* 띄어 쓰거나 점·하이픈으로 끊은 번호: 숫자 사이 구분을 지우고 9자리 이상이면 계좌·전화번호로 본다 */
+  var n = t.replace(/\+\s?82[\s.\-]*/g, '0').replace(/(\d)[\s.\-]+(?=\d)/g, '$1');
+  return /(^|\D)\d{9,14}(?!\d)/.test(n);
+}
 
 /* ---------- 작은 도구 ---------- */
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -134,16 +141,26 @@ var ST = freshState();
 var UI = {draft:null, gtab:'sell', filter:'all', muted:true, onb:0, sheetData:{}, riskArmed:null, locating:false, chatDraft:{}, afterPop:null, sbDark:null, upOpen:false};
 /* 데이터가 바뀔 때마다 올라가는 번호. 아래에 깔린 화면이 다시 드러날 때 이 번호로 낡았는지 본다 */
 var REV = 0;
-var saveTimer = null;
+var saveTimer = null, storageWarnAt = 0;
+/* IndexedDB에 못 쓰면 localStorage에 대신 쓰고 알린다. 시작할 때는 둘 중 더 새 것을 읽는다 */
+function writeState(){
+  clearTimeout(saveTimer); saveTimer = null;
+  ST.savedAt = Date.now();
+  var json = JSON.stringify(ST);
+  return idbPut('kv', 'state', json).then(function(ok){
+    if(ok){ try{ localStorage.removeItem('cheonshop.state'); }catch(e){} return true; }
+    var lsOK = false;
+    try{ localStorage.setItem('cheonshop.state', json); lsOK = true; }catch(e){}
+    if(Date.now() - storageWarnAt > 30000){ storageWarnAt = Date.now(); toast(lsOK ? '휴대폰 저장 공간이 거의 찼어요. 공간을 비워 주세요.' : '저장 공간이 부족해 저장하지 못했어요. 영상이나 사진을 줄여 주세요.'); }
+    return lsOK;
+  });
+}
 function save(){
   REV++;
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(function(){
-    idbPut('kv', 'state', JSON.stringify(ST)).then(function(ok){
-      if(!ok){ try{ localStorage.setItem('cheonshop.state', JSON.stringify(ST)); }catch(e){ toast('저장 공간이 부족해요. 영상이나 사진을 줄여 주세요.'); } }
-    });
-  }, 250);
+  saveTimer = setTimeout(writeState, 250);
 }
+function saveNow(){ REV++; return writeState(); }
 /* 위치 확인 배지는 확인할 때 적었던 동네와 지금 동네가 같을 때만 */
 function townOK(){ return !!(ST.me.verified && ST.me.town && ST.me.verifiedTown === ST.me.town); }
 function postById(id){ for(var i = 0; i < ST.posts.length; i++){ if(ST.posts[i].id === id) return ST.posts[i]; } return null; }
@@ -252,8 +269,10 @@ window.addEventListener('popstate', function(e){
     if(ap.fn) ap.fn();
     return;
   }
-  NAV = e.state && e.state.stack ? clone(e.state) : {tab:'home', stack:[], sheet:null};
-  if(sanitizeNav()){ try{ history.replaceState(clone(NAV), ''); }catch(x){} }
+  var raw = e.state && e.state.stack ? clone(e.state) : {tab:'home', stack:[], sheet:null};
+  NAV = clone(raw);
+  /* 돌아온 기록에 지워진 화면이 있으면 덮어쓰지 않고 걷어낸다. 덮어쓰면 기록이 하나 남아 뒤로 가기가 한 번 헛돈다 */
+  if(sanitizeNav()){ var tgt = clone(NAV); NAV = raw; popTo(tgt); return; }
   apply();
 });
 function push(view){ var n = clone(NAV); n.stack.push(view); n.sheet = null; navTo(n); }
@@ -269,6 +288,7 @@ function popTo(target, fn){
 }
 /* 이미 열려 있는 화면이면 새로 쌓지 않고 그 화면까지 돌아간다 */
 function openView(view){
+  if(view.v === 'item'){ var hp = postById(view.id); if(!hp || hp.hidden){ toast(hp ? '숨기거나 신고한 물건이에요.' : '지워진 물건이에요.'); return; } }
   var key = keyOf(view);
   for(var i = 0; i < NAV.stack.length; i++){
     if(keyOf(NAV.stack[i]) === key){
@@ -305,14 +325,26 @@ function onBackButton(){
   nativeCall('App', 'minimizeApp');
 }
 if(CAP && CAP.App && CAP.App.addListener){ try{ CAP.App.addListener('backButton', onBackButton); }catch(e){} }
-/* 쇼츠 탭은 검은 화면이라 상태 표시줄 아이콘을 흰색으로 */
+/* 웹 화면이 상태 표시줄 밑까지 그려지는지 (안드로이드 15+ 또는 가장자리까지 쓰는 화면). 아니면 상태 표시줄은 테마 색이다 */
+function drawsUnderStatusBar(){
+  var p = document.getElementById('inset-probe');
+  if(!p){ p = document.createElement('div'); p.id = 'inset-probe'; p.setAttribute('aria-hidden', 'true'); p.style.cssText = 'position:fixed;left:0;top:0;width:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px)'; document.body.appendChild(p); }
+  return parseFloat(getComputedStyle(p).paddingTop) > 0;
+}
+/* 쇼츠 탭은 검은 화면이라 상태 표시줄 아이콘을 흰색으로. 상태 표시줄이 테마 색(흰색)으로 따로 그려질 때는 그대로 둔다 */
 function syncSystemBars(){
   if(!CAP || !CAP.SystemBars) return;
-  var dark = !!(ST.flags.onboarded && NAV.tab === 'shorts' && !NAV.stack.length);
+  var dark = !!(ST.flags.onboarded && NAV.tab === 'shorts' && !NAV.stack.length && drawsUnderStatusBar());
   if(dark === UI.sbDark) return;
   UI.sbDark = dark;
   nativeCall('SystemBars', 'setStyle', {style:dark ? 'DARK' : 'DEFAULT'});
 }
+/* 앱을 켜 둔 채 다크·라이트 모드가 바뀌면 네이티브는 예전 아이콘 색을 다시 적용한다. 새 테마로 다시 정하게 한다 */
+try{
+  var mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+  var onScheme = function(){ UI.sbDark = null; syncSystemBars(); };
+  if(mqDark.addEventListener) mqDark.addEventListener('change', onScheme); else if(mqDark.addListener) mqDark.addListener(onScheme);
+}catch(e){}
 
 var DIRTY = {home:true, shorts:true, me:true};
 function dirtyTabs(){ DIRTY.home = DIRTY.shorts = DIRTY.me = true; }
@@ -388,6 +420,8 @@ function refreshAll(){
 var toastTimer;
 function toast(m){
   var t = document.getElementById('toast'); if(!t) return;
+  /* 시트나 처음 시작 화면에서는 아래쪽 입력칸·버튼을 가리지 않게 위에 띄운다 */
+  t.classList.toggle('top', !!(NAV.sheet || !ST.flags.onboarded));
   t.innerHTML = '<div class="toast" role="status">' + esc(m) + '</div>';
   clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.innerHTML = ''; }, 2800);
 }
@@ -467,7 +501,7 @@ function myPosts(kind){
   if(kind === 'liked') return ST.posts.filter(function(p){ return p.liked && !p.hidden; });
   if(kind === 'done'){
     var mine = ST.posts.filter(function(p){ return p.mine && p.status === 'done'; });
-    var bought = ST.chats.filter(function(c){ return c.done; }).map(function(c){ return postById(c.postId); }).filter(Boolean);
+    var bought = ST.chats.filter(function(c){ return c.done; }).map(function(c){ return postById(c.postId); }).filter(function(p){ return p && !p.hidden; });
     return mine.concat(bought.filter(function(p){ return mine.indexOf(p) < 0; }));
   }
   return ST.posts.filter(function(p){ return p.mine && p.status !== 'done'; });
@@ -485,7 +519,7 @@ function meHTML(){
     + '<div class="stats"><span><b>' + sold + '</b>올린 물건</span><span><b>' + done + '</b>거래완료</span><span><b>' + reviews + '</b>보낸 후기</span></div></section>'
     + '<div class="bio"><b>' + esc(me.nick || '이름 없음') + '</b><span class="line">' + ic('pin', 'xs') + esc(me.town || '동네를 정해 주세요') + (townOK() ? ' <span class="verified">' + ic('check', 'xs') + '위치 확인</span>' : '') + '</span>'
     + '<span class="temp-line">매너온도 <b class="temp" style="color:' + tempColor(me.temp) + '">' + me.temp.toFixed(1) + '°C</b><span class="tempbar"><i style="width:' + Math.min(100, me.temp) + '%;background:' + tempColor(me.temp) + '"></i></span></span></div>'
-    + '<div class="prof-btns"><button class="btn ghost" data-act="editProfile">프로필 편집</button><button class="btn ghost" data-act="' + (townOK() ? 'rules' : 'verify') + '">' + (townOK() ? '안전 거래 수칙' : (UI.locating ? '확인 중…' : '위치 확인')) + '</button></div>'
+    + '<div class="prof-btns"><button class="btn ghost" data-act="editProfile">프로필 편집</button><button class="btn ghost" data-act="' + (townOK() ? 'rules' : 'verify') + '">' + (townOK() ? '안전 거래 수칙' : (UI.locating ? '확인 중…' : '위치 확인하기')) + '</button></div>'
     + '<div class="gtabs" role="tablist">' + G.map(function(g){ return '<button role="tab" data-act="gtab" data-g="' + g[0] + '" aria-selected="' + (UI.gtab === g[0]) + '" aria-label="' + g[2] + '">' + ic(g[1]) + '</button>'; }).join('') + '</div>'
     + (list.length ? '<div class="grid">' + list.map(function(p){
         var m = p.media[0], vid = m && m.kind === 'video';
@@ -572,7 +606,7 @@ function uploadMediaHTML(d){
   }
   return '<div class="picker">' + d.media.map(function(m, i){
       return '<div class="pk">' + (m.kind === 'video' ? (m.posterUrl ? '<img src="' + m.posterUrl + '" alt="">' : '<video src="' + m.url + '" muted playsinline preload="metadata"></video>') : '<img src="' + m.url + '" alt="">')
-        + (d.busy ? '' : '<button class="x" data-act="dropMedia" data-i="' + i + '" aria-label="빼기">' + ic('close') + '</button>') + (i === 0 ? '<span class="first">대표</span>' : '') + (m.kind === 'video' ? '<span class="dur">' + Math.round(m.dur || 0) + '초</span>' : '') + '</div>';
+        + (d.busy ? '' : '<button class="x" data-act="dropMedia" data-i="' + i + '" aria-label="빼기">' + ic('close') + '</button>') + (m.failed ? '<span class="bad">저장 안 됨</span>' : (i === 0 ? '<span class="first">대표</span>' : '')) + (m.kind === 'video' ? '<span class="dur">' + Math.round(m.dur || 0) + '초</span>' : '') + '</div>';
     }).join('') + (d.media.length < MAX_MEDIA && !d.busy ? '<label class="add">' + ic('plus') + '추가<input type="file" accept="image/*,video/*" multiple data-file="media"></label>' : '') + '</div>'
     + (d.busy ? '<p class="note">불러오는 중…</p>' : '<p class="note">' + d.media.length + '/' + MAX_MEDIA + ' · 첫 장이 대표 사진이 돼요</p>');
 }
@@ -598,6 +632,9 @@ function chatsHTML(){
 }
 function cardTitle(k){ return k.type === 'appt' ? '약속: ' + k.day + ' ' + k.time + ' · ' + k.place : (k.type === 'ship' ? '택배로 받기 요청' : '알림'); }
 function hasAppt(c){ return !!(c && c.msgs.some(function(m){ return m.card && m.card.type === 'appt'; })); }
+function lastAppt(c){ for(var i = c ? c.msgs.length - 1 : -1; i >= 0; i--){ var k = c.msgs[i].card; if(k && k.type === 'appt') return k; } return null; }
+/* 노쇼 신고는 약속 시간이 10분 지난 뒤부터 (시각이 없는 예전 약속은 바로) */
+function apptPassed(c){ var k = lastAppt(c); return !!k && (!k.at || Date.now() >= k.at + 10 * 60 * 1000); }
 function msgsHTML(c){
   var h = '<p class="sys">시제품이라 대화는 이 휴대폰에만 저장되고 상대에게 전달되지 않아요.</p>';
   c.msgs.forEach(function(m){
@@ -619,7 +656,7 @@ function chatHTML(c){
   var p = postById(c.postId);
   var status = p ? p.status : 'done';
   var h = '<div class="chat"><header class="bar line">' + backBtn() + '<div class="who grow"><b>' + esc(c.with.nick) + '</b><small>매너온도 ' + c.with.temp.toFixed(1) + '°C</small></div><button class="ib" data-act="chatMenu" data-id="' + esc(c.id) + '" aria-label="더 보기">' + ic('more') + '</button></header>'
-    + '<button class="chat-item" data-act="openItem" data-id="' + esc(c.postId) + '" style="width:100%;text-align:left"><span class="thumb">' + (p ? mediaHTML(p.media[0], 'thumb') : '') + '</span><span class="grow" style="min-width:0"><b>' + esc(c.title) + '</b><small>' + won(PRICE) + '</small></span><span class="pill' + (c.done ? ' ok' : '') + '">' + (c.done ? '거래완료' : (status === 'reserved' ? '예약중' : '판매중')) + '</span></button>';
+    + '<button class="chat-item"' + (p && !p.hidden ? ' data-act="openItem" data-id="' + esc(c.postId) + '"' : ' disabled') + ' style="width:100%;text-align:left"><span class="thumb">' + (p ? mediaHTML(p.media[0], 'thumb') : '') + '</span><span class="grow" style="min-width:0"><b>' + esc(c.title) + '</b><small>' + won(PRICE) + '</small></span><span class="pill' + (c.done ? ' ok' : '') + '">' + (c.done ? '거래완료' : (status === 'reserved' ? '예약중' : '판매중')) + '</span></button>';
   if(!c.warnClosed) h += '<div class="warnbox">' + ic('shield', 'sm') + '<span>앱 밖으로 연락처를 옮기자거나 돈을 먼저 보내 달라는 말은 사기일 수 있어요. 공개된 장소에서 밝을 때 만나요.</span><button data-act="closeWarn" data-id="' + esc(c.id) + '" aria-label="닫기">' + ic('close', 'sm') + '</button></div>';
   h += '<div class="msgs">' + msgsHTML(c) + '</div><div class="composer">';
   if(!c.done){
@@ -667,6 +704,7 @@ function sheetBody(s){
     case 'appt':
       c = chatById(s.id); p = c && postById(c.postId);
       var pick = apptPick(sd), place = sd.place != null ? sd.place : (p && p.place) || '';
+      sd.shown = {day:pick.day, time:pick.time, label:dayLabel(pick.day)};
       var late = parseInt(pick.time, 10) >= 21;
       return '<h2>약속 잡기</h2><div class="pad"><span class="lb" style="font-size:13px;font-weight:700">날짜</span><div class="opt-row">' + ['오늘','내일','모레'].map(function(x){ return '<button data-act="sd" data-k="day" data-v="' + x + '" aria-pressed="' + (pick.day === x) + '"' + (x === '오늘' && !pick.todayOK ? ' disabled' : '') + '>' + x + '</button>'; }).join('') + '</div>'
         + '<span class="lb" style="font-size:13px;font-weight:700">시간</span><div class="opt-row">' + pick.avail.map(function(x){ return '<button data-act="sd" data-k="time" data-v="' + x + '" aria-pressed="' + (pick.time === x) + '">' + x + '</button>'; }).join('') + '</div>'
@@ -685,7 +723,7 @@ function sheetBody(s){
       return '<h2>상대가 약속 장소에 안 나왔나요?</h2><p class="lead">한 거래에 한 번만 신고할 수 있어요. 신고하면 상대의 매너온도가 내려가고, 같은 사람이 ' + NOSHOW_LIMIT + '번 신고되면 일주일 동안 원해요를 누를 수 없어요.</p><div class="pad"><button class="btn wide" data-act="noShowSave" data-id="' + esc(s.id) + '">안 나왔다고 신고하기</button><button class="btn wide ghost" data-act="closeSheet">취소</button></div>';
     case 'chatMenu':
       c = chatById(s.id);
-      return '<div class="menu">' + (c && !c.done && hasAppt(c) && !c.noShowAt ? '<button data-act="noShow" data-id="' + esc(s.id) + '">' + ic('calendar') + '약속 장소에 안 나왔어요</button>' : '') + '<button data-act="report" data-id="' + esc((c || {}).postId || '') + '">' + ic('flag') + '신고하기</button><button data-act="rules">' + ic('shield') + '안전 거래 수칙</button><button class="danger" data-act="leaveChat" data-id="' + esc(s.id) + '">' + ic('trash') + (UI.confirm === 'leave' + s.id ? '한 번 더 누르면 나가요' : '채팅방 나가기') + '</button></div>';
+      return '<div class="menu">' + (c && !c.done && apptPassed(c) && !c.noShowAt ? '<button data-act="noShow" data-id="' + esc(s.id) + '">' + ic('calendar') + '약속 장소에 안 나왔어요</button>' : '') + '<button data-act="report" data-id="' + esc((c || {}).postId || '') + '">' + ic('flag') + '신고하기</button><button data-act="rules">' + ic('shield') + '안전 거래 수칙</button><button class="danger" data-act="leaveChat" data-id="' + esc(s.id) + '">' + ic('trash') + (UI.confirm === 'leave' + s.id ? '한 번 더 누르면 나가요' : '채팅방 나가기') + '</button></div>';
     case 'settings':
       return '<div class="menu"><button data-act="editProfile">' + ic('edit') + '프로필 편집</button><button data-act="verify">' + ic('location') + (townOK() ? '위치 다시 확인하기' : '위치 확인하기') + '</button><button data-act="rules">' + ic('shield') + '안전 거래 수칙</button><button data-act="banned">' + ic('info') + '판매 금지 품목</button><button data-act="toggleSamples">' + ic(ST.flags.samples ? 'eyeOff' : 'eye') + (ST.flags.samples ? '예시 물건 숨기기' : '예시 물건 보기') + '</button><button class="danger" data-act="resetAll">' + ic('trash') + (UI.confirm === 'reset' ? '한 번 더 누르면 모두 지워요' : '모든 기록 지우기') + '</button></div><p class="lead" style="padding-top:8px">천샵 ' + VERSION + ' 시제품 · 글·사진·대화는 이 휴대폰에만 저장돼요.</p>';
     case 'profile':
@@ -710,7 +748,7 @@ function renderOnboard(){
     app.innerHTML = '<main class="layer"><div class="onb"><div class="mid"><h1 style="font-size:28px">이웃에게 보일<br>이름과 동네를 알려 주세요</h1><div class="form-col">'
       + '<label for="ob-nick">닉네임</label><input class="field" id="ob-nick" maxlength="12" data-ob="nick" value="' + esc(d.nick) + '" placeholder="예: 하늘이네" autocomplete="off">'
       + '<label for="ob-town">우리 동네</label><input class="field" id="ob-town" maxlength="20" data-ob="town" value="' + esc(d.town) + '" placeholder="예: 역삼동" autocomplete="off">'
-      + '<button class="btn wide line" data-act="verify">' + ic('location', 'sm') + (ST.me.verified && ST.me.verifiedTown && ST.me.verifiedTown === String(d.town || '').trim() ? '위치 확인 완료' : (UI.locating ? '위치 확인 중…' : 'GPS로 위치 확인 (선택)')) + '</button>'
+      + '<button class="btn wide line" data-act="verify">' + onbVerifyLabel() + '</button>'
       + '<p class="muted" style="font-size:12.5px">위치는 동네 확인에만 쓰고, 대략적인 값만 이 휴대폰에 저장해요.</p></div></div>'
       + '<button class="btn wide" data-act="onbDone">천샵 시작하기</button></div></main>';
   }
@@ -752,11 +790,14 @@ function videoInfo(file){
 }
 /* 고른 사진·영상은 바로 IndexedDB에 넣는다. 카메라를 여는 사이 안드로이드가 앱을 꺼도 쓰던 글이 남게 */
 function stashMedia(m){
-  m.id = 'm' + uid();
+  if(!m.id) m.id = 'm' + uid();
+  if(m.posterBlob && !m.posterId) m.posterId = 'm' + uid();
   var jobs = [idbPut('media', m.id, m.blob)];
-  if(m.posterBlob){ m.posterId = 'm' + uid(); jobs.push(idbPut('media', m.posterId, m.posterBlob)); }
-  m.saved = Promise.all(jobs).then(function(rs){ return rs.every(Boolean); });
+  if(m.posterBlob) jobs.push(idbPut('media', m.posterId, m.posterBlob));
+  m.saved = Promise.all(jobs).then(function(rs){ var ok = rs.every(Boolean); m.failed = !ok; return ok; });
+  return m.saved;
 }
+function kindWord(m){ return m.kind === 'video' ? '영상' : '사진'; }
 function addFiles(files){
   var d = UI.draft || (UI.draft = newDraft());
   if(d.busy){ toast('불러오는 중이에요. 잠시만 기다려 주세요.'); return; }
@@ -775,11 +816,16 @@ function addFiles(files){
           if(info.error){ toast('이 영상은 열 수 없어요. 다른 영상을 골라 주세요.'); URL.revokeObjectURL(info.url); return; }
           if(info.dur && info.dur > MAX_VIDEO_SEC){ toast('영상은 1분까지만 올릴 수 있어요.'); URL.revokeObjectURL(info.url); return; }
           var m = {kind:'video', blob:f, url:info.url, dur:info.dur || 0, posterBlob:info.poster || null, posterUrl:info.poster ? URL.createObjectURL(info.poster) : ''};
-          stashMedia(m); d.media.push(m);
+          d.media.push(m);
+          return stashMedia(m).then(function(ok){ if(!ok) toast('저장 공간이 부족해 이 영상을 저장하지 못했어요.'); });
         });
       }
       if(/^image\//.test(f.type) || !f.type){
-        return shrinkImage(f, 1440).then(function(b){ var m = {kind:'image', blob:b, url:URL.createObjectURL(b)}; stashMedia(m); d.media.push(m); }, function(){ toast('이 사진은 열 수 없어요.'); });
+        return shrinkImage(f, 1440).then(function(b){
+          var m = {kind:'image', blob:b, url:URL.createObjectURL(b)};
+          d.media.push(m);
+          return stashMedia(m).then(function(ok){ if(!ok) toast('저장 공간이 부족해 이 사진을 저장하지 못했어요.'); });
+        }, function(){ toast('이 사진은 열 수 없어요.'); });
       }
       toast('사진이나 영상만 올릴 수 있어요.');
     });
@@ -824,22 +870,34 @@ function publish(){
   if(!d.title.trim()){ toast('제목을 적어 주세요.'); var t = l && l.querySelector('#d-title'); if(t) t.focus(); return; }
   if(!d.agree){ toast('판매 금지 품목이 아닌지 확인해 주세요.'); var a = l && l.querySelector('[data-act="draftAgree"]'); if(a) a.scrollIntoView({block:'center', behavior:'smooth'}); return; }
   d.busy = true; renderUploadMedia();
-  Promise.all(d.media.map(function(m){ return m.saved || Promise.resolve(false); })).then(function(rs){
-    if(rs.some(function(x){ return !x; })){ d.busy = false; renderUploadMedia(); toast('저장 공간이 부족해 올리지 못했어요. 영상을 빼거나 줄여 주세요.'); return; }
+  Promise.all(d.media.map(function(m){
+    return (m.saved || Promise.resolve(false)).then(function(ok){ return ok || (m.blob ? stashMedia(m) : false); });
+  })).then(function(rs){
+    if(rs.some(function(x){ return !x; })){
+      d.busy = false; renderUploadMedia();
+      var bad = d.media.filter(function(m){ return m.failed || !m.saved; });
+      toast('저장하지 못한 ' + (bad.length && bad.every(function(m){ return m.kind === 'video'; }) ? '영상' : '사진·영상') + '이 있어요. \'저장 안 됨\' 표시를 빼고 다시 올려 주세요.');
+      return;
+    }
     var media = d.media.map(function(m){
       var item = {kind:m.kind, id:m.id};
-      URLS[m.id] = m.url;
-      if(m.kind === 'video'){ item.dur = Math.round(m.dur || 0); if(m.posterId){ item.poster = m.posterId; URLS[m.posterId] = m.posterUrl; } }
+      if(m.kind === 'video'){ item.dur = Math.round(m.dur || 0); if(m.posterId) item.poster = m.posterId; }
       return item;
     });
-    ST.posts.push({id:'p' + uid(), mine:true, sample:false, seller:{nick:ST.me.nick, temp:ST.me.temp, town:ST.me.town, verified:townOK()},
+    var post = {id:'p' + uid(), mine:true, sample:false, seller:{nick:ST.me.nick, temp:ST.me.temp, town:ST.me.town, verified:townOK()},
       title:d.title.trim(), desc:d.desc.trim(), cond:d.cond, ship:!!d.ship, place:d.place.trim(), media:media,
-      likes:0, liked:false, wants:0, wanted:false, status:'selling', at:Date.now()});
-    UI.draft = null; UI.filter = 'all'; clearTimeout(draftTimer); idbDel('kv', 'draft');
-    save(); dirtyTabs();
-    popTo({tab:'home', stack:[], sheet:null}, function(){
-      var h = document.getElementById('tab-home'); if(h) h.scrollTop = 0;
-      toast('천 원에 올렸어요.');
+      likes:0, liked:false, wants:0, wanted:false, status:'selling', at:Date.now()};
+    ST.posts.push(post);
+    /* 글 목록이 저장된 뒤에만 쓰던 글을 지운다. 못 쓰면 올리지 않은 것으로 되돌린다 */
+    saveNow().then(function(ok){
+      if(!ok){ ST.posts = ST.posts.filter(function(x){ return x !== post; }); d.busy = false; renderUploadMedia(); return; }
+      d.media.forEach(function(m){ URLS[m.id] = m.url; if(m.posterId) URLS[m.posterId] = m.posterUrl; });
+      UI.draft = null; UI.filter = 'all'; clearTimeout(draftTimer); idbDel('kv', 'draft');
+      dirtyTabs();
+      popTo({tab:'home', stack:[], sheet:null}, function(){
+        var h = document.getElementById('tab-home'); if(h) h.scrollTop = 0;
+        toast('천 원에 올렸어요.');
+      });
     });
   });
 }
@@ -904,11 +962,9 @@ function apptPick(sd){
   var time = (sd.time && avail.indexOf(sd.time) >= 0) ? sd.time : avail[0];
   return {day:day, time:time, avail:avail, todayOK:todayOK.length > 0};
 }
-function dayLabel(word){
-  var off = ['오늘','내일','모레'].indexOf(word); if(off < 0) off = 0;
-  var d = new Date(); d.setDate(d.getDate() + off);
-  return (d.getMonth() + 1) + '월 ' + d.getDate() + '일(' + '일월화수목금토'.charAt(d.getDay()) + ')';
-}
+function dayDate(word){ var off = ['오늘','내일','모레'].indexOf(word); if(off < 0) off = 0; var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + off); return d; }
+function dayLabel(word){ var d = dayDate(word); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일(' + '일월화수목금토'.charAt(d.getDay()) + ')'; }
+function apptAt(word, time){ var d = dayDate(word), hm = String(time).split(':'); d.setHours(parseInt(hm[0], 10) || 0, parseInt(hm[1], 10) || 0, 0, 0); return d.getTime(); }
 
 /* ---------- 위치 확인 ---------- */
 /* 시제품은 동네 경계 자료가 없어 위치만 받아 둔다. 적어 둔 동네와 맞는지는 정식 앱에서 확인한다 */
@@ -918,24 +974,35 @@ function verifyTown(){
   if(!town){ toast('먼저 우리 동네를 적어 주세요.'); var f = document.getElementById('ob-town'); if(f) f.focus(); return; }
   if(!navigator.geolocation){ toast('이 기기에서는 위치를 확인할 수 없어요.'); return; }
   if(UI.locating) return;
-  UI.locating = true; rerenderAfterLocate();
+  UI.locating = true; rerenderAfterLocate(false);
   navigator.geolocation.getCurrentPosition(function(pos){
     UI.locating = false;
     ST.me.verified = true; ST.me.verifiedTown = town; ST.me.verifiedAt = Date.now();
     ST.me.lat = Math.round(pos.coords.latitude * 100) / 100; ST.me.lng = Math.round(pos.coords.longitude * 100) / 100;
     ST.posts.forEach(function(p){ if(p.mine) p.seller.verified = ST.me.town === town; });
-    save(); rerenderAfterLocate();
+    save(); rerenderAfterLocate(true);
     toast('위치를 확인했어요. 시제품이라 동네 이름과 맞는지는 아직 확인하지 않아요.');
   }, function(err){
     UI.locating = false;
-    rerenderAfterLocate();
+    rerenderAfterLocate(true);
     toast(err && err.code === 1 ? '위치 권한이 꺼져 있어요. 휴대폰 설정 > 애플리케이션 > 천샵 > 권한에서 위치를 허용해 주세요.' : '위치를 찾지 못했어요. 휴대폰의 위치(GPS)가 켜져 있는지 확인하고 다시 해 주세요.');
   }, {enableHighAccuracy:false, timeout:15000, maximumAge:600000});
 }
-function rerenderAfterLocate(){
-  if(!ST.flags.onboarded){ syncOnbInputs(); renderOnboard(); return; }
-  if(NAV.sheet && NAV.sheet.k === 'settings') closeSheet();
-  refreshAll();
+/* 위치 결과가 늦게 와도 쓰고 있는 화면은 다시 그리지 않는다 (키보드가 내려가지 않게). 위치 표시만 바꾼다 */
+function onbVerifyLabel(){
+  var tw = String((UI.onbData || {}).town || '').trim();
+  return ic('location', 'sm') + (ST.me.verified && ST.me.verifiedTown && ST.me.verifiedTown === tw ? '위치 확인 완료' : (UI.locating ? '위치 확인 중…' : 'GPS로 위치 확인 (선택)'));
+}
+function rerenderAfterLocate(finished){
+  if(!ST.flags.onboarded){
+    syncOnbInputs();
+    var b = document.querySelector('.onb [data-act="verify"]'); if(b) b.innerHTML = onbVerifyLabel();
+    return;
+  }
+  if(!finished && NAV.sheet && NAV.sheet.k === 'settings') closeSheet();
+  dirtyTabs();
+  var t = document.getElementById('tab-' + NAV.tab);
+  if(t){ var st = t.scrollTop; renderTab(NAV.tab); DIRTY[NAV.tab] = false; t.scrollTop = st; }
 }
 function syncOnbInputs(){ var d = UI.onbData; if(!d) return; var a = document.getElementById('ob-nick'), b = document.getElementById('ob-town'); if(a) d.nick = a.value; if(b) d.town = b.value; }
 
@@ -1052,9 +1119,16 @@ var A = {
     var p = postById(c.postId), sd = UI.sheetData;
     var place = String(sd.place != null ? sd.place : (p && p.place) || '').trim();
     if(!place){ toast('만날 장소를 적어 주세요.'); var f = document.getElementById('appt-place'); if(f) f.focus(); return; }
-    if(risky(place)){ toast('장소에는 연락처나 계좌를 적지 말아 주세요.'); return; }
-    var pick = apptPick(sd);
-    c.msgs.push({id:uid(), from:'me', card:{type:'appt', day:dayLabel(pick.day), time:pick.time, place:place, late:parseInt(pick.time, 10) >= 21}, at:Date.now()});
+    var pick = apptPick(sd), shown = sd.shown || {};
+    /* 시트를 연 사이 정각이나 자정이 지나 고른 날짜·시간이 바뀌었으면 보내지 않고 다시 고르게 한다 */
+    if(pick.day !== shown.day || pick.time !== shown.time || dayLabel(pick.day) !== shown.label){ renderSheet(); toast('시간이 지나서 약속 시간을 다시 골라 주세요.'); return; }
+    if(risky(place) && sd.placeArmed !== place){
+      sd.placeArmed = place;
+      toast('장소에 연락처·계좌·메신저 이야기가 있어요. 그래도 보내려면 한 번 더 누르세요.');
+      var pf = document.getElementById('appt-place'); if(pf){ pf.focus(); pf.select(); }
+      return;
+    }
+    c.msgs.push({id:uid(), from:'me', card:{type:'appt', day:dayLabel(pick.day), time:pick.time, at:apptAt(pick.day, pick.time), place:place, late:parseInt(pick.time, 10) >= 21}, at:Date.now()});
     c.at = Date.now(); save(); refreshMsgs(c.id); closeSheet();
   },
   shipReq:function(el){ var c = chatById(el.getAttribute('data-id')); if(!c) return; c.msgs.push({id:uid(), from:'me', card:{type:'ship'}, at:Date.now()}); c.at = Date.now(); save(); refreshMsgs(c.id); },
@@ -1072,7 +1146,7 @@ var A = {
   noShow:function(el){ openSheet({k:'noShow', id:el.getAttribute('data-id')}); },
   noShowSave:function(el){
     var c = chatById(el.getAttribute('data-id')); if(!c) return;
-    if(!hasAppt(c)){ toast('약속을 잡은 뒤에 신고할 수 있어요.'); closeSheet(); return; }
+    if(!apptPassed(c)){ toast(hasAppt(c) ? '약속 시간이 지난 뒤에 신고할 수 있어요.' : '약속을 잡은 뒤에 신고할 수 있어요.'); closeSheet(); return; }
     if(c.noShowAt){ toast('이미 신고했어요.'); closeSheet(); return; }
     c.noShowAt = Date.now();
     adjustSellerTemp(c.with.nick, -0.5);
@@ -1082,9 +1156,11 @@ var A = {
   leaveChat:function(el){
     var id = el.getAttribute('data-id');
     if(UI.confirm !== 'leave' + id){ UI.confirm = 'leave' + id; renderSheet(); return; }
-    var c = chatById(id);
-    /* 끝난 거래는 거래완료·후기 기록이 남도록 목록에서만 뺀다 */
-    if(c && c.done){ c.left = true; c.unread = 0; }
+    var c = chatById(id), p = c && postById(c.postId);
+    /* 끝나지 않은 거래에서 나가면 원해요도 거둔다 */
+    if(c && !c.done && p && !p.mine && p.wanted){ p.wanted = false; p.wants = Math.max(0, p.wants - 1); }
+    /* 끝난 거래(거래완료·후기)와 약속·노쇼 기록이 있는 거래는 목록에서만 뺀다. 다시 원해요를 누르면 이어진다 */
+    if(c && (c.done || c.noShowAt || hasAppt(c))){ c.left = true; c.unread = 0; }
     else ST.chats = ST.chats.filter(function(x){ return x.id !== id; });
     delete UI.chatDraft[id];
     UI.confirm = null; save(); dirtyTabs();
@@ -1103,7 +1179,8 @@ var A = {
     try{ history.replaceState(clone(NAV), ''); }catch(e){}
     document.getElementById('app').innerHTML = '';
     apply();
-    if(townOK()) toast('위치를 확인한 ' + town + ' 이웃으로 시작해요.');
+    if(ST.me.verified && ST.me.verifiedTown !== town) toast('동네를 바꿔서 위치를 다시 확인해야 해요.');
+    else toast(town + ' 이웃으로 시작해요.');
   }
 };
 
@@ -1124,7 +1201,10 @@ document.addEventListener('input', function(e){
     syncPublishButtons(); persistDraft();
   }
   if(el.hasAttribute('data-sd')) UI.sheetData[el.getAttribute('data-sd')] = el.value;
-  if(el.hasAttribute('data-ob')){ (UI.onbData || (UI.onbData = {}))[el.getAttribute('data-ob')] = el.value; }
+  if(el.hasAttribute('data-ob')){
+    (UI.onbData || (UI.onbData = {}))[el.getAttribute('data-ob')] = el.value;
+    if(el.getAttribute('data-ob') === 'town'){ var vb = document.querySelector('.onb [data-act="verify"]'); if(vb) vb.innerHTML = onbVerifyLabel(); }
+  }
   if(el.matches && el.matches('textarea.msg')){
     var cid = el.getAttribute('data-id');
     fitTextarea(el);
@@ -1168,14 +1248,19 @@ document.addEventListener('scroll', function(e){
 /* ---------- 시작 ---------- */
 function boot(){
   idbGet('kv', 'state').then(function(raw){
-    var s = null;
-    try{ s = raw ? JSON.parse(raw) : null; }catch(e){ s = null; }
-    if(!s){ try{ var ls = localStorage.getItem('cheonshop.state'); s = ls ? JSON.parse(ls) : null; }catch(e){ s = null; } }
+    var a = null, b = null;
+    try{ a = raw ? JSON.parse(raw) : null; }catch(e){ a = null; }
+    try{ var ls = localStorage.getItem('cheonshop.state'); b = ls ? JSON.parse(ls) : null; }catch(e){ b = null; }
+    var s = (b && (!a || (b.savedAt || 0) >= (a.savedAt || 0))) ? b : a;
     if(s && s.v === 1){
       var f = freshState();
-      ST = {v:1, me:Object.assign(f.me, s.me || {}), posts:Array.isArray(s.posts) ? s.posts : [], chats:Array.isArray(s.chats) ? s.chats : [], flags:Object.assign(f.flags, s.flags || {})};
+      ST = {v:1, savedAt:s.savedAt || 0, me:Object.assign(f.me, s.me || {}), posts:Array.isArray(s.posts) ? s.posts : [], chats:Array.isArray(s.chats) ? s.chats : [], flags:Object.assign(f.flags, s.flags || {})};
       /* 0.1.3 이전 기록: 위치 확인 때의 동네를 몰라서 지금 동네로 본다 */
       if(ST.me.verified && !ST.me.verifiedTown) ST.me.verifiedTown = ST.me.town;
+      /* 0.1.3 이전 노쇼 신고는 표시가 없어서 시스템 메시지로 찾는다 */
+      ST.chats.forEach(function(c){ if(!c.noShowAt){ c.msgs.forEach(function(m){ if(m.from === 'sys' && /나오지 않았다고 신고했어요/.test(m.text)) c.noShowAt = m.at || 1; }); } });
+      /* 대신 쓴 기록을 읽었으면 IndexedDB로 다시 옮겨 본다 */
+      if(s === b) save();
     }
     return ST.flags.onboarded ? restoreDraft() : null;
   }).then(function(openDraft){

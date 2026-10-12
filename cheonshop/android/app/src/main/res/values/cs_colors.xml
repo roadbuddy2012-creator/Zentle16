@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 상태 표시줄·내비게이션 바를 앱 바탕과 같은 색으로 (안드로이드 14 이하에서 쓰인다) -->
+<resources>
+    <color name="cs_bar">#FFFFFF</color>
+    <bool name="cs_light_bars">true</bool>
+</resources>
